@@ -16,6 +16,7 @@
 
 package io.spring.issuebot;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ import io.spring.issuebot.github.Issue;
 import io.spring.issuebot.github.Page;
 
 /**
- * Central class for monitoring the configured repository.
+ * Central class for monitoring the configured repositories.
  *
  * @author Andy Wilkinson
  */
@@ -37,44 +38,53 @@ class RepositoryMonitor {
 
 	private final GitHubOperations gitHub;
 
-	private final MonitoredRepository repository;
+	private final List<MonitoredRepository> repositories;
 
 	private final List<IssueListener> issueListeners;
 
 	RepositoryMonitor(GitHubOperations gitHub, MonitoredRepository repository,
 			List<IssueListener> issueListeners) {
 		this.gitHub = gitHub;
-		this.repository = repository;
+		this.repositories = Arrays.asList(repository);
+		this.issueListeners = issueListeners;
+	}
+
+	RepositoryMonitor(GitHubOperations gitHub, List<MonitoredRepository> repositories,
+			List<IssueListener> issueListeners) {
+		this.gitHub = gitHub;
+		this.repositories = repositories;
 		this.issueListeners = issueListeners;
 	}
 
 	@Scheduled(fixedRate = 5 * 60 * 1000)
 	void monitor() {
-		log.info("Monitoring {}/{}", this.repository.getOrganization(),
-				this.repository.getName());
-		try {
-			Page<Issue> page = this.gitHub.getIssues(this.repository.getOrganization(),
-					this.repository.getName());
-			while (page != null) {
-				for (Issue issue : page.getContent()) {
-					for (IssueListener issueListener : this.issueListeners) {
-						try {
-							issueListener.onOpenIssue(issue);
-						}
-						catch (Exception ex) {
-							log.warn("Listener '{}' failed when handling issue '{}'",
-									issueListener, issue, ex);
+		for (MonitoredRepository repository : this.repositories) {
+			log.info("Monitoring {}/{}", repository.getOrganization(),
+					repository.getName());
+			try {
+				Page<Issue> page = this.gitHub.getIssues(repository.getOrganization(),
+						repository.getName());
+				while (page != null) {
+					for (Issue issue : page.getContent()) {
+						for (IssueListener issueListener : this.issueListeners) {
+							try {
+								issueListener.onOpenIssue(issue);
+							}
+							catch (Exception ex) {
+								log.warn("Listener '{}' failed when handling issue '{}'",
+										issueListener, issue, ex);
+							}
 						}
 					}
+					page = page.next();
 				}
-				page = page.next();
 			}
+			catch (Exception ex) {
+				log.warn("A failure occurred during issue monitoring", ex);
+			}
+			log.info("Monitoring of {}/{} completed", repository.getOrganization(),
+					repository.getName());
 		}
-		catch (Exception ex) {
-			log.warn("A failure occurred during issue monitoring", ex);
-		}
-		log.info("Monitoring of {}/{} completed", this.repository.getOrganization(),
-				this.repository.getName());
 	}
 
 }

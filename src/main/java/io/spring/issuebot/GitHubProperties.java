@@ -16,6 +16,7 @@
 
 package io.spring.issuebot;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
@@ -35,6 +36,8 @@ public class GitHubProperties {
 
 	@NestedConfigurationProperty
 	private Repository repository = new Repository();
+
+	private List<Repository> repositories = new ArrayList<>();
 
 	@NestedConfigurationProperty
 	private Credentials credentials = new Credentials();
