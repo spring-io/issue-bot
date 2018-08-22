@@ -58,4 +58,10 @@ final class FeedbackProperties {
 	 */
 	private String closeComment;
 
+	/**
+	 * Whether or not to include the user of the issuebot as a collaborator. Useful for
+	 * testing.
+	 */
+	private boolean includeBotUser = true;
+
 }

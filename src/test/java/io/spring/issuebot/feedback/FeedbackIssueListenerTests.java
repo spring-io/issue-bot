@@ -50,7 +50,7 @@ public class FeedbackIssueListenerTests {
 
 	private final IssueListener listener = new FeedbackIssueListener(this.gitHub,
 			"required", MultiValueMaps.from("testorg/testrepo", "Amy", "Brian"),
-			"IssueBot", this.feedbackListener);
+			"IssueBot", this.feedbackListener, true);
 
 	private final String repositoryUrl = "https://api.github.com/repos/testorg/testrepo";
 

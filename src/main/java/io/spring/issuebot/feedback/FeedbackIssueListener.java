@@ -45,15 +45,17 @@ final class FeedbackIssueListener implements IssueListener {
 
 	private final String username;
 	private final FeedbackListener feedbackListener;
+	private final boolean includeBotUser;
 
 	FeedbackIssueListener(GitHubOperations gitHub, String labelName,
 						MultiValueMap<String, String> collaborators, String username,
-						FeedbackListener feedbackListener) {
+						FeedbackListener feedbackListener, boolean includeBotUser) {
 		this.gitHub = gitHub;
 		this.labelName = labelName;
 		this.collaborators = collaborators;
 		this.username = username;
 		this.feedbackListener = feedbackListener;
+		this.includeBotUser = includeBotUser;
 	}
 
 	@Override
@@ -105,7 +107,9 @@ final class FeedbackIssueListener implements IssueListener {
 
 	private boolean commentedSince(OffsetDateTime waitingForFeedbackSince, Issue issue) {
 		List<String> collaborators = new ArrayList<>();
-		collaborators.add(this.username); //TODO: make configurable (for testing)
+		if (this.includeBotUser) {
+			collaborators.add(this.username);
+		}
 		String slug = issue.slug();
 		if (this.collaborators.containsKey(slug)) {
 			collaborators.addAll(this.collaborators.get(slug));

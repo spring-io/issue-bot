@@ -48,7 +48,8 @@ class FeedbackConfiguration {
 						feedbackProperties.getRequiredLabel(),
 						feedbackProperties.getReminderLabel(),
 						feedbackProperties.getReminderComment(),
-						feedbackProperties.getCloseComment(), issueListener));
+						feedbackProperties.getCloseComment(), issueListener),
+				feedbackProperties.isIncludeBotUser());
 	}
 
 }
