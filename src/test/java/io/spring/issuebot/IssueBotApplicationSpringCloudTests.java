@@ -16,9 +16,9 @@
 
 package io.spring.issuebot;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -41,10 +41,9 @@ public class IssueBotApplicationSpringCloudTests {
 
 	@Test
 	public void contextLoads() {
-		assertThat(gitHubProperties.getRepositories()).isNotEmpty();
-		GitHubProperties.Repository repository = gitHubProperties.getRepositories().get(0);
+		assertThat(this.gitHubProperties.getRepositories()).isNotEmpty();
+		GitHubProperties.Repository repository = this.gitHubProperties.getRepositories().get(0);
 		assertThat(repository.getCollaborators()).containsExactly("user1", "user2");
-
 	}
 
 }

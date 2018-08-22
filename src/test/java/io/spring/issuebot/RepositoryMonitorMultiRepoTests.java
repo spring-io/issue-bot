@@ -69,8 +69,8 @@ public class RepositoryMonitorMultiRepoTests {
 	public void singleRepositoryWithOpenIssues() {
 		@SuppressWarnings("unchecked")
 		Page<Issue> page = mock(Page.class);
-		Issue issueOne = new Issue(null, null, null, null, null, null, null, null);
-		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null);
+		Issue issueOne = new Issue(null, null, null, null, null, null, null, null, null);
+		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null, null);
 		given(page.getContent()).willReturn(Arrays.asList(issueOne, issueTwo));
 		given(this.gitHub.getIssues("test", "test")).willReturn(page);
 		this.repositoryMonitor.monitor();
@@ -85,8 +85,8 @@ public class RepositoryMonitorMultiRepoTests {
 	public void multipleRepositoriesWithOpenIssues() {
 		@SuppressWarnings("unchecked")
 		Page<Issue> page = mock(Page.class);
-		Issue issueOne = new Issue(null, null, null, null, null, null, null, null);
-		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null);
+		Issue issueOne = new Issue(null, null, null, null, null, null, null, null, null);
+		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null, null);
 		given(page.getContent()).willReturn(Arrays.asList(issueOne, issueTwo));
 		given(this.gitHub.getIssues("test", "test")).willReturn(page);
 		given(this.gitHub.getIssues("test2", "test2")).willReturn(page);
@@ -101,7 +101,7 @@ public class RepositoryMonitorMultiRepoTests {
 	public void exceptionFromAnIssueListenerIsHandledGracefully() {
 		@SuppressWarnings("unchecked")
 		Page<Issue> page = mock(Page.class);
-		Issue issue = new Issue(null, null, null, null, null, null, null, null);
+		Issue issue = new Issue(null, null, null, null, null, null, null, null, null);
 		given(page.getContent()).willReturn(Arrays.asList(issue));
 		given(this.gitHub.getIssues("test", "test")).willReturn(page);
 		willThrow(new RuntimeException()).given(this.issueListenerOne).onOpenIssue(issue);

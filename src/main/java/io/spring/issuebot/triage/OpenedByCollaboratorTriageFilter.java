@@ -16,11 +16,10 @@
 
 package io.spring.issuebot.triage;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import io.spring.issuebot.github.Issue;
 
@@ -35,16 +34,18 @@ final class OpenedByCollaboratorTriageFilter implements TriageFilter {
 	private static final Logger log = LoggerFactory
 			.getLogger(OpenedByCollaboratorTriageFilter.class);
 
-	private final List<String> collaborators;
+	private final MultiValueMap<String, String> collaborators;
 
-	OpenedByCollaboratorTriageFilter(List<String> collaborators) {
-		this.collaborators = collaborators == null ? Collections.emptyList()
+	OpenedByCollaboratorTriageFilter(MultiValueMap<String, String> collaborators) {
+		this.collaborators = collaborators == null ? new LinkedMultiValueMap<>()
 				: collaborators;
 	}
 
 	@Override
 	public boolean triaged(Issue issue) {
-		if (this.collaborators.contains(issue.getUser().getLogin())) {
+		String slug = issue.slug();
+		if (this.collaborators.containsKey(slug)
+				&& this.collaborators.get(slug).contains(issue.getUser().getLogin())) {
 			log.debug("{} has been triaged. It was opened by {}", issue, issue.getUser());
 			return true;
 		}

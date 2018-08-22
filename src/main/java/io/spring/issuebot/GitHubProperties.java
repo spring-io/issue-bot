@@ -23,6 +23,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 /**
  * {@link ConfigurationProperties} for connecting to GitHub.
@@ -41,6 +43,22 @@ public class GitHubProperties {
 
 	@NestedConfigurationProperty
 	private Credentials credentials = new Credentials();
+
+	/**
+	 * Creates a map of collaborators per repo.
+	 * @return creates a map of collaborators per repo.
+	 */
+	public MultiValueMap<String, String> getCollaborators() {
+		LinkedMultiValueMap<String, String> collaborators = new LinkedMultiValueMap<>();
+		if (getRepositories().isEmpty()) {
+			collaborators.put(getRepository().slug(),
+					getRepository().getCollaborators());
+		}
+		else {
+			getRepositories().forEach(repo -> collaborators.put(repo.slug(), repo.getCollaborators()));
+		}
+		return collaborators;
+	}
 
 	/**
 	 * Configuration for a GitHub repository.
@@ -64,6 +82,13 @@ public class GitHubProperties {
 		 */
 		private List<String> collaborators;
 
+		/**
+		 * Creates a slug of org and name.
+		 * @return the org/repo
+		 */
+		public String slug() {
+			return this.organization + "/" + this.name;
+		}
 	}
 
 	/**

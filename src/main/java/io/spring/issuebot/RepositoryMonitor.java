@@ -56,6 +56,7 @@ class RepositoryMonitor {
 		this.issueListeners = issueListeners;
 	}
 
+	//TODO: make configurable
 	@Scheduled(fixedRate = 5 * 60 * 1000)
 	void monitor() {
 		for (MonitoredRepository repository : this.repositories) {

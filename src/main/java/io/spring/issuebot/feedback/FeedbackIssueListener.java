@@ -20,6 +20,8 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.util.MultiValueMap;
+
 import io.spring.issuebot.IssueListener;
 import io.spring.issuebot.github.Comment;
 import io.spring.issuebot.github.Event;
@@ -39,17 +41,18 @@ final class FeedbackIssueListener implements IssueListener {
 
 	private final String labelName;
 
-	private final List<String> collaborators;
+	private final MultiValueMap<String, String> collaborators;
 
+	private final String username;
 	private final FeedbackListener feedbackListener;
 
 	FeedbackIssueListener(GitHubOperations gitHub, String labelName,
-			List<String> collaborators, String username,
-			FeedbackListener feedbackListener) {
+						MultiValueMap<String, String> collaborators, String username,
+						FeedbackListener feedbackListener) {
 		this.gitHub = gitHub;
 		this.labelName = labelName;
-		this.collaborators = new ArrayList<>(collaborators);
-		this.collaborators.add(username);
+		this.collaborators = collaborators;
+		this.username = username;
 		this.feedbackListener = feedbackListener;
 	}
 
@@ -101,10 +104,17 @@ final class FeedbackIssueListener implements IssueListener {
 	}
 
 	private boolean commentedSince(OffsetDateTime waitingForFeedbackSince, Issue issue) {
+		List<String> collaborators = new ArrayList<>();
+		collaborators.add(this.username); //TODO: make configurable (for testing)
+		String slug = issue.slug();
+		if (this.collaborators.containsKey(slug)) {
+			collaborators.addAll(this.collaborators.get(slug));
+		}
+
 		Page<Comment> page = this.gitHub.getComments(issue);
 		while (page != null) {
 			for (Comment comment : page.getContent()) {
-				if (!this.collaborators.contains(comment.getUser().getLogin())
+				if (!collaborators.contains(comment.getUser().getLogin())
 						&& comment.getCreationTime().isAfter(waitingForFeedbackSince)) {
 					return true;
 				}

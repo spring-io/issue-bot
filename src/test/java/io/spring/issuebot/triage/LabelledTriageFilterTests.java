@@ -38,7 +38,7 @@ public class LabelledTriageFilterTests {
 
 	@Test
 	public void issueWithLabels() {
-		assertThat(this.filter.triaged(new Issue(null, null, null, null, null,
+		assertThat(this.filter.triaged(new Issue(null, null, null, null, null, null,
 				Arrays.asList(new Label("test")), null, null)), is(true));
 	}
 
@@ -46,13 +46,13 @@ public class LabelledTriageFilterTests {
 	public void issueWithNullLabels() {
 		assertThat(
 				this.filter.triaged(
-						new Issue(null, null, null, null, null, null, null, null)),
+						new Issue(null, null, null, null, null, null, null, null, null)),
 				is(false));
 	}
 
 	@Test
 	public void issueWithNoLabels() {
-		assertThat(this.filter.triaged(new Issue(null, null, null, null, null,
+		assertThat(this.filter.triaged(new Issue(null, null, null, null, null, null,
 				Collections.emptyList(), null, null)), is(false));
 	}
 

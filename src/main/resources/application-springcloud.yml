@@ -5,10 +5,10 @@ issuebot:
   github:
     repositories:
       - organization: spencergibb
-        name: something
+        name: issuebot-test1
         collaborators: ${springcloud.collaborators}
       - organization: spencergibb
-        name: somethingelse
+        name: issuebot-test2
         collaborators: ${springcloud.collaborators}
   triage:
     label: "status: waiting-for-triage"

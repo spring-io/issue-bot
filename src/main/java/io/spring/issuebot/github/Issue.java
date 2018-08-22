@@ -22,6 +22,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Getter;
+import org.springframework.util.StringUtils;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * A GitHub issue.
@@ -43,6 +46,9 @@ public class Issue {
 	private final String labelsUrl;
 
 	@Getter
+	private final String repositoryUrl;
+
+	@Getter
 	private final User user;
 
 	@Getter
@@ -56,11 +62,11 @@ public class Issue {
 
 	/**
 	 * Creates a new {@code Issue}.
-	 *
-	 * @param url the url of the issue in the GitHub API
+	 *  @param url the url of the issue in the GitHub API
 	 * @param commentsUrl the url of the comments on the issue in the GitHub API
 	 * @param eventsUrl the url of the events on the issue in the GitHub API
 	 * @param labelsUrl the url of the labels on the issue in the GitHub API
+	 * @param repositoryUrl the url of the repository on the issue in the GitHub API
 	 * @param user the user that created the issue
 	 * @param labels the labels applied to the issue
 	 * @param milestone the milestone applied to the issue
@@ -70,7 +76,9 @@ public class Issue {
 	public Issue(@JsonProperty("url") String url,
 			@JsonProperty("comments_url") String commentsUrl,
 			@JsonProperty("events_url") String eventsUrl,
-			@JsonProperty("labels_url") String labelsUrl, @JsonProperty("user") User user,
+			@JsonProperty("labels_url") String labelsUrl,
+			@JsonProperty("repository_url") String repositoryUrl,
+			@JsonProperty("user") User user,
 			@JsonProperty("labels") List<Label> labels,
 			@JsonProperty("milestone") Milestone milestone,
 			@JsonProperty("pull_request") PullRequest pullRequest) {
@@ -78,6 +86,7 @@ public class Issue {
 		this.commentsUrl = commentsUrl;
 		this.eventsUrl = eventsUrl;
 		this.labelsUrl = labelsUrl;
+		this.repositoryUrl = repositoryUrl;
 		this.user = user;
 		this.labels = labels;
 		this.milestone = milestone;
@@ -89,4 +98,19 @@ public class Issue {
 		return this.url;
 	}
 
+	/**
+	 * Creates slug (org/repo) from repositoryUrl.
+	 * @return if repo url is not null, slug, otherwise null
+	 */
+	public String slug() {
+		String repositoryUrl = getRepositoryUrl();
+		if (repositoryUrl == null) {
+			return null;
+		}
+		UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(repositoryUrl).build();
+		List<String> segments = uriComponents.getPathSegments();
+		List<String> slugSegments = segments.subList(segments.size() - 2, segments.size());
+		String slug = StringUtils.collectionToDelimitedString(slugSegments, "/");
+		return slug;
+	}
 }

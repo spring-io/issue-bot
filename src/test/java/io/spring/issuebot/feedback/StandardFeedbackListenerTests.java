@@ -47,7 +47,7 @@ public class StandardFeedbackListenerTests {
 			"Please provide requested feedback", "Closing due to lack of feedback",
 			Arrays.asList(this.issueListener));
 
-	private final Issue issue = new Issue(null, null, null, null, null, new ArrayList<>(),
+	private final Issue issue = new Issue(null, null, null, null, null, null, new ArrayList<>(),
 			null, null);
 
 	@Test

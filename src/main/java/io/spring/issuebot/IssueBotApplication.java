@@ -24,6 +24,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.GitHubTemplate;
@@ -65,6 +67,20 @@ public class IssueBotApplication {
 					.map(repo -> new MonitoredRepository(repo.getOrganization(), repo.getName()))
 					.collect(Collectors.toList());
 			return new RepositoryMonitor(gitHub, repositories, issueListeners);
+		}
+	}
+
+	@RestController
+	public static class MonitorController {
+		final RepositoryMonitor repositoryMonitor;
+
+		public MonitorController(RepositoryMonitor repositoryMonitor) {
+			this.repositoryMonitor = repositoryMonitor;
+		}
+
+		@PostMapping("/monitor")
+		public void monitor() {
+			this.repositoryMonitor.monitor();
 		}
 	}
 
