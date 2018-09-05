@@ -39,7 +39,7 @@ final class FeedbackIssueListener implements IssueListener {
 
 	private final GitHubOperations gitHub;
 
-	private final String labelName;
+	private final FeedbackProperties feedbackProperties;
 
 	private final MultiValueMap<String, String> collaborators;
 
@@ -47,15 +47,15 @@ final class FeedbackIssueListener implements IssueListener {
 	private final FeedbackListener feedbackListener;
 	private final boolean includeBotUser;
 
-	FeedbackIssueListener(GitHubOperations gitHub, String labelName,
+	FeedbackIssueListener(GitHubOperations gitHub, FeedbackProperties feedbackProperties,
 						MultiValueMap<String, String> collaborators, String username,
-						FeedbackListener feedbackListener, boolean includeBotUser) {
+						FeedbackListener feedbackListener) {
 		this.gitHub = gitHub;
-		this.labelName = labelName;
+		this.feedbackProperties = feedbackProperties;
 		this.collaborators = collaborators;
 		this.username = username;
 		this.feedbackListener = feedbackListener;
-		this.includeBotUser = includeBotUser;
+		this.includeBotUser = feedbackProperties.isIncludeBotUser();
 	}
 
 	@Override
@@ -81,9 +81,11 @@ final class FeedbackIssueListener implements IssueListener {
 		return issue.getPullRequest() == null && labelledAsWaitingForFeedback(issue);
 	}
 
+
 	private boolean labelledAsWaitingForFeedback(Issue issue) {
+		String labelName = findLabel(issue);
 		for (Label label : issue.getLabels()) {
-			if (this.labelName.equals(label.getName())) {
+			if (labelName.equals(label.getName())) {
 				return true;
 			}
 		}
@@ -92,11 +94,12 @@ final class FeedbackIssueListener implements IssueListener {
 
 	private OffsetDateTime getWaitingSince(Issue issue) {
 		OffsetDateTime createdAt = null;
+		String labelName = findLabel(issue);
 		Page<Event> page = this.gitHub.getEvents(issue);
 		while (page != null) {
 			for (Event event : page.getContent()) {
 				if (Event.Type.LABELED.equals(event.getType())
-						&& this.labelName.equals(event.getLabel().getName())) {
+						&& labelName.equals(event.getLabel().getName())) {
 					createdAt = event.getCreationTime();
 				}
 			}
@@ -105,12 +108,26 @@ final class FeedbackIssueListener implements IssueListener {
 		return createdAt;
 	}
 
+	private String findLabel(Issue issue) {
+		Issue.Slug slug = issue.slug();
+		if (this.feedbackProperties.containsKey(slug.toString())) {
+			return this.feedbackProperties.get(slug.toString()).getRequiredLabel();
+		}
+		else if (this.feedbackProperties.containsKey(slug.getRepo())) {
+			return this.feedbackProperties.get(slug.getRepo()).getRequiredLabel();
+		}
+		else if (this.feedbackProperties.containsKey(slug.getOrg())) {
+			return this.feedbackProperties.get(slug.getOrg()).getRequiredLabel();
+		}
+		return null;
+	}
+
 	private boolean commentedSince(OffsetDateTime waitingForFeedbackSince, Issue issue) {
 		List<String> collaborators = new ArrayList<>();
 		if (this.includeBotUser) {
 			collaborators.add(this.username);
 		}
-		String slug = issue.slug();
+		String slug = issue.slug().toString();
 		if (this.collaborators.containsKey(slug)) {
 			collaborators.addAll(this.collaborators.get(slug));
 		}

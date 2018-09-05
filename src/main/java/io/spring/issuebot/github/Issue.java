@@ -21,8 +21,8 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
+import lombok.Data;
 import lombok.Getter;
-import org.springframework.util.StringUtils;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -102,15 +102,44 @@ public class Issue {
 	 * Creates slug (org/repo) from repositoryUrl.
 	 * @return if repo url is not null, slug, otherwise null
 	 */
-	public String slug() {
+	public Slug slug() {
 		String repositoryUrl = getRepositoryUrl();
 		if (repositoryUrl == null) {
 			return null;
 		}
-		UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(repositoryUrl).build();
-		List<String> segments = uriComponents.getPathSegments();
-		List<String> slugSegments = segments.subList(segments.size() - 2, segments.size());
-		String slug = StringUtils.collectionToDelimitedString(slugSegments, "/");
-		return slug;
+		return Slug.from(repositoryUrl);
+	}
+
+	/**
+	 * Org and repo pair that represent a github project.
+	 */
+	@Data
+	public static class Slug {
+
+		private final String org;
+		private final String repo;
+
+		/**
+		 * Formats org and repo.
+		 * @return org/repo
+		 */
+		@Override
+		public String toString() {
+			return this.org + "/" + this.repo;
+		}
+
+		/**
+		 * Factory method for creating slug from url.
+		 * @param repositoryUrl url to parse.
+		 * @return A Slug from the url.
+		 */
+		public static Slug from(String repositoryUrl) {
+			UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(repositoryUrl).build();
+			List<String> segments = uriComponents.getPathSegments();
+			String repo = segments.get(segments.size() - 1);
+			String org = segments.get(segments.size() - 2);
+			return new Slug(org, repo);
+		}
+
 	}
 }

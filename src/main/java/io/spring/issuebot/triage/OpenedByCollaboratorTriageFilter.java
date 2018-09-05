@@ -43,7 +43,7 @@ final class OpenedByCollaboratorTriageFilter implements TriageFilter {
 
 	@Override
 	public boolean triaged(Issue issue) {
-		String slug = issue.slug();
+		String slug = issue.slug().toString();
 		if (this.collaborators.containsKey(slug)
 				&& this.collaborators.get(slug).contains(issue.getUser().getLogin())) {
 			log.debug("{} has been triaged. It was opened by {}", issue, issue.getUser());

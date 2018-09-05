@@ -11,15 +11,17 @@ issuebot:
         name: issuebot-test2
         collaborators: ${springcloud.collaborators}
   triage:
-    label: "status: waiting-for-triage"
+    label:
+      spencergibb: "inbox"
   feedback:
-    required_label: "status: waiting-for-feedback"
-    provided_label: "status: feedback-provided"
-    reminder_label: "status: feedback-reminder"
-    reminder_comment: >
-      If you would like us to look at this issue, please provide the requested
-      information. If the information is not provided within the next 7 days this issue
-      will be closed.
-    close_comment: >
-      Closing due to lack of requested feedback. If you would like us to look at this
-      issue, please provide the requested information and we will re-open the issue.
+    spencergibb:
+      required_label: "waiting-for-feedback"
+      provided_label: "feedback-provided"
+      reminder_label: "feedback-reminder"
+      reminder_comment: >
+        If you would like us to look at this issue, please provide the requested
+        information. If the information is not provided within the next 7 days this issue
+        will be closed.
+      close_comment: >
+        Closing due to lack of requested feedback. If you would like us to look at this
+        issue, please provide the requested information and we will re-open the issue.

@@ -48,9 +48,17 @@ public class FeedbackIssueListenerTests {
 
 	private final FeedbackListener feedbackListener = mock(FeedbackListener.class);
 
+	private static final FeedbackProperties properties = new FeedbackProperties();
+	static {
+		FeedbackProperties.Properties value = new FeedbackProperties.Properties();
+		value.setRequiredLabel("required");
+
+		properties.put("testrepo", value);
+	}
+
 	private final IssueListener listener = new FeedbackIssueListener(this.gitHub,
-			"required", MultiValueMaps.from("testorg/testrepo", "Amy", "Brian"),
-			"IssueBot", this.feedbackListener, true);
+			properties, MultiValueMaps.from("testorg/testrepo", "Amy", "Brian"),
+			"IssueBot", this.feedbackListener);
 
 	private final String repositoryUrl = "https://api.github.com/repos/testorg/testrepo";
 

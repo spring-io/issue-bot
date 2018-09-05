@@ -16,10 +16,16 @@
 
 package io.spring.issuebot.feedback;
 
+import java.util.HashMap;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+
 
 /**
  * {@link EnableConfigurationProperties Configuration properties} for configuring the
@@ -29,34 +35,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
  */
 @Getter
 @Setter
+@NoArgsConstructor
 @ConfigurationProperties(prefix = "issuebot.feedback")
-final class FeedbackProperties {
-
-	/**
-	 * Name of the label that is applied when feedback is required.
-	 */
-	private String requiredLabel;
-
-	/**
-	 * Name of the label that is applied when feedback has been provided.
-	 */
-	private String providedLabel;
-
-	/**
-	 * Name of the label that is applied when the feedback reminder comment has been made.
-	 */
-	private String reminderLabel;
-
-	/**
-	 * The text of the comment that is added as a reminder that feedback is required.
-	 */
-	private String reminderComment;
-
-	/**
-	 * The text of the comment that is added when an issue is clsed as feedback has not
-	 * been provided.
-	 */
-	private String closeComment;
+final class FeedbackProperties extends HashMap<String, FeedbackProperties.Properties> {
 
 	/**
 	 * Whether or not to include the user of the issuebot as a collaborator. Useful for
@@ -64,4 +45,39 @@ final class FeedbackProperties {
 	 */
 	private boolean includeBotUser = true;
 
+	/**
+	 * Data for each project or repo.
+	 *
+	 * @author Spencer Gibb
+	 */
+	@Data
+	@AllArgsConstructor
+	@NoArgsConstructor
+	static class Properties {
+		/**
+		 * Name of the label that is applied when feedback is required.
+		 */
+		private String requiredLabel;
+
+		/**
+		 * Name of the label that is applied when feedback has been provided.
+		 */
+		private String providedLabel;
+
+		/**
+		 * Name of the label that is applied when the feedback reminder comment has been made.
+		 */
+		private String reminderLabel;
+
+		/**
+		 * The text of the comment that is added as a reminder that feedback is required.
+		 */
+		private String reminderComment;
+
+		/**
+		 * The text of the comment that is added when an issue is clsed as feedback has not
+		 * been provided.
+		 */
+		private String closeComment;
+	}
 }

@@ -40,16 +40,11 @@ class FeedbackConfiguration {
 	FeedbackIssueListener feedbackIssueListener(GitHubOperations gitHub,
 			GitHubProperties githubProperties, FeedbackProperties feedbackProperties,
 			List<IssueListener> issueListener) {
-		return new FeedbackIssueListener(gitHub, feedbackProperties.getRequiredLabel(),
+		return new FeedbackIssueListener(gitHub, feedbackProperties,
 				githubProperties.getCollaborators(),
 				githubProperties.getCredentials().getUsername(),
 				new StandardFeedbackListener(gitHub,
-						feedbackProperties.getProvidedLabel(),
-						feedbackProperties.getRequiredLabel(),
-						feedbackProperties.getReminderLabel(),
-						feedbackProperties.getReminderComment(),
-						feedbackProperties.getCloseComment(), issueListener),
-				feedbackProperties.isIncludeBotUser());
+						feedbackProperties, issueListener));
 	}
 
 }
