@@ -36,9 +36,6 @@ import org.springframework.util.MultiValueMap;
 @Setter
 public class GitHubProperties {
 
-	@NestedConfigurationProperty
-	private Repository repository = new Repository();
-
 	private List<Repository> repositories = new ArrayList<>();
 
 	@NestedConfigurationProperty
@@ -50,13 +47,7 @@ public class GitHubProperties {
 	 */
 	public MultiValueMap<String, String> getCollaborators() {
 		LinkedMultiValueMap<String, String> collaborators = new LinkedMultiValueMap<>();
-		if (getRepositories().isEmpty()) {
-			collaborators.put(getRepository().slug(),
-					getRepository().getCollaborators());
-		}
-		else {
-			getRepositories().forEach(repo -> collaborators.put(repo.slug(), repo.getCollaborators()));
-		}
+		getRepositories().forEach(repo -> collaborators.put(repo.slug(), repo.getCollaborators()));
 		return collaborators;
 	}
 
