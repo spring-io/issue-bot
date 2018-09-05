@@ -57,16 +57,7 @@ final class LabelApplyingTriageListener implements TriageListener {
 
 	private String findLabel(Issue issue) {
 		Issue.Slug slug = issue.slug();
-		if (this.label.containsKey(slug.toString())) {
-			return this.label.get(slug.toString());
-		}
-		else if (this.label.containsKey(slug.getRepo())) {
-			return this.label.get(slug.getRepo());
-		}
-		else if (this.label.containsKey(slug.getOrg())) {
-			return this.label.get(slug.getOrg());
-		}
-		return null;
+		return slug.find(this.label);
 	}
 
 }

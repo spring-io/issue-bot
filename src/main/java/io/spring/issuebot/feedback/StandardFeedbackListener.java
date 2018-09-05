@@ -92,16 +92,7 @@ final class StandardFeedbackListener implements FeedbackListener {
 
 	private Properties findProperties(Issue issue) {
 		Issue.Slug slug = issue.slug();
-		if (this.properties.containsKey(slug.toString())) {
-			return this.properties.get(slug.toString());
-		}
-		else if (this.properties.containsKey(slug.getRepo())) {
-			return this.properties.get(slug.getRepo());
-		}
-		else if (this.properties.containsKey(slug.getOrg())) {
-			return this.properties.get(slug.getOrg());
-		}
-		return null;
+		return slug.find(this.properties);
 	}
 
 }

@@ -110,14 +110,9 @@ final class FeedbackIssueListener implements IssueListener {
 
 	private String findLabel(Issue issue) {
 		Issue.Slug slug = issue.slug();
-		if (this.feedbackProperties.containsKey(slug.toString())) {
-			return this.feedbackProperties.get(slug.toString()).getRequiredLabel();
-		}
-		else if (this.feedbackProperties.containsKey(slug.getRepo())) {
-			return this.feedbackProperties.get(slug.getRepo()).getRequiredLabel();
-		}
-		else if (this.feedbackProperties.containsKey(slug.getOrg())) {
-			return this.feedbackProperties.get(slug.getOrg()).getRequiredLabel();
+		FeedbackProperties.Properties properties = slug.find(this.feedbackProperties);
+		if (properties != null) {
+			return properties.getRequiredLabel();
 		}
 		return null;
 	}

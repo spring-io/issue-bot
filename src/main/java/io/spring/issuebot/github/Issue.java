@@ -17,6 +17,7 @@
 package io.spring.issuebot.github;
 
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -118,6 +119,25 @@ public class Issue {
 
 		private final String org;
 		private final String repo;
+
+		/**
+		 * Finds a value in a map based on slug, then repo, then org.
+		 * @param map The map to search.
+		 * @param <V> the type of the value.
+		 * @return The value or null.
+		 */
+		public <V> V find(Map<String, V> map) {
+			if (map.containsKey(toString())) {
+				return map.get(toString());
+			}
+			else if (map.containsKey(getRepo())) {
+				return map.get(getRepo());
+			}
+			else if (map.containsKey(getOrg())) {
+				return map.get(getOrg());
+			}
+			return null;
+		}
 
 		/**
 		 * Formats org and repo.
