@@ -20,8 +20,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AccessLevel;
-import lombok.Getter;
 
 /**
  * A GitHub issue.
@@ -30,28 +28,20 @@ import lombok.Getter;
  */
 public class Issue {
 
-	@Getter(AccessLevel.PACKAGE)
 	private final String url;
 
-	@Getter(AccessLevel.PACKAGE)
 	private final String commentsUrl;
 
-	@Getter(AccessLevel.PACKAGE)
 	private final String eventsUrl;
 
-	@Getter(AccessLevel.PACKAGE)
 	private final String labelsUrl;
 
-	@Getter
 	private final User user;
 
-	@Getter
 	private List<Label> labels;
 
-	@Getter
 	private final Milestone milestone;
 
-	@Getter
 	private final PullRequest pullRequest;
 
 	/**
@@ -81,6 +71,38 @@ public class Issue {
 		this.labels = labels;
 		this.milestone = milestone;
 		this.pullRequest = pullRequest;
+	}
+
+	String getUrl() {
+		return this.url;
+	}
+
+	String getCommentsUrl() {
+		return this.commentsUrl;
+	}
+
+	String getEventsUrl() {
+		return this.eventsUrl;
+	}
+
+	String getLabelsUrl() {
+		return this.labelsUrl;
+	}
+
+	public User getUser() {
+		return this.user;
+	}
+
+	public List<Label> getLabels() {
+		return this.labels;
+	}
+
+	public Milestone getMilestone() {
+		return this.milestone;
+	}
+
+	public PullRequest getPullRequest() {
+		return this.pullRequest;
 	}
 
 	@Override

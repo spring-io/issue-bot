@@ -16,9 +16,6 @@
 
 package io.spring.issuebot.triage;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
@@ -28,8 +25,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
  *
  * @author Andy Wilkinson
  */
-@Getter
-@Setter
 @ConfigurationProperties(prefix = "issuebot.triage")
 class TriageProperties {
 
@@ -37,5 +32,13 @@ class TriageProperties {
 	 * The name of the label that should be applied to issues that are waiting for triage.
 	 */
 	private String label;
+
+	public String getLabel() {
+		return this.label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
 
 }

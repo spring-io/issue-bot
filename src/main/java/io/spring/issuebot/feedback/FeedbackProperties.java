@@ -16,9 +16,6 @@
 
 package io.spring.issuebot.feedback;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
@@ -28,8 +25,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
  *
  * @author Andy Wilkinson
  */
-@Getter
-@Setter
 @ConfigurationProperties(prefix = "issuebot.feedback")
 final class FeedbackProperties {
 
@@ -58,5 +53,45 @@ final class FeedbackProperties {
 	 * been provided.
 	 */
 	private String closeComment;
+
+	public String getRequiredLabel() {
+		return this.requiredLabel;
+	}
+
+	public void setRequiredLabel(String requiredLabel) {
+		this.requiredLabel = requiredLabel;
+	}
+
+	public String getProvidedLabel() {
+		return this.providedLabel;
+	}
+
+	public void setProvidedLabel(String providedLabel) {
+		this.providedLabel = providedLabel;
+	}
+
+	public String getReminderLabel() {
+		return this.reminderLabel;
+	}
+
+	public void setReminderLabel(String reminderLabel) {
+		this.reminderLabel = reminderLabel;
+	}
+
+	public String getReminderComment() {
+		return this.reminderComment;
+	}
+
+	public void setReminderComment(String reminderComment) {
+		this.reminderComment = reminderComment;
+	}
+
+	public String getCloseComment() {
+		return this.closeComment;
+	}
+
+	public void setCloseComment(String closeComment) {
+		this.closeComment = closeComment;
+	}
 
 }

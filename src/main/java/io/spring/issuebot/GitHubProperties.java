@@ -18,9 +18,6 @@ package io.spring.issuebot;
 
 import java.util.List;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -30,8 +27,6 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Andy Wilkinson
  */
 @ConfigurationProperties(prefix = "issuebot.github")
-@Getter
-@Setter
 public class GitHubProperties {
 
 	@NestedConfigurationProperty
@@ -40,11 +35,25 @@ public class GitHubProperties {
 	@NestedConfigurationProperty
 	private Credentials credentials = new Credentials();
 
+	public Repository getRepository() {
+		return this.repository;
+	}
+
+	public void setRepository(Repository repository) {
+		this.repository = repository;
+	}
+
+	public Credentials getCredentials() {
+		return this.credentials;
+	}
+
+	public void setCredentials(Credentials credentials) {
+		this.credentials = credentials;
+	}
+
 	/**
 	 * Configuration for a GitHub repository.
 	 */
-	@Getter
-	@Setter
 	public static class Repository {
 
 		/**
@@ -62,13 +71,35 @@ public class GitHubProperties {
 		 */
 		private List<String> collaborators;
 
+		public String getOrganization() {
+			return this.organization;
+		}
+
+		public void setOrganization(String organization) {
+			this.organization = organization;
+		}
+
+		public String getName() {
+			return this.name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public List<String> getCollaborators() {
+			return this.collaborators;
+		}
+
+		public void setCollaborators(List<String> collaborators) {
+			this.collaborators = collaborators;
+		}
+
 	}
 
 	/**
 	 * Configuration for the credentials used to authenticate with GitHub.
 	 */
-	@Getter
-	@Setter
 	public static class Credentials {
 
 		/**
@@ -80,6 +111,22 @@ public class GitHubProperties {
 		 * The password used for authentication with GitHub.
 		 */
 		private String password;
+
+		public String getUsername() {
+			return this.username;
+		}
+
+		public void setUsername(String username) {
+			this.username = username;
+		}
+
+		public String getPassword() {
+			return this.password;
+		}
+
+		public void setPassword(String password) {
+			this.password = password;
+		}
 
 	}
 

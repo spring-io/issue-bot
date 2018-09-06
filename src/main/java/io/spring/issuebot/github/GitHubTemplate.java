@@ -128,7 +128,7 @@ public class GitHubTemplate implements GitHubOperations {
 			return null;
 		}
 		ResponseEntity<T[]> contents = this.rest.getForEntity(url, type);
-		return new StandardPage<T>(Arrays.asList(contents.getBody()),
+		return new StandardPage<>(Arrays.asList(contents.getBody()),
 				() -> getPage(getNextUrl(contents), type));
 	}
 

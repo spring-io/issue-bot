@@ -20,14 +20,12 @@ import java.time.OffsetDateTime;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
 
 /**
  * A comment that has been made on a GitHub issue.
  *
  * @author Andy Wilkinson
  */
-@Getter
 public final class Comment {
 
 	private final User user;
@@ -45,6 +43,14 @@ public final class Comment {
 			@JsonProperty("created_at") OffsetDateTime creationTime) {
 		this.user = user;
 		this.creationTime = creationTime;
+	}
+
+	public User getUser() {
+		return this.user;
+	}
+
+	public OffsetDateTime getCreationTime() {
+		return this.creationTime;
 	}
 
 }

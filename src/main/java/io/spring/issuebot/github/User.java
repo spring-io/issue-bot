@@ -18,14 +18,12 @@ package io.spring.issuebot.github;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
 
 /**
  * A GitHub user.
  *
  * @author Andy Wilkinson
  */
-@Getter
 public class User {
 
 	private final String login;
@@ -37,6 +35,10 @@ public class User {
 	@JsonCreator
 	public User(@JsonProperty("login") String login) {
 		this.login = login;
+	}
+
+	public String getLogin() {
+		return this.login;
 	}
 
 	@Override

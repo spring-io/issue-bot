@@ -18,14 +18,12 @@ package io.spring.issuebot.github;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
 
 /**
  * A label that can be applied to a GitHub issue.
  *
  * @author Andy Wilkinson
  */
-@Getter
 public class Label {
 
 	private final String name;
@@ -37,6 +35,10 @@ public class Label {
 	@JsonCreator
 	public Label(@JsonProperty("name") String name) {
 		this.name = name;
+	}
+
+	public String getName() {
+		return this.name;
 	}
 
 }

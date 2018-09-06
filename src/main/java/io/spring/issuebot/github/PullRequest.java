@@ -18,14 +18,12 @@ package io.spring.issuebot.github;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
 
 /**
  * Details of a GitHub pull request.
  *
  * @author Andy Wilkinson
  */
-@Getter
 public class PullRequest {
 
 	private final String url;
@@ -37,6 +35,10 @@ public class PullRequest {
 	@JsonCreator
 	public PullRequest(@JsonProperty("url") String url) {
 		this.url = url;
+	}
+
+	public String getUrl() {
+		return this.url;
 	}
 
 }

@@ -20,14 +20,12 @@ import java.time.OffsetDateTime;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
 
 /**
  * An event that has been performed on an {@link Issue}.
  *
  * @author Andy Wilkinson
  */
-@Getter
 public class Event {
 
 	private final Type type;
@@ -49,6 +47,18 @@ public class Event {
 		this.type = Type.valueFrom(type);
 		this.creationTime = creationTime;
 		this.label = label;
+	}
+
+	public Type getType() {
+		return this.type;
+	}
+
+	public OffsetDateTime getCreationTime() {
+		return this.creationTime;
+	}
+
+	public Label getLabel() {
+		return this.label;
 	}
 
 	/**

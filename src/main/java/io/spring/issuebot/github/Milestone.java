@@ -18,14 +18,12 @@ package io.spring.issuebot.github;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
 
 /**
  * A milestone to which a GitHub Issue can be added.
  *
  * @author Andy Wilkinson
  */
-@Getter
 public class Milestone {
 
 	private final String title;
@@ -37,6 +35,10 @@ public class Milestone {
 	@JsonCreator
 	public Milestone(@JsonProperty("title") String title) {
 		this.title = title;
+	}
+
+	public String getTitle() {
+		return this.title;
 	}
 
 }

@@ -16,16 +16,11 @@
 
 package io.spring.issuebot;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 /**
  * A repository that should be monitored.
  *
  * @author Andy Wilkinson
  */
-@RequiredArgsConstructor
-@Getter
 public class MonitoredRepository {
 
 	/**
@@ -37,5 +32,18 @@ public class MonitoredRepository {
 	 * The name of the repository.
 	 */
 	private final String name;
+
+	public MonitoredRepository(String organization, String name) {
+		this.organization = organization;
+		this.name = name;
+	}
+
+	public String getOrganization() {
+		return this.organization;
+	}
+
+	public String getName() {
+		return this.name;
+	}
 
 }
