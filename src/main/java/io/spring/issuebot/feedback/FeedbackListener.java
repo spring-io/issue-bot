@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ public interface FeedbackListener {
 
 	/**
 	 * Notification that feedback has been provided for the given {@code issue}.
-	 *
 	 * @param issue the issue
 	 */
 	void feedbackProvided(Issue issue);
@@ -38,7 +37,6 @@ public interface FeedbackListener {
 	/**
 	 * Notification that feedback is still required for the given {@code issue} having
 	 * been requested at the given {@code requestTime}.
-	 *
 	 * @param issue the issue
 	 * @param requestTime the time when feedback was requested
 	 */

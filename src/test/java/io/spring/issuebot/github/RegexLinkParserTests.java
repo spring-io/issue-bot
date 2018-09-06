@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link RegexLinkParser}.
@@ -35,34 +33,34 @@ public class RegexLinkParserTests {
 
 	@Test
 	public void emptyInput() {
-		assertThat(this.linkParser.parse("").size(), is(0));
+		assertThat(this.linkParser.parse("")).isEmpty();
 	}
 
 	@Test
 	public void nullInput() {
-		assertThat(this.linkParser.parse(null).size(), is(0));
+		assertThat(this.linkParser.parse(null)).isEmpty();
 	}
 
 	@Test
 	public void singleLink() {
 		Map<String, String> links = this.linkParser.parse("<url>; rel=\"foo\"");
-		assertThat(links.size(), is(1));
-		assertThat(links, hasEntry("foo", "url"));
+		assertThat(links).hasSize(1);
+		assertThat(links).containsEntry("foo", "url");
 	}
 
 	@Test
 	public void notALink() {
 		Map<String, String> links = this.linkParser.parse("<url>; foo bar");
-		assertThat(links.size(), is(0));
+		assertThat(links).isEmpty();
 	}
 
 	@Test
 	public void multipleLinks() {
 		Map<String, String> links = this.linkParser
 				.parse("<url-one>; rel=\"foo\", <url-two>; rel=\"bar\"");
-		assertThat(links.size(), is(2));
-		assertThat(links, hasEntry("foo", "url-one"));
-		assertThat(links, hasEntry("bar", "url-two"));
+		assertThat(links).hasSize(2);
+		assertThat(links).containsEntry("foo", "url-one");
+		assertThat(links).containsEntry("bar", "url-two");
 	}
 
 }

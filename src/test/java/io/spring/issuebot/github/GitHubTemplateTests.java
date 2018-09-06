@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.Date;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -32,13 +33,8 @@ import org.springframework.test.web.client.response.DefaultResponseCreator;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.RestTemplate;
 
-import static org.hamcrest.Matchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
@@ -70,8 +66,8 @@ public class GitHubTemplateTests {
 				.andExpect(method(HttpMethod.GET)).andExpect(basicAuth())
 				.andRespond(withSuccess("[]", MediaType.APPLICATION_JSON));
 		Page<Issue> issues = this.gitHub.getIssues("org", "repo");
-		assertThat(issues.getContent().size(), is(0));
-		assertThat(issues.next(), is(nullValue()));
+		assertThat(issues.getContent()).isEmpty();
+		assertThat(issues.next()).isNull();
 	}
 
 	@Test
@@ -80,8 +76,8 @@ public class GitHubTemplateTests {
 				.andExpect(method(HttpMethod.GET)).andExpect(basicAuth())
 				.andRespond(withResource("issues-page-one.json"));
 		Page<Issue> issues = this.gitHub.getIssues("org", "repo");
-		assertThat(issues.getContent().size(), is(15));
-		assertThat(issues.next(), is(nullValue()));
+		assertThat(issues.getContent()).hasSize(15);
+		assertThat(issues.next()).isNull();
 	}
 
 	@Test
@@ -95,10 +91,10 @@ public class GitHubTemplateTests {
 		this.server.expect(requestTo("page-two")).andExpect(method(HttpMethod.GET))
 				.andExpect(basicAuth()).andRespond(withResource("issues-page-two.json"));
 		Page<Issue> pageOne = this.gitHub.getIssues("org", "repo");
-		assertThat(pageOne.getContent().size(), is(15));
+		assertThat(pageOne.getContent()).hasSize(15);
 		Page<Issue> pageTwo = pageOne.next();
-		assertThat(pageTwo, is(not(nullValue())));
-		assertThat(pageTwo.getContent().size(), is(15));
+		assertThat(pageTwo).isNotNull();
+		assertThat(pageTwo.getContent()).hasSize(15);
 	}
 
 	@Test
@@ -123,8 +119,8 @@ public class GitHubTemplateTests {
 				.andRespond(withSuccess("[]", MediaType.APPLICATION_JSON));
 		Page<Comment> comments = this.gitHub.getComments(
 				new Issue(null, "commentsUrl", null, null, null, null, null, null));
-		assertThat(comments.getContent().size(), is(0));
-		assertThat(comments.next(), is(nullValue()));
+		assertThat(comments.getContent()).isEmpty();
+		assertThat(comments.next()).isNull();
 	}
 
 	@Test
@@ -134,8 +130,8 @@ public class GitHubTemplateTests {
 				.andRespond(withResource("comments-page-one.json"));
 		Page<Comment> comments = this.gitHub.getComments(
 				new Issue(null, "commentsUrl", null, null, null, null, null, null));
-		assertThat(comments.getContent().size(), is(17));
-		assertThat(comments.next(), is(nullValue()));
+		assertThat(comments.getContent()).hasSize(17);
+		assertThat(comments.next()).isNull();
 	}
 
 	@Test
@@ -150,10 +146,10 @@ public class GitHubTemplateTests {
 				.andRespond(withResource("comments-page-two.json"));
 		Page<Comment> pageOne = this.gitHub.getComments(
 				new Issue(null, "commentsUrl", null, null, null, null, null, null));
-		assertThat(pageOne.getContent().size(), is(17));
+		assertThat(pageOne.getContent()).hasSize(17);
 		Page<Comment> pageTwo = pageOne.next();
-		assertThat(pageTwo, is(not(nullValue())));
-		assertThat(pageTwo.getContent().size(), is(3));
+		assertThat(pageTwo).isNotNull();
+		assertThat(pageTwo.getContent()).hasSize(3);
 	}
 
 	@Test
@@ -165,7 +161,7 @@ public class GitHubTemplateTests {
 		Issue issue = new Issue("issueUrl", null, null, "labelsUrl{/name}", null, null,
 				null, null);
 		Issue modifiedIssue = this.gitHub.addLabel(issue, "test");
-		assertThat(modifiedIssue.getLabels(), hasSize(1));
+		assertThat(modifiedIssue.getLabels()).hasSize(1);
 	}
 
 	@Test
@@ -176,18 +172,18 @@ public class GitHubTemplateTests {
 		Issue issue = new Issue(null, null, null, "labels{/name}", null, null, null,
 				null);
 		Issue modifiedIssue = this.gitHub.removeLabel(issue, "test");
-		assertThat(modifiedIssue.getLabels(), hasSize(0));
+		assertThat(modifiedIssue.getLabels()).isEmpty();
 	}
 
 	@Test
 	public void removeLabelWithNameThatRequiresEncodingFromIssue() {
-		this.server.expect(requestTo("labels/status:%20foo")).andExpect(method(HttpMethod.DELETE))
-				.andExpect(basicAuth())
+		this.server.expect(requestTo("labels/status:%20foo"))
+				.andExpect(method(HttpMethod.DELETE)).andExpect(basicAuth())
 				.andRespond(withSuccess("[]", MediaType.APPLICATION_JSON));
 		Issue issue = new Issue(null, null, null, "labels{/name}", null, null, null,
 				null);
 		Issue modifiedIssue = this.gitHub.removeLabel(issue, "status: foo");
-		assertThat(modifiedIssue.getLabels(), hasSize(0));
+		assertThat(modifiedIssue.getLabels()).isEmpty();
 	}
 
 	@Test
@@ -198,7 +194,7 @@ public class GitHubTemplateTests {
 				.andRespond(withResource("new-comment.json"));
 		Issue issue = new Issue(null, "commentsUrl", null, null, null, null, null, null);
 		Comment comment = this.gitHub.addComment(issue, "A test comment");
-		assertThat(comment, is(not(nullValue())));
+		assertThat(comment).isNotNull();
 	}
 
 	@Test
@@ -207,8 +203,8 @@ public class GitHubTemplateTests {
 				.andExpect(basicAuth()).andRespond(withResource("events-page-one.json"));
 		Page<Event> events = this.gitHub.getEvents(
 				new Issue(null, null, "eventsUrl", null, null, null, null, null));
-		assertThat(events.getContent().size(), is(12));
-		assertThat(events.next(), is(nullValue()));
+		assertThat(events.getContent()).hasSize(12);
+		assertThat(events.next()).isNull();
 	}
 
 	@Test
@@ -222,10 +218,10 @@ public class GitHubTemplateTests {
 				.andExpect(basicAuth()).andRespond(withResource("events-page-two.json"));
 		Page<Event> pageOne = this.gitHub.getEvents(
 				new Issue(null, null, "eventsUrl", null, null, null, null, null));
-		assertThat(pageOne.getContent().size(), is(12));
+		assertThat(pageOne.getContent()).hasSize(12);
 		Page<Event> pageTwo = pageOne.next();
-		assertThat(pageTwo, is(not(nullValue())));
-		assertThat(pageTwo.getContent().size(), is(3));
+		assertThat(pageTwo).isNotNull();
+		assertThat(pageTwo.getContent()).hasSize(3);
 	}
 
 	@Test
@@ -237,7 +233,7 @@ public class GitHubTemplateTests {
 						MediaType.APPLICATION_JSON));
 		Issue closedIssue = this.gitHub
 				.close(new Issue("issueUrl", null, null, null, null, null, null, null));
-		assertThat(closedIssue.getUrl(), is(equalTo("updatedIssueUrl")));
+		assertThat(closedIssue.getUrl()).isEqualTo("updatedIssueUrl");
 	}
 
 	private DefaultResponseCreator withResource(String resource, String... headers) {

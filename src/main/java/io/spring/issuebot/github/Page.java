@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,14 +28,12 @@ public interface Page<T> {
 
 	/**
 	 * Returns the next page, if any.
-	 *
-	 * @return The next page or {@code null}
+	 * @return the next page or {@code null}
 	 */
 	Page<T> next();
 
 	/**
 	 * Returns the contents of the page.
-	 *
 	 * @return the contents
 	 */
 	List<T> getContent();

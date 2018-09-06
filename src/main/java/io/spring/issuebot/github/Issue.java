@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,6 @@ public class Issue {
 
 	/**
 	 * Creates a new {@code Issue}.
-	 *
 	 * @param url the url of the issue in the GitHub API
 	 * @param commentsUrl the url of the comments on the issue in the GitHub API
 	 * @param eventsUrl the url of the events on the issue in the GitHub API

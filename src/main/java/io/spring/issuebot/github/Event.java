@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,6 @@ public class Event {
 
 	/**
 	 * Creates a new {@code Event}.
-	 *
 	 * @param type the type of the event
 	 * @param creationTime the timestamp of when the event was created
 	 * @param label the label associated with the event
@@ -76,7 +75,7 @@ public class Event {
 
 		/**
 		 * The actor unsubscribed from receibing notifications for an issue.
-		*/
+		 */
 		UNSUBSCRIBED("unsubscribed"),
 
 		/**
@@ -164,6 +163,7 @@ public class Event {
 			throw new IllegalArgumentException(
 					"'" + type + "' is not a valid event type");
 		}
+
 	}
 
 }

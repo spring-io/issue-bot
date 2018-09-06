@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
@@ -66,7 +67,6 @@ public class GitHubTemplate implements GitHubOperations {
 	 * Creates a new {@code GitHubTemplate} that will use the given {@code username} and
 	 * {@code password} to authenticate, and the given {@code linkParser} to parse links
 	 * from responses' {@code Link} header.
-	 *
 	 * @param username the username
 	 * @param password the password
 	 * @param linkParser the link parser
@@ -92,7 +92,7 @@ public class GitHubTemplate implements GitHubOperations {
 									+ new Date(Long
 											.valueOf(response.getHeaders()
 													.getFirst("X-RateLimit-Reset"))
-									* 1000));
+											* 1000));
 				}
 			}
 		});
@@ -204,7 +204,7 @@ public class GitHubTemplate implements GitHubOperations {
 		@Override
 		public Object read(Type type, Class<?> contextClass,
 				HttpInputMessage inputMessage)
-						throws IOException, HttpMessageNotReadableException {
+				throws IOException, HttpMessageNotReadableException {
 			try {
 				return super.read(type, contextClass, inputMessage);
 			}
@@ -235,7 +235,7 @@ public class GitHubTemplate implements GitHubOperations {
 
 		BasicAuthorizationInterceptor(String username, String password) {
 			this.username = username;
-			this.password = (password == null ? "" : password);
+			this.password = (password != null) ? password : "";
 		}
 
 		@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ final class LabelApplyingTriageListener implements TriageListener {
 	 * Creates a new {@code LabelApplyingTriageListener} that will use the given
 	 * {@code gitHubOperations} to apply the given {@code label} to any issues that
 	 * require triage.
-	 *
 	 * @param gitHubOperations the GitHubOperations
 	 * @param label the label
 	 */

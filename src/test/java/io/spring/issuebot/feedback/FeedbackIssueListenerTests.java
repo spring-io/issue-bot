@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ package io.spring.issuebot.feedback;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 
-import org.junit.Test;
-
 import io.spring.issuebot.IssueListener;
 import io.spring.issuebot.github.Comment;
 import io.spring.issuebot.github.Event;
@@ -30,6 +28,7 @@ import io.spring.issuebot.github.Label;
 import io.spring.issuebot.github.PullRequest;
 import io.spring.issuebot.github.StandardPage;
 import io.spring.issuebot.github.User;
+import org.junit.Test;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;

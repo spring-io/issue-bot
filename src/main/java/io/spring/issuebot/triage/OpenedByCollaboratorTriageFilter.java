@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,9 @@ package io.spring.issuebot.triage;
 import java.util.Collections;
 import java.util.List;
 
+import io.spring.issuebot.github.Issue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import io.spring.issuebot.github.Issue;
 
 /**
  * A {@link TriageFilter} that considers an issue as having been triaged if it was opened
@@ -38,8 +37,8 @@ final class OpenedByCollaboratorTriageFilter implements TriageFilter {
 	private final List<String> collaborators;
 
 	OpenedByCollaboratorTriageFilter(List<String> collaborators) {
-		this.collaborators = collaborators == null ? Collections.emptyList()
-				: collaborators;
+		this.collaborators = (collaborators != null) ? collaborators
+				: Collections.emptyList();
 	}
 
 	@Override

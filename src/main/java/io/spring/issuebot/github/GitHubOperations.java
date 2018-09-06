@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ public interface GitHubOperations {
 	/**
 	 * Returns the open issues in the {@code repository} owned by the given
 	 * {@code organization}.
-	 *
 	 * @param organization the name of the organization
 	 * @param repository the name of the repository
 	 * @return the issues
@@ -35,7 +34,6 @@ public interface GitHubOperations {
 
 	/**
 	 * Returns the comments that have been made on the given {@code issue}.
-	 *
 	 * @param issue the issue
 	 * @return the comments
 	 */
@@ -43,7 +41,6 @@ public interface GitHubOperations {
 
 	/**
 	 * Adds the given {@code label} to the given {@code issue}.
-	 *
 	 * @param issue the issue
 	 * @param label the label
 	 * @return the modified issue
@@ -52,7 +49,6 @@ public interface GitHubOperations {
 
 	/**
 	 * Removes the given {@code label} from the given {@code issue}.
-	 *
 	 * @param issue the issue
 	 * @param label the label
 	 * @return the modified issue
@@ -61,7 +57,6 @@ public interface GitHubOperations {
 
 	/**
 	 * Adds the given {@code comment} to the given {@code issue}.
-	 *
 	 * @param issue the issue
 	 * @param comment the comment
 	 * @return the added comment
@@ -70,7 +65,6 @@ public interface GitHubOperations {
 
 	/**
 	 * Closes the given {@code issue}.
-	 *
 	 * @param issue the issue
 	 * @return the modified issue
 	 */
@@ -78,7 +72,6 @@ public interface GitHubOperations {
 
 	/**
 	 * Returns the events that have occurred on the given {@code issue}.
-	 *
 	 * @param issue the issue
 	 * @return the events
 	 */

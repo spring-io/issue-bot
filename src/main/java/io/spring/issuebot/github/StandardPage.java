@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,6 @@ public class StandardPage<T> implements Page<T> {
 	 * Creates a new {@code StandardPage} that has the given {@code content}. The given
 	 * {@code nextSupplier} will be used to obtain the next page {@link #next when
 	 * requested}.
-	 *
 	 * @param content the content
 	 * @param nextSupplier the supplier of the next page
 	 */

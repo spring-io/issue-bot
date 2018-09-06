@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,15 @@ package io.spring.issuebot;
 
 import java.util.List;
 
+import io.spring.issuebot.github.GitHubOperations;
+import io.spring.issuebot.github.GitHubTemplate;
+import io.spring.issuebot.github.RegexLinkParser;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
-
-import io.spring.issuebot.github.GitHubOperations;
-import io.spring.issuebot.github.GitHubTemplate;
-import io.spring.issuebot.github.RegexLinkParser;
 
 /**
  * Main class for launching Issue Bot.

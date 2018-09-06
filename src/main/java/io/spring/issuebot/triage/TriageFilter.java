@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ interface TriageFilter {
 	/**
 	 * Returns {@code true} if the given issue has already been triaged, otherwise
 	 * {@code false}.
-	 *
 	 * @param issue the issue
 	 * @return {@code true} if the issue has been triaged, {@code false} otherwise
 	 */

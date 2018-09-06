@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,6 @@ final class TriageIssueListener implements IssueListener {
 	 * Creates a new {@code TriageIssueListener} that will use the given
 	 * {@code triageFilters} to identify issues that require triage and notify the given
 	 * {@code triageListener} of those that do.
-	 *
 	 * @param triageFilters the triage filters
 	 * @param triageListener the triage listener
 	 */

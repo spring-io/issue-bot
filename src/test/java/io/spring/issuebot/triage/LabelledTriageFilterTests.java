@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,11 @@ package io.spring.issuebot.triage;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.junit.Test;
-
 import io.spring.issuebot.github.Issue;
 import io.spring.issuebot.github.Label;
+import org.junit.Test;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link LabelledTriageFilter}.
@@ -39,21 +37,20 @@ public class LabelledTriageFilterTests {
 	@Test
 	public void issueWithLabels() {
 		assertThat(this.filter.triaged(new Issue(null, null, null, null, null,
-				Arrays.asList(new Label("test")), null, null)), is(true));
+				Arrays.asList(new Label("test")), null, null))).isTrue();
 	}
 
 	@Test
 	public void issueWithNullLabels() {
-		assertThat(
-				this.filter.triaged(
-						new Issue(null, null, null, null, null, null, null, null)),
-				is(false));
+		assertThat(this.filter
+				.triaged(new Issue(null, null, null, null, null, null, null, null)))
+						.isFalse();
 	}
 
 	@Test
 	public void issueWithNoLabels() {
 		assertThat(this.filter.triaged(new Issue(null, null, null, null, null,
-				Collections.emptyList(), null, null)), is(false));
+				Collections.emptyList(), null, null))).isFalse();
 	}
 
 }
