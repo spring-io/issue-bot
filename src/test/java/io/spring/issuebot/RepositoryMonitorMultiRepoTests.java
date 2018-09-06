@@ -18,15 +18,20 @@ package io.spring.issuebot;
 
 import java.util.Arrays;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.springframework.boot.test.rule.OutputCapture;
 
 import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.Issue;
 import io.spring.issuebot.github.Page;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
@@ -35,7 +40,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
  *
  * @author Andy Wilkinson
  */
-public class RepositoryMonitorTests {
+public class RepositoryMonitorMultiRepoTests {
 
 	private final GitHubOperations gitHub = mock(GitHubOperations.class);
 
@@ -44,18 +49,24 @@ public class RepositoryMonitorTests {
 	private final IssueListener issueListenerTwo = mock(IssueListener.class);
 
 	private final RepositoryMonitor repositoryMonitor = new RepositoryMonitor(this.gitHub,
-			new MonitoredRepository("test", "test"),
+			Arrays.asList(new MonitoredRepository("test", "test"),
+					new MonitoredRepository("test2", "test2")),
 			Arrays.asList(this.issueListenerOne, this.issueListenerTwo));
+
+	@Rule
+	public OutputCapture output = new OutputCapture();
 
 	@Test
 	public void repositoryWithNoIssues() {
 		given(this.gitHub.getIssues("test", "test")).willReturn(null);
+		given(this.gitHub.getIssues("test2", "test2")).willReturn(null);
 		this.repositoryMonitor.monitor();
 		verifyNoMoreInteractions(this.issueListenerOne, this.issueListenerTwo);
+		assertNoFailures();
 	}
 
 	@Test
-	public void repositoryWithOpenIssues() {
+	public void singleRepositoryWithOpenIssues() {
 		@SuppressWarnings("unchecked")
 		Page<Issue> page = mock(Page.class);
 		Issue issueOne = new Issue(null, null, null, null, null, null, null, null, null);
@@ -67,8 +78,25 @@ public class RepositoryMonitorTests {
 		verify(this.issueListenerOne).onOpenIssue(issueTwo);
 		verify(this.issueListenerTwo).onOpenIssue(issueOne);
 		verify(this.issueListenerTwo).onOpenIssue(issueTwo);
+		assertNoFailures();
 	}
 
+	@Test
+	public void multipleRepositoriesWithOpenIssues() {
+		@SuppressWarnings("unchecked")
+		Page<Issue> page = mock(Page.class);
+		Issue issueOne = new Issue(null, null, null, null, null, null, null, null, null);
+		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null, null);
+		given(page.getContent()).willReturn(Arrays.asList(issueOne, issueTwo));
+		given(this.gitHub.getIssues("test", "test")).willReturn(page);
+		given(this.gitHub.getIssues("test2", "test2")).willReturn(page);
+		this.repositoryMonitor.monitor();
+		verify(this.issueListenerOne, times(2)).onOpenIssue(issueOne);
+		verify(this.issueListenerOne, times(2)).onOpenIssue(issueTwo);
+		verify(this.issueListenerTwo, times(2)).onOpenIssue(issueOne);
+		verify(this.issueListenerTwo, times(2)).onOpenIssue(issueTwo);
+		assertNoFailures();
+	}
 	@Test
 	public void exceptionFromAnIssueListenerIsHandledGracefully() {
 		@SuppressWarnings("unchecked")
@@ -80,12 +108,18 @@ public class RepositoryMonitorTests {
 		this.repositoryMonitor.monitor();
 		verify(this.issueListenerOne).onOpenIssue(issue);
 		verify(this.issueListenerTwo).onOpenIssue(issue);
+		this.output.expect(containsString("failed when handling issue"));
 	}
 
 	@Test
 	public void exceptionFromGitHubIsHandledGracefully() {
 		given(this.gitHub.getIssues("test", "test")).willThrow(new RuntimeException());
 		this.repositoryMonitor.monitor();
+		this.output.expect(containsString("A failure occurred during issue monitoring"));
+	}
+
+	private void assertNoFailures() {
+		this.output.expect(not(containsString("A failure occurred during issue monitoring")));
 	}
 
 }

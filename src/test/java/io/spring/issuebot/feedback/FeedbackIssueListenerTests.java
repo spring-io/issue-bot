@@ -30,6 +30,7 @@ import io.spring.issuebot.github.Label;
 import io.spring.issuebot.github.PullRequest;
 import io.spring.issuebot.github.StandardPage;
 import io.spring.issuebot.github.User;
+import io.spring.issuebot.support.MultiValueMaps;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -47,12 +48,23 @@ public class FeedbackIssueListenerTests {
 
 	private final FeedbackListener feedbackListener = mock(FeedbackListener.class);
 
+	private static final FeedbackProperties properties = new FeedbackProperties();
+	static {
+		FeedbackProperties.Properties value = new FeedbackProperties.Properties();
+		value.setRequiredLabel("required");
+
+		properties.put("testrepo", value);
+	}
+
 	private final IssueListener listener = new FeedbackIssueListener(this.gitHub,
-			"required", Arrays.asList("Amy", "Brian"), "IssueBot", this.feedbackListener);
+			properties, MultiValueMaps.from("testorg/testrepo", "Amy", "Brian"),
+			"IssueBot", this.feedbackListener);
+
+	private final String repositoryUrl = "https://api.github.com/repos/testorg/testrepo";
 
 	@Test
 	public void pullRequestsAreIgnored() {
-		Issue issue = new Issue(null, null, null, null, null,
+		Issue issue = new Issue(null, null, null, null, this.repositoryUrl, null,
 				Arrays.asList(new Label("required")), null, new PullRequest("url"));
 		this.listener.onOpenIssue(issue);
 		verifyNoMoreInteractions(this.gitHub, this.feedbackListener);
@@ -60,7 +72,7 @@ public class FeedbackIssueListenerTests {
 
 	@Test
 	public void issuesWithFeedbackRequiredLabelAreIgnored() {
-		Issue issue = new Issue(null, null, null, null, null,
+		Issue issue = new Issue(null, null, null, null, this.repositoryUrl, null,
 				Arrays.asList(new Label("something-else")), null, null);
 		this.listener.onOpenIssue(issue);
 		verifyNoMoreInteractions(this.gitHub, this.feedbackListener);
@@ -68,7 +80,7 @@ public class FeedbackIssueListenerTests {
 
 	@Test
 	public void feedbackRequiredForLabeledIssueWithEvent() {
-		Issue issue = new Issue(null, null, null, null, null,
+		Issue issue = new Issue(null, null, null, null, this.repositoryUrl, null,
 				Arrays.asList(new Label("required")), null, null);
 		OffsetDateTime requestTime = OffsetDateTime.now();
 		given(this.gitHub.getEvents(issue)).willReturn(new StandardPage<>(
@@ -80,7 +92,7 @@ public class FeedbackIssueListenerTests {
 
 	@Test
 	public void feedbackProvidedAfterCommentFromNonCollaborator() {
-		Issue issue = new Issue("issue_url", null, null, null, null,
+		Issue issue = new Issue("issue_url", null, null, null, this.repositoryUrl, null,
 				Arrays.asList(new Label("required")), null, null);
 		OffsetDateTime requestTime = OffsetDateTime.now().minusDays(1);
 		given(this.gitHub.getEvents(issue)).willReturn(new StandardPage<>(
@@ -95,7 +107,7 @@ public class FeedbackIssueListenerTests {
 
 	@Test
 	public void feedbackRequiredAfterCommentFromNonCollaboratorBeforeRequest() {
-		Issue issue = new Issue("issue_url", null, null, null, null,
+		Issue issue = new Issue("issue_url", null, null, null, this.repositoryUrl, null,
 				Arrays.asList(new Label("required")), null, null);
 		OffsetDateTime requestTime = OffsetDateTime.now().minusDays(1);
 		given(this.gitHub.getEvents(issue)).willReturn(new StandardPage<>(
@@ -110,7 +122,7 @@ public class FeedbackIssueListenerTests {
 
 	@Test
 	public void feedbackRequiredAfterCommentFromCollaborator() {
-		Issue issue = new Issue(null, null, null, null, null,
+		Issue issue = new Issue(null, null, null, null, this.repositoryUrl, null,
 				Arrays.asList(new Label("required")), null, null);
 		OffsetDateTime requestTime = OffsetDateTime.now().minusDays(1);
 		given(this.gitHub.getEvents(issue)).willReturn(new StandardPage<>(
@@ -125,7 +137,7 @@ public class FeedbackIssueListenerTests {
 
 	@Test
 	public void feedbackRequiredAfterCommentFromIssueBot() {
-		Issue issue = new Issue(null, null, null, null, null,
+		Issue issue = new Issue(null, null, null, null, this.repositoryUrl, null,
 				Arrays.asList(new Label("required")), null, null);
 		OffsetDateTime requestTime = OffsetDateTime.now().minusDays(1);
 		given(this.gitHub.getEvents(issue)).willReturn(new StandardPage<>(
@@ -140,7 +152,7 @@ public class FeedbackIssueListenerTests {
 
 	@Test
 	public void issueWithNoMatchingLabeledEventIsIgnored() {
-		Issue issue = new Issue(null, null, null, null, null,
+		Issue issue = new Issue(null, null, null, null, this.repositoryUrl, null,
 				Arrays.asList(new Label("required")), null, null);
 		OffsetDateTime requestTime = OffsetDateTime.now();
 		given(this.gitHub.getEvents(issue)).willReturn(new StandardPage<>(
@@ -153,7 +165,7 @@ public class FeedbackIssueListenerTests {
 
 	@Test
 	public void eventsWithWrongTypeAreIgnored() {
-		Issue issue = new Issue(null, null, null, null, null,
+		Issue issue = new Issue(null, null, null, null, this.repositoryUrl, null,
 				Arrays.asList(new Label("required")), null, null);
 		OffsetDateTime requestTime = OffsetDateTime.now();
 		given(this.gitHub.getEvents(issue)).willReturn(new StandardPage<>(

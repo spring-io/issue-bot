@@ -42,12 +42,24 @@ public class StandardFeedbackListenerTests {
 
 	private final IssueListener issueListener = mock(IssueListener.class);
 
-	private final FeedbackListener listener = new StandardFeedbackListener(this.gitHub,
-			"feedback-provided", "feedback-required", "feedback-reminder",
-			"Please provide requested feedback", "Closing due to lack of feedback",
-			Arrays.asList(this.issueListener));
+	private static final FeedbackProperties properties = new FeedbackProperties();
+	static {
+		FeedbackProperties.Properties value = new FeedbackProperties.Properties(
+			"feedback-required",
+			"feedback-provided",
+			"feedback-reminder",
+			"Please provide requested feedback",
+			"Closing due to lack of feedback");
 
-	private final Issue issue = new Issue(null, null, null, null, null, new ArrayList<>(),
+		properties.put("testrepo", value);
+	}
+
+	private final FeedbackListener listener = new StandardFeedbackListener(this.gitHub,
+			properties, Arrays.asList(this.issueListener));
+
+	private final String repositoryUrl = "https://api.github.com/repos/testorg/testrepo";
+
+	private final Issue issue = new Issue(null, null, null, null, this.repositoryUrl, null, new ArrayList<>(),
 			null, null);
 
 	@Test

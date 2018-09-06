@@ -17,6 +17,7 @@
 package io.spring.issuebot;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -51,11 +52,10 @@ public class IssueBotApplication {
 	@Bean
 	RepositoryMonitor repositoryMonitor(GitHubOperations gitHub,
 			GitHubProperties gitHubProperties, List<IssueListener> issueListeners) {
-		return new RepositoryMonitor(gitHub,
-				new MonitoredRepository(
-						gitHubProperties.getRepository().getOrganization(),
-						gitHubProperties.getRepository().getName()),
-				issueListeners);
+		List<MonitoredRepository> repositories = gitHubProperties.getRepositories().stream()
+				.map(repo -> new MonitoredRepository(repo.getOrganization(), repo.getName()))
+				.collect(Collectors.toList());
+		return new RepositoryMonitor(gitHub, repositories, issueListeners);
 	}
 
 }

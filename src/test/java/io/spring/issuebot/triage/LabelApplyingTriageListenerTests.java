@@ -16,6 +16,8 @@
 
 package io.spring.issuebot.triage;
 
+import java.util.Collections;
+
 import org.junit.Test;
 
 import io.spring.issuebot.github.GitHubOperations;
@@ -34,11 +36,11 @@ public class LabelApplyingTriageListenerTests {
 	private GitHubOperations gitHub = mock(GitHubOperations.class);
 
 	private final LabelApplyingTriageListener listener = new LabelApplyingTriageListener(
-			this.gitHub, "test");
+			this.gitHub, Collections.singletonMap("testrepo", "test"));
 
 	@Test
 	public void requiresTriage() {
-		Issue issue = new Issue(null, null, null, null, null, null, null, null);
+		Issue issue = new Issue(null, null, null, null, "https://api.github.com/repos/testorg/testrepo", null, null, null, null);
 		this.listener.requiresTriage(issue);
 		verify(this.gitHub).addLabel(issue, "test");
 	}

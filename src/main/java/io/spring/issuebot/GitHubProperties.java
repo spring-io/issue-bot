@@ -16,12 +16,15 @@
 
 package io.spring.issuebot;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 /**
  * {@link ConfigurationProperties} for connecting to GitHub.
@@ -33,11 +36,20 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Setter
 public class GitHubProperties {
 
-	@NestedConfigurationProperty
-	private Repository repository = new Repository();
+	private List<Repository> repositories = new ArrayList<>();
 
 	@NestedConfigurationProperty
 	private Credentials credentials = new Credentials();
+
+	/**
+	 * Creates a map of collaborators per repo.
+	 * @return creates a map of collaborators per repo.
+	 */
+	public MultiValueMap<String, String> getCollaborators() {
+		LinkedMultiValueMap<String, String> collaborators = new LinkedMultiValueMap<>();
+		getRepositories().forEach(repo -> collaborators.put(repo.slug(), repo.getCollaborators()));
+		return collaborators;
+	}
 
 	/**
 	 * Configuration for a GitHub repository.
@@ -61,6 +73,13 @@ public class GitHubProperties {
 		 */
 		private List<String> collaborators;
 
+		/**
+		 * Creates a slug of org and name.
+		 * @return the org/repo
+		 */
+		public String slug() {
+			return this.organization + "/" + this.name;
+		}
 	}
 
 	/**

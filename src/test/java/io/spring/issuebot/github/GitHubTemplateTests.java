@@ -122,7 +122,7 @@ public class GitHubTemplateTests {
 				.andExpect(basicAuth())
 				.andRespond(withSuccess("[]", MediaType.APPLICATION_JSON));
 		Page<Comment> comments = this.gitHub.getComments(
-				new Issue(null, "commentsUrl", null, null, null, null, null, null));
+				new Issue(null, "commentsUrl", null, null, null, null, null, null, null));
 		assertThat(comments.getContent().size(), is(0));
 		assertThat(comments.next(), is(nullValue()));
 	}
@@ -133,7 +133,7 @@ public class GitHubTemplateTests {
 				.andExpect(basicAuth())
 				.andRespond(withResource("comments-page-one.json"));
 		Page<Comment> comments = this.gitHub.getComments(
-				new Issue(null, "commentsUrl", null, null, null, null, null, null));
+				new Issue(null, "commentsUrl", null, null, null, null, null, null, null));
 		assertThat(comments.getContent().size(), is(17));
 		assertThat(comments.next(), is(nullValue()));
 	}
@@ -149,7 +149,7 @@ public class GitHubTemplateTests {
 				.andExpect(basicAuth())
 				.andRespond(withResource("comments-page-two.json"));
 		Page<Comment> pageOne = this.gitHub.getComments(
-				new Issue(null, "commentsUrl", null, null, null, null, null, null));
+				new Issue(null, "commentsUrl", null, null, null, null, null, null, null));
 		assertThat(pageOne.getContent().size(), is(17));
 		Page<Comment> pageTwo = pageOne.next();
 		assertThat(pageTwo, is(not(nullValue())));
@@ -162,7 +162,7 @@ public class GitHubTemplateTests {
 				.andExpect(basicAuth()).andExpect(content().string("[\"test\"]"))
 				.andRespond(
 						withSuccess("[{\"name\":\"test\"}]", MediaType.APPLICATION_JSON));
-		Issue issue = new Issue("issueUrl", null, null, "labelsUrl{/name}", null, null,
+		Issue issue = new Issue("issueUrl", null, null, "labelsUrl{/name}", null, null, null,
 				null, null);
 		Issue modifiedIssue = this.gitHub.addLabel(issue, "test");
 		assertThat(modifiedIssue.getLabels(), hasSize(1));
@@ -173,7 +173,7 @@ public class GitHubTemplateTests {
 		this.server.expect(requestTo("labels/test")).andExpect(method(HttpMethod.DELETE))
 				.andExpect(basicAuth())
 				.andRespond(withSuccess("[]", MediaType.APPLICATION_JSON));
-		Issue issue = new Issue(null, null, null, "labels{/name}", null, null, null,
+		Issue issue = new Issue(null, null, null, "labels{/name}", null, null, null, null,
 				null);
 		Issue modifiedIssue = this.gitHub.removeLabel(issue, "test");
 		assertThat(modifiedIssue.getLabels(), hasSize(0));
@@ -184,7 +184,7 @@ public class GitHubTemplateTests {
 		this.server.expect(requestTo("labels/status:%20foo")).andExpect(method(HttpMethod.DELETE))
 				.andExpect(basicAuth())
 				.andRespond(withSuccess("[]", MediaType.APPLICATION_JSON));
-		Issue issue = new Issue(null, null, null, "labels{/name}", null, null, null,
+		Issue issue = new Issue(null, null, null, "labels{/name}", null, null, null, null,
 				null);
 		Issue modifiedIssue = this.gitHub.removeLabel(issue, "status: foo");
 		assertThat(modifiedIssue.getLabels(), hasSize(0));
@@ -196,7 +196,7 @@ public class GitHubTemplateTests {
 				.andExpect(basicAuth())
 				.andExpect(content().string("{\"body\":\"A test comment\"}"))
 				.andRespond(withResource("new-comment.json"));
-		Issue issue = new Issue(null, "commentsUrl", null, null, null, null, null, null);
+		Issue issue = new Issue(null, "commentsUrl", null, null, null, null, null, null, null);
 		Comment comment = this.gitHub.addComment(issue, "A test comment");
 		assertThat(comment, is(not(nullValue())));
 	}
@@ -206,7 +206,7 @@ public class GitHubTemplateTests {
 		this.server.expect(requestTo("eventsUrl")).andExpect(method(HttpMethod.GET))
 				.andExpect(basicAuth()).andRespond(withResource("events-page-one.json"));
 		Page<Event> events = this.gitHub.getEvents(
-				new Issue(null, null, "eventsUrl", null, null, null, null, null));
+				new Issue(null, null, "eventsUrl", null, null, null, null, null, null));
 		assertThat(events.getContent().size(), is(12));
 		assertThat(events.next(), is(nullValue()));
 	}
@@ -221,7 +221,7 @@ public class GitHubTemplateTests {
 		this.server.expect(requestTo("page-two")).andExpect(method(HttpMethod.GET))
 				.andExpect(basicAuth()).andRespond(withResource("events-page-two.json"));
 		Page<Event> pageOne = this.gitHub.getEvents(
-				new Issue(null, null, "eventsUrl", null, null, null, null, null));
+				new Issue(null, null, "eventsUrl", null, null, null, null, null, null));
 		assertThat(pageOne.getContent().size(), is(12));
 		Page<Event> pageTwo = pageOne.next();
 		assertThat(pageTwo, is(not(nullValue())));
@@ -236,7 +236,7 @@ public class GitHubTemplateTests {
 				.andRespond(withSuccess("{\"url\":\"updatedIssueUrl\"}",
 						MediaType.APPLICATION_JSON));
 		Issue closedIssue = this.gitHub
-				.close(new Issue("issueUrl", null, null, null, null, null, null, null));
+				.close(new Issue("issueUrl", null, null, null, null, null, null, null, null));
 		assertThat(closedIssue.getUrl(), is(equalTo("updatedIssueUrl")));
 	}
 

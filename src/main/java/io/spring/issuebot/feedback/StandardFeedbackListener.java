@@ -20,6 +20,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 import io.spring.issuebot.IssueListener;
+import io.spring.issuebot.feedback.FeedbackProperties.Properties;
 import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.Issue;
 import io.spring.issuebot.github.Label;
@@ -33,62 +34,50 @@ final class StandardFeedbackListener implements FeedbackListener {
 
 	private final GitHubOperations gitHub;
 
-	private final String providedLabel;
-
-	private final String requiredLabel;
-
-	private final String reminderLabel;
-
-	private final String reminderComment;
-
-	private final String closeComment;
+	private final FeedbackProperties properties;
 
 	private final List<IssueListener> issueListeners;
 
-	StandardFeedbackListener(GitHubOperations gitHub, String providedLabel,
-			String requiredLabel, String reminderLabel, String reminderComment,
-			String closeComment, List<IssueListener> issueListeners) {
+	StandardFeedbackListener(GitHubOperations gitHub, FeedbackProperties properties, List<IssueListener> issueListeners) {
 		this.gitHub = gitHub;
-		this.providedLabel = providedLabel;
-		this.requiredLabel = requiredLabel;
-		this.reminderLabel = reminderLabel;
-		this.reminderComment = reminderComment;
-		this.closeComment = closeComment;
+		this.properties = properties;
 		this.issueListeners = issueListeners;
 	}
 
 	@Override
 	public void feedbackProvided(Issue issue) {
-		this.gitHub.addLabel(issue, this.providedLabel);
-		this.gitHub.removeLabel(issue, this.requiredLabel);
-		if (hasReminderLabel(issue)) {
-			this.gitHub.removeLabel(issue, this.reminderLabel);
+		Properties issueProperties = findProperties(issue);
+		this.gitHub.addLabel(issue, issueProperties.getProvidedLabel());
+		this.gitHub.removeLabel(issue, issueProperties.getRequiredLabel());
+		if (hasReminderLabel(issue, issueProperties)) {
+			this.gitHub.removeLabel(issue, issueProperties.getReminderLabel());
 		}
 	}
 
 	@Override
 	public void feedbackRequired(Issue issue, OffsetDateTime requestTime) {
 		OffsetDateTime now = OffsetDateTime.now();
+		Properties issueProperties = findProperties(issue);
 		if (requestTime.plusDays(14).isBefore(now)) {
-			close(issue);
+			close(issue, issueProperties);
 		}
-		else if (requestTime.plusDays(7).isBefore(now) && !hasReminderLabel(issue)) {
-			remind(issue);
+		else if (requestTime.plusDays(7).isBefore(now) && !hasReminderLabel(issue, issueProperties)) {
+			remind(issue, issueProperties);
 		}
 	}
 
-	private void close(Issue issue) {
-		this.gitHub.addComment(issue, this.closeComment);
+	private void close(Issue issue, Properties issueProperties) {
+		this.gitHub.addComment(issue, issueProperties.getCloseComment());
 		this.gitHub.close(issue);
-		this.gitHub.removeLabel(issue, this.requiredLabel);
-		this.gitHub.removeLabel(issue, this.reminderLabel);
+		this.gitHub.removeLabel(issue, issueProperties.getRequiredLabel());
+		this.gitHub.removeLabel(issue, issueProperties.getReminderLabel());
 		this.issueListeners.forEach((listener) -> listener.onIssueClosure(issue));
 	}
 
-	private boolean hasReminderLabel(Issue issue) {
+	private boolean hasReminderLabel(Issue issue, Properties issueProperties) {
 		if (issue.getLabels() != null) {
 			for (Label label : issue.getLabels()) {
-				if (this.reminderLabel.equals(label.getName())) {
+				if (issueProperties.getReminderLabel().equals(label.getName())) {
 					return true;
 				}
 			}
@@ -96,9 +85,14 @@ final class StandardFeedbackListener implements FeedbackListener {
 		return false;
 	}
 
-	private void remind(Issue issue) {
-		this.gitHub.addComment(issue, this.reminderComment);
-		this.gitHub.addLabel(issue, this.reminderLabel);
+	private void remind(Issue issue, Properties issueProperties) {
+		this.gitHub.addComment(issue, issueProperties.getReminderComment());
+		this.gitHub.addLabel(issue, issueProperties.getReminderLabel());
+	}
+
+	private Properties findProperties(Issue issue) {
+		Issue.Slug slug = issue.slug();
+		return slug.find(this.properties);
 	}
 
 }

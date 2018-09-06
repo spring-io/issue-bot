@@ -148,7 +148,7 @@ public class GitHubTemplate implements GitHubOperations {
 					+ response.getStatusCode());
 		}
 		return new Issue(issue.getUrl(), issue.getCommentsUrl(), issue.getEventsUrl(),
-				issue.getLabelsUrl(), issue.getUser(), Arrays.asList(response.getBody()),
+				issue.getLabelsUrl(), issue.getRepositoryUrl(), issue.getUser(), Arrays.asList(response.getBody()),
 				issue.getMilestone(), issue.getPullRequest());
 	}
 
@@ -170,7 +170,7 @@ public class GitHubTemplate implements GitHubOperations {
 					+ response.getStatusCode());
 		}
 		return new Issue(issue.getUrl(), issue.getCommentsUrl(), issue.getEventsUrl(),
-				issue.getLabelsUrl(), issue.getUser(), Arrays.asList(response.getBody()),
+				issue.getLabelsUrl(), issue.getRepositoryUrl(), issue.getUser(), Arrays.asList(response.getBody()),
 				issue.getMilestone(), issue.getPullRequest());
 	}
 

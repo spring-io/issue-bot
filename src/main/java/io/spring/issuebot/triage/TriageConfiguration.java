@@ -39,8 +39,7 @@ class TriageConfiguration {
 			TriageProperties triageProperties, GitHubProperties gitHubProperties) {
 		return new TriageIssueListener(
 				Arrays.asList(
-						new OpenedByCollaboratorTriageFilter(
-								gitHubProperties.getRepository().getCollaborators()),
+						new OpenedByCollaboratorTriageFilter(gitHubProperties.getCollaborators()),
 						new LabelledTriageFilter(), new MilestoneAppliedTriageFilter()),
 				new LabelApplyingTriageListener(gitHubOperations,
 						triageProperties.getLabel()));

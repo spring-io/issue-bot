@@ -16,6 +16,8 @@
 
 package io.spring.issuebot.triage;
 
+import java.util.Map;
+
 import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.Issue;
 
@@ -28,7 +30,7 @@ final class LabelApplyingTriageListener implements TriageListener {
 
 	private final GitHubOperations gitHub;
 
-	private final String label;
+	private final Map<String, String> label;
 
 	/**
 	 * Creates a new {@code LabelApplyingTriageListener} that will use the given
@@ -38,19 +40,24 @@ final class LabelApplyingTriageListener implements TriageListener {
 	 * @param gitHubOperations the GitHubOperations
 	 * @param label the label
 	 */
-	LabelApplyingTriageListener(GitHubOperations gitHubOperations, String label) {
+	LabelApplyingTriageListener(GitHubOperations gitHubOperations, Map<String, String> label) {
 		this.gitHub = gitHubOperations;
 		this.label = label;
 	}
 
 	@Override
 	public void requiresTriage(Issue issue) {
-		this.gitHub.addLabel(issue, this.label);
+		this.gitHub.addLabel(issue, findLabel(issue));
 	}
 
 	@Override
 	public void doesNotRequireTriage(Issue issue) {
-		this.gitHub.removeLabel(issue, this.label);
+		this.gitHub.removeLabel(issue, findLabel(issue));
+	}
+
+	private String findLabel(Issue issue) {
+		Issue.Slug slug = issue.slug();
+		return slug.find(this.label);
 	}
 
 }

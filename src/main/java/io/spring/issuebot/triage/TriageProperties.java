@@ -16,6 +16,9 @@
 
 package io.spring.issuebot.triage;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -35,6 +38,6 @@ class TriageProperties {
 	/**
 	 * The name of the label that should be applied to issues that are waiting for triage.
 	 */
-	private String label;
+	private Map<String, String> label = new HashMap<>();
 
 }

@@ -16,12 +16,11 @@
 
 package io.spring.issuebot.triage;
 
-import java.util.Arrays;
-
 import org.junit.Test;
 
 import io.spring.issuebot.github.Issue;
 import io.spring.issuebot.github.User;
+import io.spring.issuebot.support.MultiValueMaps;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -33,20 +32,22 @@ import static org.junit.Assert.assertThat;
  */
 public class OpenedByCollaboratorTriageFilterTests {
 
+	private final String repositoryUrl = "https://api.github.com/repos/testorg/testrepo";
+
 	private TriageFilter filter = new OpenedByCollaboratorTriageFilter(
-			Arrays.asList("Adam", "Brenda", "Charlie"));
+			MultiValueMaps.from("testorg/testrepo", "Adam", "Brenda", "Charlie"));
 
 	@Test
 	public void openedByCollaborator() {
 		assertThat(this.filter.triaged(
-				new Issue(null, null, null, null, new User("Adam"), null, null, null)),
+				new Issue(null, null, null, null, this.repositoryUrl, new User("Adam"), null, null, null)),
 				is(true));
 	}
 
 	@Test
 	public void openedByAnotherUser() {
 		assertThat(this.filter.triaged(
-				new Issue(null, null, null, null, new User("Debbie"), null, null, null)),
+				new Issue(null, null, null, null, this.repositoryUrl, new User("Debbie"), null, null, null)),
 				is(false));
 	}
 

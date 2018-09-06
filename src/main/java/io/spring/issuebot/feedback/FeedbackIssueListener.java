@@ -20,6 +20,8 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.util.MultiValueMap;
+
 import io.spring.issuebot.IssueListener;
 import io.spring.issuebot.github.Comment;
 import io.spring.issuebot.github.Event;
@@ -37,20 +39,23 @@ final class FeedbackIssueListener implements IssueListener {
 
 	private final GitHubOperations gitHub;
 
-	private final String labelName;
+	private final FeedbackProperties feedbackProperties;
 
-	private final List<String> collaborators;
+	private final MultiValueMap<String, String> collaborators;
 
+	private final String username;
 	private final FeedbackListener feedbackListener;
+	private final boolean includeBotUser;
 
-	FeedbackIssueListener(GitHubOperations gitHub, String labelName,
-			List<String> collaborators, String username,
-			FeedbackListener feedbackListener) {
+	FeedbackIssueListener(GitHubOperations gitHub, FeedbackProperties feedbackProperties,
+						MultiValueMap<String, String> collaborators, String username,
+						FeedbackListener feedbackListener) {
 		this.gitHub = gitHub;
-		this.labelName = labelName;
-		this.collaborators = new ArrayList<>(collaborators);
-		this.collaborators.add(username);
+		this.feedbackProperties = feedbackProperties;
+		this.collaborators = collaborators;
+		this.username = username;
 		this.feedbackListener = feedbackListener;
+		this.includeBotUser = feedbackProperties.isIncludeBotUser();
 	}
 
 	@Override
@@ -76,9 +81,11 @@ final class FeedbackIssueListener implements IssueListener {
 		return issue.getPullRequest() == null && labelledAsWaitingForFeedback(issue);
 	}
 
+
 	private boolean labelledAsWaitingForFeedback(Issue issue) {
+		String labelName = findLabel(issue);
 		for (Label label : issue.getLabels()) {
-			if (this.labelName.equals(label.getName())) {
+			if (labelName.equals(label.getName())) {
 				return true;
 			}
 		}
@@ -87,11 +94,12 @@ final class FeedbackIssueListener implements IssueListener {
 
 	private OffsetDateTime getWaitingSince(Issue issue) {
 		OffsetDateTime createdAt = null;
+		String labelName = findLabel(issue);
 		Page<Event> page = this.gitHub.getEvents(issue);
 		while (page != null) {
 			for (Event event : page.getContent()) {
 				if (Event.Type.LABELED.equals(event.getType())
-						&& this.labelName.equals(event.getLabel().getName())) {
+						&& labelName.equals(event.getLabel().getName())) {
 					createdAt = event.getCreationTime();
 				}
 			}
@@ -100,11 +108,29 @@ final class FeedbackIssueListener implements IssueListener {
 		return createdAt;
 	}
 
+	private String findLabel(Issue issue) {
+		Issue.Slug slug = issue.slug();
+		FeedbackProperties.Properties properties = slug.find(this.feedbackProperties);
+		if (properties != null) {
+			return properties.getRequiredLabel();
+		}
+		return null;
+	}
+
 	private boolean commentedSince(OffsetDateTime waitingForFeedbackSince, Issue issue) {
+		List<String> collaborators = new ArrayList<>();
+		if (this.includeBotUser) {
+			collaborators.add(this.username);
+		}
+		String slug = issue.slug().toString();
+		if (this.collaborators.containsKey(slug)) {
+			collaborators.addAll(this.collaborators.get(slug));
+		}
+
 		Page<Comment> page = this.gitHub.getComments(issue);
 		while (page != null) {
 			for (Comment comment : page.getContent()) {
-				if (!this.collaborators.contains(comment.getUser().getLogin())
+				if (!collaborators.contains(comment.getUser().getLogin())
 						&& comment.getCreationTime().isAfter(waitingForFeedbackSince)) {
 					return true;
 				}
