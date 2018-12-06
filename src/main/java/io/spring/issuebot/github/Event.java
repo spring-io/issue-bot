@@ -20,6 +20,8 @@ import java.time.OffsetDateTime;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An event that has been performed on an {@link Issue}.
@@ -27,6 +29,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Andy Wilkinson
  */
 public class Event {
+
+	private static final Logger log = LoggerFactory.getLogger(Event.class);
 
 	private final Type type;
 
@@ -220,8 +224,10 @@ public class Event {
 					return value;
 				}
 			}
-			throw new IllegalArgumentException(
-					"'" + type + "' is not a valid event type");
+			if (log.isInfoEnabled()) {
+				log.info("Received unknown event type '" + type + "'");
+			}
+			return null;
 		}
 
 	}
