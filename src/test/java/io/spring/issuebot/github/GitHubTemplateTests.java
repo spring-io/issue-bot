@@ -221,7 +221,7 @@ public class GitHubTemplateTests {
 		assertThat(pageOne.getContent()).hasSize(12);
 		Page<Event> pageTwo = pageOne.next();
 		assertThat(pageTwo).isNotNull();
-		assertThat(pageTwo.getContent()).hasSize(3);
+		assertThat(pageTwo.getContent()).hasSize(4);
 	}
 
 	@Test
