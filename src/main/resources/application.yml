@@ -9,6 +9,16 @@ issuebot:
           - philwebb
           - snicoll
           - wilkinsona
+      - organization: spring-projects
+        name: spring-framework
+        collaborators:
+          - bclozel
+          - jhoeller
+          - poutsma
+          - rstoyanchev
+          - sbrannen
+          - sdeleuze
+          - snicoll
   triage:
     label: "status: waiting-for-triage"
   feedback:
