@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package io.spring.issuebot.triage;
 import java.util.Arrays;
 
 import io.spring.issuebot.GitHubProperties;
+import io.spring.issuebot.MonitoringProperties;
 import io.spring.issuebot.github.GitHubOperations;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -36,11 +37,12 @@ class TriageConfiguration {
 
 	@Bean
 	TriageIssueListener triageIssueListener(GitHubOperations gitHubOperations,
-			TriageProperties triageProperties, GitHubProperties gitHubProperties) {
+			TriageProperties triageProperties, MonitoringProperties monitoringProperties,
+			GitHubProperties gitHubProperties) {
 		return new TriageIssueListener(
 				Arrays.asList(
 						new OpenedByCollaboratorTriageFilter(
-								gitHubProperties.getRepository().getCollaborators()),
+								monitoringProperties.getRepositories()),
 						new LabelledTriageFilter(), new MilestoneAppliedTriageFilter()),
 				new LabelApplyingTriageListener(gitHubOperations,
 						triageProperties.getLabel()));

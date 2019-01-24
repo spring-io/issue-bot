@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package io.spring.issuebot.triage;
 import java.util.List;
 
 import io.spring.issuebot.IssueListener;
+import io.spring.issuebot.Repository;
 import io.spring.issuebot.github.Issue;
 
 /**
@@ -45,15 +46,15 @@ final class TriageIssueListener implements IssueListener {
 	}
 
 	@Override
-	public void onOpenIssue(Issue issue) {
-		if (requiresTriage(issue)) {
+	public void onOpenIssue(Repository repository, Issue issue) {
+		if (requiresTriage(repository, issue)) {
 			this.triageListener.requiresTriage(issue);
 		}
 	}
 
-	private boolean requiresTriage(Issue issue) {
+	private boolean requiresTriage(Repository repository, Issue issue) {
 		for (TriageFilter filter : this.triageFilters) {
-			if (filter.triaged(issue)) {
+			if (filter.triaged(repository, issue)) {
 				return false;
 			}
 		}
@@ -61,7 +62,7 @@ final class TriageIssueListener implements IssueListener {
 	}
 
 	@Override
-	public void onIssueClosure(Issue issue) {
+	public void onIssueClosure(Repository repository, Issue issue) {
 		this.triageListener.doesNotRequireTriage(issue);
 	}
 

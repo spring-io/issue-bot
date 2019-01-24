@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package io.spring.issuebot.triage;
 
+import io.spring.issuebot.Repository;
 import io.spring.issuebot.github.Issue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ final class MilestoneAppliedTriageFilter implements TriageFilter {
 	private static final Logger log = LoggerFactory.getLogger(LabelledTriageFilter.class);
 
 	@Override
-	public boolean triaged(Issue issue) {
+	public boolean triaged(Repository repository, Issue issue) {
 		if (issue.getMilestone() != null) {
 			log.debug("Issue has been triaged. It has been added to milestone {}",
 					issue.getMilestone().getTitle());

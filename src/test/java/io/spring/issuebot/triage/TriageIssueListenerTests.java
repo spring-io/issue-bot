@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package io.spring.issuebot.triage;
 import java.util.Arrays;
 
 import io.spring.issuebot.IssueListener;
+import io.spring.issuebot.Repository;
 import io.spring.issuebot.github.Issue;
 import org.junit.Test;
 
@@ -34,6 +35,8 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
  */
 public class TriageIssueListenerTests {
 
+	private final Repository repository = new Repository();
+
 	private final TriageFilter triageFilterOne = mock(TriageFilter.class);
 
 	private final TriageFilter triageFilterTwo = mock(TriageFilter.class);
@@ -46,20 +49,20 @@ public class TriageIssueListenerTests {
 	@Test
 	public void listenerIsCalledWhenIssueRequiresTriage() {
 		Issue issue = new Issue(null, null, null, null, null, null, null, null);
-		given(this.triageFilterOne.triaged(issue)).willReturn(false);
-		given(this.triageFilterTwo.triaged(issue)).willReturn(false);
-		this.issueListener.onOpenIssue(issue);
-		verify(this.triageFilterOne).triaged(issue);
-		verify(this.triageFilterTwo).triaged(issue);
+		given(this.triageFilterOne.triaged(this.repository, issue)).willReturn(false);
+		given(this.triageFilterTwo.triaged(this.repository, issue)).willReturn(false);
+		this.issueListener.onOpenIssue(this.repository, issue);
+		verify(this.triageFilterOne).triaged(this.repository, issue);
+		verify(this.triageFilterTwo).triaged(this.repository, issue);
 		verify(this.listener).requiresTriage(issue);
 	}
 
 	@Test
 	public void listenerIsNotCalledWhenIssueHasAlreadyBeenTriaged() {
 		Issue issue = new Issue(null, null, null, null, null, null, null, null);
-		given(this.triageFilterOne.triaged(issue)).willReturn(true);
-		this.issueListener.onOpenIssue(issue);
-		verify(this.triageFilterOne).triaged(issue);
+		given(this.triageFilterOne.triaged(this.repository, issue)).willReturn(true);
+		this.issueListener.onOpenIssue(this.repository, issue);
+		verify(this.triageFilterOne).triaged(this.repository, issue);
 		verifyNoMoreInteractions(this.triageFilterTwo, this.listener);
 	}
 

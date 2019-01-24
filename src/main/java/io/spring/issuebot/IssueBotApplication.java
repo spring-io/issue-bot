@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @SpringBootApplication
 @EnableScheduling
-@EnableConfigurationProperties(GitHubProperties.class)
+@EnableConfigurationProperties({ GitHubProperties.class, MonitoringProperties.class })
 public class IssueBotApplication {
 
 	public static void main(String[] args) {
@@ -50,11 +50,9 @@ public class IssueBotApplication {
 
 	@Bean
 	RepositoryMonitor repositoryMonitor(GitHubOperations gitHub,
-			GitHubProperties gitHubProperties, List<IssueListener> issueListeners) {
-		return new RepositoryMonitor(gitHub,
-				new MonitoredRepository(
-						gitHubProperties.getRepository().getOrganization(),
-						gitHubProperties.getRepository().getName()),
+			MonitoringProperties monitoringProperties,
+			List<IssueListener> issueListeners) {
+		return new RepositoryMonitor(gitHub, monitoringProperties.getRepositories(),
 				issueListeners);
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package io.spring.issuebot.feedback;
 
 import java.time.OffsetDateTime;
 
+import io.spring.issuebot.Repository;
 import io.spring.issuebot.github.Issue;
 
 /**
@@ -30,16 +31,18 @@ public interface FeedbackListener {
 
 	/**
 	 * Notification that feedback has been provided for the given {@code issue}.
+	 * @param repository the repository to which the issue belongs
 	 * @param issue the issue
 	 */
-	void feedbackProvided(Issue issue);
+	void feedbackProvided(Repository repository, Issue issue);
 
 	/**
 	 * Notification that feedback is still required for the given {@code issue} having
 	 * been requested at the given {@code requestTime}.
+	 * @param repository the repository to which the issue belongs
 	 * @param issue the issue
 	 * @param requestTime the time when feedback was requested
 	 */
-	void feedbackRequired(Issue issue, OffsetDateTime requestTime);
+	void feedbackRequired(Repository repository, Issue issue, OffsetDateTime requestTime);
 
 }

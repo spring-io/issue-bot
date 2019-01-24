@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.Arrays;
 import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.Issue;
 import io.spring.issuebot.github.Page;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.mockito.BDDMockito.given;
@@ -42,30 +43,64 @@ public class RepositoryMonitorTests {
 
 	private final IssueListener issueListenerTwo = mock(IssueListener.class);
 
+	private final Repository repositoryOne = new Repository();
+
+	private final Repository repositoryTwo = new Repository();
+
 	private final RepositoryMonitor repositoryMonitor = new RepositoryMonitor(this.gitHub,
-			new MonitoredRepository("test", "test"),
+			Arrays.asList(this.repositoryOne, this.repositoryTwo),
 			Arrays.asList(this.issueListenerOne, this.issueListenerTwo));
 
+	@Before
+	public void setUp() {
+		this.repositoryOne.setOrganization("test");
+		this.repositoryOne.setName("one");
+		this.repositoryTwo.setOrganization("test");
+		this.repositoryTwo.setName("two");
+	}
+
 	@Test
-	public void repositoryWithNoIssues() {
-		given(this.gitHub.getIssues("test", "test")).willReturn(null);
+	public void repositoriesWithNoIssues() {
+		given(this.gitHub.getIssues("test", "one")).willReturn(null);
+		given(this.gitHub.getIssues("test", "two")).willReturn(null);
 		this.repositoryMonitor.monitor();
 		verifyNoMoreInteractions(this.issueListenerOne, this.issueListenerTwo);
 	}
 
 	@Test
-	public void repositoryWithOpenIssues() {
+	public void oneRepositoryWithOpenIssues() {
 		@SuppressWarnings("unchecked")
 		Page<Issue> page = mock(Page.class);
 		Issue issueOne = new Issue(null, null, null, null, null, null, null, null);
 		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null);
 		given(page.getContent()).willReturn(Arrays.asList(issueOne, issueTwo));
-		given(this.gitHub.getIssues("test", "test")).willReturn(page);
+		given(this.gitHub.getIssues("test", "one")).willReturn(page);
+		given(this.gitHub.getIssues("test", "two")).willReturn(null);
 		this.repositoryMonitor.monitor();
-		verify(this.issueListenerOne).onOpenIssue(issueOne);
-		verify(this.issueListenerOne).onOpenIssue(issueTwo);
-		verify(this.issueListenerTwo).onOpenIssue(issueOne);
-		verify(this.issueListenerTwo).onOpenIssue(issueTwo);
+		verify(this.issueListenerOne).onOpenIssue(this.repositoryOne, issueOne);
+		verify(this.issueListenerOne).onOpenIssue(this.repositoryOne, issueTwo);
+		verify(this.issueListenerTwo).onOpenIssue(this.repositoryOne, issueOne);
+		verify(this.issueListenerTwo).onOpenIssue(this.repositoryOne, issueTwo);
+	}
+
+	@Test
+	public void bothRepositoriesWithOpenIssues() {
+		@SuppressWarnings("unchecked")
+		Page<Issue> page = mock(Page.class);
+		Issue issueOne = new Issue(null, null, null, null, null, null, null, null);
+		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null);
+		given(page.getContent()).willReturn(Arrays.asList(issueOne, issueTwo));
+		given(this.gitHub.getIssues("test", "one")).willReturn(page);
+		given(this.gitHub.getIssues("test", "two")).willReturn(page);
+		this.repositoryMonitor.monitor();
+		verify(this.issueListenerOne).onOpenIssue(this.repositoryOne, issueOne);
+		verify(this.issueListenerOne).onOpenIssue(this.repositoryOne, issueTwo);
+		verify(this.issueListenerTwo).onOpenIssue(this.repositoryOne, issueOne);
+		verify(this.issueListenerTwo).onOpenIssue(this.repositoryOne, issueTwo);
+		verify(this.issueListenerOne).onOpenIssue(this.repositoryTwo, issueOne);
+		verify(this.issueListenerOne).onOpenIssue(this.repositoryTwo, issueTwo);
+		verify(this.issueListenerTwo).onOpenIssue(this.repositoryTwo, issueOne);
+		verify(this.issueListenerTwo).onOpenIssue(this.repositoryTwo, issueTwo);
 	}
 
 	@Test
@@ -74,17 +109,19 @@ public class RepositoryMonitorTests {
 		Page<Issue> page = mock(Page.class);
 		Issue issue = new Issue(null, null, null, null, null, null, null, null);
 		given(page.getContent()).willReturn(Arrays.asList(issue));
-		given(this.gitHub.getIssues("test", "test")).willReturn(page);
-		willThrow(new RuntimeException()).given(this.issueListenerOne).onOpenIssue(issue);
+		given(this.gitHub.getIssues("test", "one")).willReturn(page);
+		willThrow(new RuntimeException()).given(this.issueListenerOne)
+				.onOpenIssue(this.repositoryOne, issue);
 		this.repositoryMonitor.monitor();
-		verify(this.issueListenerOne).onOpenIssue(issue);
-		verify(this.issueListenerTwo).onOpenIssue(issue);
+		verify(this.issueListenerOne).onOpenIssue(this.repositoryOne, issue);
+		verify(this.issueListenerTwo).onOpenIssue(this.repositoryOne, issue);
 	}
 
 	@Test
 	public void exceptionFromGitHubIsHandledGracefully() {
-		given(this.gitHub.getIssues("test", "test")).willThrow(new RuntimeException());
+		given(this.gitHub.getIssues("test", "one")).willThrow(new RuntimeException());
 		this.repositoryMonitor.monitor();
+		verify(this.gitHub).getIssues("test", "one");
 	}
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.List;
 
 import io.spring.issuebot.GitHubProperties;
 import io.spring.issuebot.IssueListener;
+import io.spring.issuebot.MonitoringProperties;
 import io.spring.issuebot.github.GitHubOperations;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -38,11 +39,11 @@ class FeedbackConfiguration {
 
 	@Bean
 	FeedbackIssueListener feedbackIssueListener(GitHubOperations gitHub,
-			GitHubProperties githubProperties, FeedbackProperties feedbackProperties,
-			List<IssueListener> issueListener) {
+			GitHubProperties gitHubProperties, MonitoringProperties monitoringProperties,
+			FeedbackProperties feedbackProperties, List<IssueListener> issueListener) {
 		return new FeedbackIssueListener(gitHub, feedbackProperties.getRequiredLabel(),
-				githubProperties.getRepository().getCollaborators(),
-				githubProperties.getCredentials().getUsername(),
+				monitoringProperties.getRepositories(),
+				gitHubProperties.getCredentials().getUsername(),
 				new StandardFeedbackListener(gitHub,
 						feedbackProperties.getProvidedLabel(),
 						feedbackProperties.getRequiredLabel(),

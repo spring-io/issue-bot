@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 import io.spring.issuebot.IssueListener;
+import io.spring.issuebot.Repository;
 import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.Issue;
 import io.spring.issuebot.github.Label;
@@ -58,7 +59,7 @@ final class StandardFeedbackListener implements FeedbackListener {
 	}
 
 	@Override
-	public void feedbackProvided(Issue issue) {
+	public void feedbackProvided(Repository repository, Issue issue) {
 		this.gitHub.addLabel(issue, this.providedLabel);
 		this.gitHub.removeLabel(issue, this.requiredLabel);
 		if (hasReminderLabel(issue)) {
@@ -67,22 +68,24 @@ final class StandardFeedbackListener implements FeedbackListener {
 	}
 
 	@Override
-	public void feedbackRequired(Issue issue, OffsetDateTime requestTime) {
+	public void feedbackRequired(Repository repository, Issue issue,
+			OffsetDateTime requestTime) {
 		OffsetDateTime now = OffsetDateTime.now();
 		if (requestTime.plusDays(14).isBefore(now)) {
-			close(issue);
+			close(repository, issue);
 		}
 		else if (requestTime.plusDays(7).isBefore(now) && !hasReminderLabel(issue)) {
 			remind(issue);
 		}
 	}
 
-	private void close(Issue issue) {
+	private void close(Repository repository, Issue issue) {
 		this.gitHub.addComment(issue, this.closeComment);
 		this.gitHub.close(issue);
 		this.gitHub.removeLabel(issue, this.requiredLabel);
 		this.gitHub.removeLabel(issue, this.reminderLabel);
-		this.issueListeners.forEach((listener) -> listener.onIssueClosure(issue));
+		this.issueListeners
+				.forEach((listener) -> listener.onIssueClosure(repository, issue));
 	}
 
 	private boolean hasReminderLabel(Issue issue) {

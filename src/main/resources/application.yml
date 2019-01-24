@@ -1,14 +1,14 @@
 issuebot:
-  github:
-    repository:
-      organization: spring-projects
-      name: spring-boot
-      collaborators:
-        - bclozel
-        - mbhave
-        - philwebb
-        - snicoll
-        - wilkinsona
+  monitoring:
+    repositories:
+      - organization: spring-projects
+        name: spring-boot
+        collaborators:
+          - bclozel
+          - mbhave
+          - philwebb
+          - snicoll
+          - wilkinsona
   triage:
     label: "status: waiting-for-triage"
   feedback:

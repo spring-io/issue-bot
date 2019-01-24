@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,8 @@ package io.spring.issuebot;
 import io.spring.issuebot.github.Issue;
 
 /**
- * An {@code IssueListener} is notified of issues found during repository monitoring.
+ * An {@code IssueListener} is notified of issues found during monitoring of a specific
+ * repository.
  *
  * @author Andy Wilkinson
  */
@@ -27,17 +28,19 @@ public interface IssueListener {
 
 	/**
 	 * Notification that the given {@code issue} is open.
+	 * @param repository the repository to which the issue belongs
 	 * @param issue the open issue
 	 */
-	default void onOpenIssue(Issue issue) {
+	default void onOpenIssue(Repository repository, Issue issue) {
 
 	}
 
 	/**
 	 * Notification that the given {@code issue} is being closed.
+	 * @param repository the repository to which the issue belongs
 	 * @param issue the open issue
 	 */
-	default void onIssueClosure(Issue issue) {
+	default void onIssueClosure(Repository repository, Issue issue) {
 
 	}
 

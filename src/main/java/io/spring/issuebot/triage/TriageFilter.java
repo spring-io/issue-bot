@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package io.spring.issuebot.triage;
 
+import io.spring.issuebot.Repository;
 import io.spring.issuebot.github.Issue;
 
 /**
@@ -28,9 +29,10 @@ interface TriageFilter {
 	/**
 	 * Returns {@code true} if the given issue has already been triaged, otherwise
 	 * {@code false}.
+	 * @param repository the repository to which the issue belongs
 	 * @param issue the issue
 	 * @return {@code true} if the issue has been triaged, {@code false} otherwise
 	 */
-	boolean triaged(Issue issue);
+	boolean triaged(Repository repository, Issue issue);
 
 }

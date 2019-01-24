@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,10 @@ package io.spring.issuebot.triage;
 
 import java.util.Arrays;
 
+import io.spring.issuebot.Repository;
 import io.spring.issuebot.github.Issue;
 import io.spring.issuebot.github.User;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,19 +33,27 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class OpenedByCollaboratorTriageFilterTests {
 
-	private TriageFilter filter = new OpenedByCollaboratorTriageFilter(
-			Arrays.asList("Adam", "Brenda", "Charlie"));
+	private final Repository repository = new Repository();
+
+	private TriageFilter filter;
+
+	@Before
+	public void setUp() {
+		this.repository.setCollaborators(Arrays.asList("Alice", "Brenda", "Charlie"));
+		this.filter = new OpenedByCollaboratorTriageFilter(
+				Arrays.asList(this.repository));
+	}
 
 	@Test
 	public void openedByCollaborator() {
-		assertThat(this.filter.triaged(
-				new Issue(null, null, null, null, new User("Adam"), null, null, null)))
+		assertThat(this.filter.triaged(this.repository,
+				new Issue(null, null, null, null, new User("Alice"), null, null, null)))
 						.isTrue();
 	}
 
 	@Test
 	public void openedByAnotherUser() {
-		assertThat(this.filter.triaged(
+		assertThat(this.filter.triaged(this.repository,
 				new Issue(null, null, null, null, new User("Debbie"), null, null, null)))
 						.isFalse();
 	}

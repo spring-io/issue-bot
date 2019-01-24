@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import io.spring.issuebot.IssueListener;
+import io.spring.issuebot.Repository;
 import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.Issue;
 import io.spring.issuebot.github.Label;
@@ -49,9 +50,11 @@ public class StandardFeedbackListenerTests {
 	private final Issue issue = new Issue(null, null, null, null, null, new ArrayList<>(),
 			null, null);
 
+	private final Repository repository = new Repository();
+
 	@Test
 	public void feedbackProvided() {
-		this.listener.feedbackProvided(this.issue);
+		this.listener.feedbackProvided(this.repository, this.issue);
 		verify(this.gitHub).addLabel(this.issue, "feedback-provided");
 		verify(this.gitHub).removeLabel(this.issue, "feedback-required");
 		verifyNoMoreInteractions(this.gitHub);
@@ -60,7 +63,7 @@ public class StandardFeedbackListenerTests {
 	@Test
 	public void feedbackProvidedAfterReminder() {
 		this.issue.getLabels().add(new Label("feedback-reminder"));
-		this.listener.feedbackProvided(this.issue);
+		this.listener.feedbackProvided(this.repository, this.issue);
 		verify(this.gitHub).addLabel(this.issue, "feedback-provided");
 		verify(this.gitHub).removeLabel(this.issue, "feedback-required");
 		verify(this.gitHub).removeLabel(this.issue, "feedback-reminder");
@@ -68,13 +71,14 @@ public class StandardFeedbackListenerTests {
 
 	@Test
 	public void feedbackRequiredButReminderNotYetDue() {
-		this.listener.feedbackRequired(this.issue, OffsetDateTime.now());
+		this.listener.feedbackRequired(this.repository, this.issue, OffsetDateTime.now());
 		verifyNoMoreInteractions(this.gitHub);
 	}
 
 	@Test
 	public void feedbackRequiredAndReminderDue() {
-		this.listener.feedbackRequired(this.issue, OffsetDateTime.now().minusDays(8));
+		this.listener.feedbackRequired(this.repository, this.issue,
+				OffsetDateTime.now().minusDays(8));
 		verify(this.gitHub).addComment(this.issue, "Please provide requested feedback");
 		verify(this.gitHub).addLabel(this.issue, "feedback-reminder");
 	}
@@ -82,17 +86,19 @@ public class StandardFeedbackListenerTests {
 	@Test
 	public void feedbackRequiredReminderDueAndAlreadyCommented() {
 		this.issue.getLabels().add(new Label("feedback-reminder"));
-		this.listener.feedbackRequired(this.issue, OffsetDateTime.now().minusDays(8));
+		this.listener.feedbackRequired(this.repository, this.issue,
+				OffsetDateTime.now().minusDays(8));
 		verifyNoMoreInteractions(this.gitHub);
 	}
 
 	@Test
 	public void feedbackRequiredAndOverdue() {
-		this.listener.feedbackRequired(this.issue, OffsetDateTime.now().minusDays(15));
+		this.listener.feedbackRequired(this.repository, this.issue,
+				OffsetDateTime.now().minusDays(15));
 		verify(this.gitHub).addComment(this.issue, "Closing due to lack of feedback");
 		verify(this.gitHub).close(this.issue);
 		verify(this.gitHub).removeLabel(this.issue, "feedback-required");
-		verify(this.issueListener).onIssueClosure(this.issue);
+		verify(this.issueListener).onIssueClosure(this.repository, this.issue);
 	}
 
 }

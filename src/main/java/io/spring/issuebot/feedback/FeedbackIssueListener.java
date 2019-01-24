@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,12 @@ package io.spring.issuebot.feedback;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import io.spring.issuebot.IssueListener;
+import io.spring.issuebot.Repository;
 import io.spring.issuebot.github.Comment;
 import io.spring.issuebot.github.Event;
 import io.spring.issuebot.github.GitHubOperations;
@@ -39,36 +43,43 @@ final class FeedbackIssueListener implements IssueListener {
 
 	private final String labelName;
 
-	private final List<String> collaborators;
+	private final Map<Repository, List<String>> repositoryCollaborators;
 
 	private final FeedbackListener feedbackListener;
 
 	FeedbackIssueListener(GitHubOperations gitHub, String labelName,
-			List<String> collaborators, String username,
+			List<Repository> repositories, String username,
 			FeedbackListener feedbackListener) {
 		this.gitHub = gitHub;
 		this.labelName = labelName;
-		this.collaborators = new ArrayList<>(collaborators);
-		this.collaborators.add(username);
+		this.repositoryCollaborators = repositories.stream()
+				.collect(Collectors.toMap(Function.identity(), (repository) -> {
+					List<String> collaborators = new ArrayList<>(
+							repository.getCollaborators());
+					collaborators.add(username);
+					return collaborators;
+				}));
 		this.feedbackListener = feedbackListener;
 	}
 
 	@Override
-	public void onOpenIssue(Issue issue) {
+	public void onOpenIssue(Repository repository, Issue issue) {
 		if (waitingForFeedback(issue)) {
 			OffsetDateTime waitingSince = getWaitingSince(issue);
 			if (waitingSince != null) {
-				processWaitingIssue(issue, waitingSince);
+				processWaitingIssue(repository, issue, waitingSince);
 			}
 		}
 	}
 
-	private void processWaitingIssue(Issue issue, OffsetDateTime waitingSince) {
-		if (commentedSince(waitingSince, issue)) {
-			this.feedbackListener.feedbackProvided(issue);
+	private void processWaitingIssue(Repository repository, Issue issue,
+			OffsetDateTime waitingSince) {
+		if (commentedSince(waitingSince, issue,
+				this.repositoryCollaborators.get(repository))) {
+			this.feedbackListener.feedbackProvided(repository, issue);
 		}
 		else {
-			this.feedbackListener.feedbackRequired(issue, waitingSince);
+			this.feedbackListener.feedbackRequired(repository, issue, waitingSince);
 		}
 	}
 
@@ -100,11 +111,12 @@ final class FeedbackIssueListener implements IssueListener {
 		return createdAt;
 	}
 
-	private boolean commentedSince(OffsetDateTime waitingForFeedbackSince, Issue issue) {
+	private boolean commentedSince(OffsetDateTime waitingForFeedbackSince, Issue issue,
+			List<String> collaborators) {
 		Page<Comment> page = this.gitHub.getComments(issue);
 		while (page != null) {
 			for (Comment comment : page.getContent()) {
-				if (!this.collaborators.contains(comment.getUser().getLogin())
+				if (!collaborators.contains(comment.getUser().getLogin())
 						&& comment.getCreationTime().isAfter(waitingForFeedbackSince)) {
 					return true;
 				}

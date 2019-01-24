@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,34 +16,26 @@
 
 package io.spring.issuebot;
 
+import java.util.List;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 /**
- * A repository that should be monitored.
+ * Properties for configuring repository monitoring.
  *
  * @author Andy Wilkinson
  */
-public class MonitoredRepository {
+@ConfigurationProperties(prefix = "issuebot.monitoring")
+public class MonitoringProperties {
 
-	/**
-	 * The name of the organization that owns the repository.
-	 */
-	private final String organization;
+	private List<Repository> repositories;
 
-	/**
-	 * The name of the repository.
-	 */
-	private final String name;
-
-	public MonitoredRepository(String organization, String name) {
-		this.organization = organization;
-		this.name = name;
+	public List<Repository> getRepositories() {
+		return this.repositories;
 	}
 
-	public String getOrganization() {
-		return this.organization;
-	}
-
-	public String getName() {
-		return this.name;
+	public void setRepositories(List<Repository> repositories) {
+		this.repositories = repositories;
 	}
 
 }
