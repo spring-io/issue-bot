@@ -23,6 +23,14 @@ issuebot:
         name: spring-restdocs
         collaborators:
           - wilkinsona
+      - organization: spring-projects
+        name: spring-security
+        collaborators:
+          - eleftherias
+          - fhanik
+          - jgrandja
+          - jzheaux
+          - rwinch
   triage:
     label: "status: waiting-for-triage"
   feedback:
