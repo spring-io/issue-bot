@@ -81,6 +81,16 @@ public class GitHubTemplateTests {
 	}
 
 	@Test
+	public void singlePageOfClosedIssue() {
+		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues?state=closed"))
+				.andExpect(method(HttpMethod.GET)).andExpect(basicAuth())
+				.andRespond(withResource("issues-page-one.json"));
+		Page<Issue> issues = this.gitHub.getClosedIssues("org", "repo");
+		assertThat(issues.getContent()).hasSize(15);
+		assertThat(issues.next()).isNull();
+	}
+
+	@Test
 	public void multiplePagesOfIssues() {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Link", "<page-two>; rel=\"next\"");
@@ -91,6 +101,23 @@ public class GitHubTemplateTests {
 		this.server.expect(requestTo("/page-two")).andExpect(method(HttpMethod.GET))
 				.andExpect(basicAuth()).andRespond(withResource("issues-page-two.json"));
 		Page<Issue> pageOne = this.gitHub.getIssues("org", "repo");
+		assertThat(pageOne.getContent()).hasSize(15);
+		Page<Issue> pageTwo = pageOne.next();
+		assertThat(pageTwo).isNotNull();
+		assertThat(pageTwo.getContent()).hasSize(15);
+	}
+
+	@Test
+	public void multiplePagesOfClosedIssues() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Link", "<page-two>; rel=\"next\"");
+		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues?state=closed"))
+				.andExpect(method(HttpMethod.GET)).andExpect(basicAuth())
+				.andRespond(withResource("issues-page-one.json",
+						"Link:<page-two>; rel=\"next\""));
+		this.server.expect(requestTo("/page-two")).andExpect(method(HttpMethod.GET))
+				.andExpect(basicAuth()).andRespond(withResource("issues-page-two.json"));
+		Page<Issue> pageOne = this.gitHub.getClosedIssues("org", "repo");
 		assertThat(pageOne.getContent()).hasSize(15);
 		Page<Issue> pageTwo = pageOne.next();
 		assertThat(pageTwo).isNotNull();

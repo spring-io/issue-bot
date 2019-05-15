@@ -33,6 +33,15 @@ public interface GitHubOperations {
 	Page<Issue> getIssues(String organization, String repository);
 
 	/**
+	 * Returns the closed issues in the {@code repository} owned by the given
+	 * {@code organization}.
+	 * @param organization the name of the organization
+	 * @param repository the name of the repository
+	 * @return the issues
+	 */
+	Page<Issue> getClosedIssues(String organization, String repository);
+
+	/**
 	 * Returns the comments that have been made on the given {@code issue}.
 	 * @param issue the issue
 	 * @return the comments
