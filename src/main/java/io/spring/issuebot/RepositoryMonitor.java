@@ -64,7 +64,13 @@ class RepositoryMonitor {
 				for (Issue issue : page.getContent()) {
 					for (IssueListener issueListener : this.issueListeners) {
 						try {
-							issueListener.onOpenIssue(repository, issue);
+							if (issue.isOpen()) {
+								issueListener.onOpenIssue(repository, issue);
+								continue;
+							}
+							if (issue.isClosed()) {
+								issueListener.onIssueClosure(repository, issue);
+							}
 						}
 						catch (Exception ex) {
 							log.warn("Listener '{}' failed when handling issue '{}'",
