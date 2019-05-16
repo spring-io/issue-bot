@@ -156,7 +156,7 @@ public class GitHubTemplate implements GitHubOperations {
 		}
 		return new Issue(issue.getUrl(), issue.getCommentsUrl(), issue.getEventsUrl(),
 				issue.getLabelsUrl(), issue.getUser(), Arrays.asList(response.getBody()),
-				issue.getMilestone(), issue.getPullRequest());
+				issue.getMilestone(), issue.getPullRequest(), issue.getState());
 	}
 
 	@Override
@@ -178,7 +178,7 @@ public class GitHubTemplate implements GitHubOperations {
 		}
 		return new Issue(issue.getUrl(), issue.getCommentsUrl(), issue.getEventsUrl(),
 				issue.getLabelsUrl(), issue.getUser(), Arrays.asList(response.getBody()),
-				issue.getMilestone(), issue.getPullRequest());
+				issue.getMilestone(), issue.getPullRequest(), issue.getState());
 	}
 
 	@Override

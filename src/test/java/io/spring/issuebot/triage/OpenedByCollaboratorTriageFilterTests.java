@@ -47,14 +47,14 @@ public class OpenedByCollaboratorTriageFilterTests {
 	@Test
 	public void openedByCollaborator() {
 		assertThat(this.filter.triaged(this.repository,
-				new Issue(null, null, null, null, new User("Alice"), null, null, null)))
+				new Issue(null, null, null, null, new User("Alice"), null, null, null, null)))
 						.isTrue();
 	}
 
 	@Test
 	public void openedByAnotherUser() {
 		assertThat(this.filter.triaged(this.repository,
-				new Issue(null, null, null, null, new User("Debbie"), null, null, null)))
+				new Issue(null, null, null, null, new User("Debbie"), null, null, null, null)))
 						.isFalse();
 	}
 

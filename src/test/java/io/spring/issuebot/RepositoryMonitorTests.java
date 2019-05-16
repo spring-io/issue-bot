@@ -71,8 +71,8 @@ public class RepositoryMonitorTests {
 	public void oneRepositoryWithOpenIssues() {
 		@SuppressWarnings("unchecked")
 		Page<Issue> page = mock(Page.class);
-		Issue issueOne = new Issue(null, null, null, null, null, null, null, null);
-		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null);
+		Issue issueOne = new Issue(null, null, null, null, null, null, null, null, null);
+		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null, null);
 		given(page.getContent()).willReturn(Arrays.asList(issueOne, issueTwo));
 		given(this.gitHub.getIssues("test", "one")).willReturn(page);
 		given(this.gitHub.getIssues("test", "two")).willReturn(null);
@@ -84,11 +84,27 @@ public class RepositoryMonitorTests {
 	}
 
 	@Test
+	public void onRepositoryWithClosedIssues() {
+		@SuppressWarnings("unchecked")
+		Page<Issue> page = mock(Page.class);
+		Issue issueOne = new Issue(null, null, null, null, null, null, null, null, null);
+		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null, null);
+		given(page.getContent()).willReturn(Arrays.asList(issueOne, issueTwo));
+		given(this.gitHub.getClosedIssues("test", "one")).willReturn(page);
+		given(this.gitHub.getClosedIssues("test", "two")).willReturn(null);
+		this.repositoryMonitor.monitor();
+		verify(this.issueListenerOne).onIssueClosure(this.repositoryOne, issueOne);
+		verify(this.issueListenerOne).onIssueClosure(this.repositoryOne, issueTwo);
+		verify(this.issueListenerTwo).onIssueClosure(this.repositoryOne, issueOne);
+		verify(this.issueListenerTwo).onIssueClosure(this.repositoryOne, issueTwo);
+	}
+
+	@Test
 	public void bothRepositoriesWithOpenIssues() {
 		@SuppressWarnings("unchecked")
 		Page<Issue> page = mock(Page.class);
-		Issue issueOne = new Issue(null, null, null, null, null, null, null, null);
-		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null);
+		Issue issueOne = new Issue(null, null, null, null, null, null, null, null, null);
+		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null, null);
 		given(page.getContent()).willReturn(Arrays.asList(issueOne, issueTwo));
 		given(this.gitHub.getIssues("test", "one")).willReturn(page);
 		given(this.gitHub.getIssues("test", "two")).willReturn(page);
@@ -107,7 +123,7 @@ public class RepositoryMonitorTests {
 	public void exceptionFromAnIssueListenerIsHandledGracefully() {
 		@SuppressWarnings("unchecked")
 		Page<Issue> page = mock(Page.class);
-		Issue issue = new Issue(null, null, null, null, null, null, null, null);
+		Issue issue = new Issue(null, null, null, null, null, null, null, null, null);
 		given(page.getContent()).willReturn(Arrays.asList(issue));
 		given(this.gitHub.getIssues("test", "one")).willReturn(page);
 		willThrow(new RuntimeException()).given(this.issueListenerOne)
