@@ -114,13 +114,6 @@ public class GitHubTemplate implements GitHubOperations {
 	}
 
 	@Override
-	public Page<Issue> getClosedIssues(String organization, String repository) {
-		String url = "https://api.github.com/repos/" + organization + "/" + repository
-				+ "/issues?state=closed";
-		return getPage(url, Issue[].class);
-	}
-
-	@Override
 	public Page<Comment> getComments(Issue issue) {
 		return getPage(issue.getCommentsUrl(), Comment[].class);
 	}
