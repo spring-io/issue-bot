@@ -51,12 +51,14 @@ class RepositoryMonitor {
 	@Scheduled(fixedRate = 5 * 60 * 1000)
 	void monitor() {
 		for (Repository repository : this.repositories) {
-			monitor(repository);
+      log.info("Monitoring {}/{}", repository.getOrganization(), repository.getName());
+			monitorOpenIssues(repository);
+			monitorClosedIssues(repository);
+      log.info("Monitoring of {}/{} completed", repository.getOrganization(), repository.getName());
 		}
 	}
 
-	private void monitor(Repository repository) {
-		log.info("Monitoring {}/{}", repository.getOrganization(), repository.getName());
+	private void monitorOpenIssues(Repository repository) {
 		try {
 			Page<Issue> page = this.gitHub.getIssues(repository.getOrganization(),
 					repository.getName());
@@ -64,13 +66,7 @@ class RepositoryMonitor {
 				for (Issue issue : page.getContent()) {
 					for (IssueListener issueListener : this.issueListeners) {
 						try {
-							if (issue.isOpen()) {
-								issueListener.onOpenIssue(repository, issue);
-								continue;
-							}
-							if (issue.isClosed()) {
-								issueListener.onIssueClosure(repository, issue);
-							}
+              issueListener.onOpenIssue(repository, issue);
 						}
 						catch (Exception ex) {
 							log.warn("Listener '{}' failed when handling issue '{}'",
@@ -85,8 +81,31 @@ class RepositoryMonitor {
 			log.warn("A failure occurred during monitoring of {}/{}",
 					repository.getOrganization(), repository.getName(), ex);
 		}
-		log.info("Monitoring of {}/{} completed", repository.getOrganization(),
-				repository.getName());
 	}
+
+  private void monitorClosedIssues(Repository repository) {
+    try {
+      Page<Issue> page = this.gitHub
+          .getClosedIssuesWithLabel(repository.getOrganization(), repository.getName(), "status: waiting-for-triage");
+      while (page != null) {
+        for (Issue issue : page.getContent()) {
+          for (IssueListener issueListener : this.issueListeners) {
+            try {
+                issueListener.onIssueClosure(repository, issue);
+            }
+            catch (Exception ex) {
+              log.warn("Listener '{}' failed when handling issue '{}'",
+                  issueListener, issue, ex);
+            }
+          }
+        }
+        page = page.next();
+      }
+    }
+    catch (Exception ex) {
+      log.warn("A failure occurred during monitoring of {}/{}",
+          repository.getOrganization(), repository.getName(), ex);
+    }
+  }
 
 }

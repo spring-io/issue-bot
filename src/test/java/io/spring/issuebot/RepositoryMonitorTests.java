@@ -21,6 +21,7 @@ import java.util.Arrays;
 import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.Issue;
 import io.spring.issuebot.github.Page;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -90,8 +91,8 @@ public class RepositoryMonitorTests {
 		Issue issueOne = new Issue(null, null, null, null, null, null, null, null, "closed");
 		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null, "closed");
 		given(page.getContent()).willReturn(Arrays.asList(issueOne, issueTwo));
-		given(this.gitHub.getIssues("test", "one")).willReturn(page);
-		given(this.gitHub.getIssues("test", "two")).willReturn(null);
+		given(this.gitHub.getClosedIssuesWithLabel("test", "one", "status: waiting-for-triage")).willReturn(page);
+		given(this.gitHub.getClosedIssuesWithLabel("test", "two", "status: waiting-for-triage")).willReturn(null);
 		this.repositoryMonitor.monitor();
 		verify(this.issueListenerOne).onIssueClosure(this.repositoryOne, issueOne);
 		verify(this.issueListenerOne).onIssueClosure(this.repositoryOne, issueTwo);
@@ -134,10 +135,30 @@ public class RepositoryMonitorTests {
 	}
 
 	@Test
+	public void exceptionFromAnIssueListenerIsHandledGracefullyForClosedIssues() {
+		@SuppressWarnings("unchecked")
+		Page<Issue> page = mock(Page.class);
+		Issue issue = new Issue(null, null, null, null, null, null, null, null, "closed");
+		given(page.getContent()).willReturn(Collections.singletonList(issue));
+		given(this.gitHub.getClosedIssuesWithLabel("test", "one", "status: waiting-for-triage")).willReturn(page);
+		willThrow(new RuntimeException()).given(this.issueListenerOne)
+				.onOpenIssue(this.repositoryOne, issue);
+		this.repositoryMonitor.monitor();
+		verify(this.issueListenerOne).onIssueClosure(this.repositoryOne, issue);
+		verify(this.issueListenerTwo).onIssueClosure(this.repositoryOne, issue);
+	}
+
+	@Test
 	public void exceptionFromGitHubIsHandledGracefully() {
 		given(this.gitHub.getIssues("test", "one")).willThrow(new RuntimeException());
 		this.repositoryMonitor.monitor();
 		verify(this.gitHub).getIssues("test", "one");
 	}
 
+	@Test
+	public void exceptionFromGitHubIsHandledGracefullyForClosedIssues() {
+		given(this.gitHub.getIssues("test", "one")).willThrow(new RuntimeException());
+		this.repositoryMonitor.monitor();
+		verify(this.gitHub).getIssues("test", "one");
+	}
 }

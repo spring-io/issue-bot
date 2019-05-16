@@ -109,7 +109,14 @@ public class GitHubTemplate implements GitHubOperations {
 	@Override
 	public Page<Issue> getIssues(String organization, String repository) {
 		String url = "https://api.github.com/repos/" + organization + "/" + repository
-				+ "/issues?state=all";
+				+ "/issues";
+		return getPage(url, Issue[].class);
+	}
+
+	@Override
+	public Page<Issue> getClosedIssuesWithLabel(String organization, String repository, String label) {
+		String url = "https://api.github.com/repos/" + organization + "/" + repository
+		+ "/issues?state=closed&labels=" + label;
 		return getPage(url, Issue[].class);
 	}
 
@@ -161,9 +168,10 @@ public class GitHubTemplate implements GitHubOperations {
 		catch (URISyntaxException ex) {
 			throw new RuntimeException(ex);
 		}
+		URI uri = URI.create(issue.getLabelsUrl().replace("{/name}", "/" + encodedName));
+		log.info("Removing label {} on {}", labelName, uri);
 		ResponseEntity<Label[]> response = this.rest.exchange(
-				new RequestEntity<Void>(HttpMethod.DELETE, URI.create(
-						issue.getLabelsUrl().replace("{/name}", "/" + encodedName))),
+				new RequestEntity<Void>(HttpMethod.DELETE, uri),
 				Label[].class);
 		if (response.getStatusCode() != HttpStatus.OK) {
 			log.warn("Failed to remove label from issue. Response status: "

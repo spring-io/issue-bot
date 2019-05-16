@@ -62,7 +62,7 @@ public class GitHubTemplateTests {
 
 	@Test
 	public void noIssues() {
-		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues?state=all"))
+		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues"))
 				.andExpect(method(HttpMethod.GET)).andExpect(basicAuth())
 				.andRespond(withSuccess("[]", MediaType.APPLICATION_JSON));
 		Page<Issue> issues = this.gitHub.getIssues("org", "repo");
@@ -72,7 +72,7 @@ public class GitHubTemplateTests {
 
 	@Test
 	public void singlePageOfIssues() {
-		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues?state=all"))
+		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues"))
 				.andExpect(method(HttpMethod.GET)).andExpect(basicAuth())
 				.andRespond(withResource("issues-page-one.json"));
 		Page<Issue> issues = this.gitHub.getIssues("org", "repo");
@@ -81,10 +81,20 @@ public class GitHubTemplateTests {
 	}
 
 	@Test
+	public void singlePageOfClosedIssues() {
+		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues?state=closed&labels=status:%20waiting-for-triage"))
+				.andExpect(method(HttpMethod.GET)).andExpect(basicAuth())
+				.andRespond(withResource("issues-page-one.json"));
+		Page<Issue> issues = this.gitHub.getClosedIssuesWithLabel("org", "repo", "status: waiting-for-triage");
+		assertThat(issues.getContent()).hasSize(15);
+		assertThat(issues.next()).isNull();
+	}
+
+	@Test
 	public void multiplePagesOfIssues() {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Link", "<page-two>; rel=\"next\"");
-		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues?state=all"))
+		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues"))
 				.andExpect(method(HttpMethod.GET)).andExpect(basicAuth())
 				.andRespond(withResource("issues-page-one.json",
 						"Link:<page-two>; rel=\"next\""));
@@ -98,12 +108,29 @@ public class GitHubTemplateTests {
 	}
 
 	@Test
+	public void multiplePagesOfClosedIssues() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Link", "<page-two>; rel=\"next\"");
+		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues?state=closed&labels=status:%20waiting-for-triage"))
+				.andExpect(method(HttpMethod.GET)).andExpect(basicAuth())
+				.andRespond(withResource("issues-page-one.json",
+						"Link:<page-two>; rel=\"next\""));
+		this.server.expect(requestTo("/page-two")).andExpect(method(HttpMethod.GET))
+				.andExpect(basicAuth()).andRespond(withResource("issues-page-two.json"));
+		Page<Issue> pageOne = this.gitHub.getClosedIssuesWithLabel("org", "repo", "status: waiting-for-triage");
+		assertThat(pageOne.getContent()).hasSize(15);
+		Page<Issue> pageTwo = pageOne.next();
+		assertThat(pageTwo).isNotNull();
+		assertThat(pageTwo.getContent()).hasSize(15);
+	}
+
+	@Test
 	public void rateLimited() {
 		long reset = System.currentTimeMillis();
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("X-RateLimit-Remaining", "0");
 		headers.set("X-RateLimit-Reset", Long.toString(reset / 1000));
-		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues?state=all"))
+		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues"))
 				.andExpect(method(HttpMethod.GET)).andExpect(basicAuth())
 				.andRespond(withStatus(HttpStatus.FORBIDDEN).headers(headers));
 		this.thrown.expect(IllegalStateException.class);
