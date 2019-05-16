@@ -62,7 +62,7 @@ public class GitHubTemplateTests {
 
 	@Test
 	public void noIssues() {
-		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues"))
+		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues?state=all"))
 				.andExpect(method(HttpMethod.GET)).andExpect(basicAuth())
 				.andRespond(withSuccess("[]", MediaType.APPLICATION_JSON));
 		Page<Issue> issues = this.gitHub.getIssues("org", "repo");
@@ -72,7 +72,7 @@ public class GitHubTemplateTests {
 
 	@Test
 	public void singlePageOfIssues() {
-		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues"))
+		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues?state=all"))
 				.andExpect(method(HttpMethod.GET)).andExpect(basicAuth())
 				.andRespond(withResource("issues-page-one.json"));
 		Page<Issue> issues = this.gitHub.getIssues("org", "repo");
@@ -94,7 +94,7 @@ public class GitHubTemplateTests {
 	public void multiplePagesOfIssues() {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Link", "<page-two>; rel=\"next\"");
-		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues"))
+		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues?state=all"))
 				.andExpect(method(HttpMethod.GET)).andExpect(basicAuth())
 				.andRespond(withResource("issues-page-one.json",
 						"Link:<page-two>; rel=\"next\""));
@@ -130,7 +130,7 @@ public class GitHubTemplateTests {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("X-RateLimit-Remaining", "0");
 		headers.set("X-RateLimit-Reset", Long.toString(reset / 1000));
-		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues"))
+		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues?state=all"))
 				.andExpect(method(HttpMethod.GET)).andExpect(basicAuth())
 				.andRespond(withStatus(HttpStatus.FORBIDDEN).headers(headers));
 		this.thrown.expect(IllegalStateException.class);

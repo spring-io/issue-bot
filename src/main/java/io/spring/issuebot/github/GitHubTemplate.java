@@ -109,7 +109,7 @@ public class GitHubTemplate implements GitHubOperations {
 	@Override
 	public Page<Issue> getIssues(String organization, String repository) {
 		String url = "https://api.github.com/repos/" + organization + "/" + repository
-				+ "/issues";
+				+ "/issues?state=all";
 		return getPage(url, Issue[].class);
 	}
 
