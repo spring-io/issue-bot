@@ -58,54 +58,42 @@ class RepositoryMonitor {
 		}
 	}
 
-	private void monitorOpenIssues(Repository repository) {
+	private void monitorClosedIssues(Repository repository) {
 		try {
-			Page<Issue> page = this.gitHub.getIssues(repository.getOrganization(),
-					repository.getName());
-			while (page != null) {
-				for (Issue issue : page.getContent()) {
-					for (IssueListener issueListener : this.issueListeners) {
-						try {
-              issueListener.onOpenIssue(repository, issue);
-						}
-						catch (Exception ex) {
-							log.warn("Listener '{}' failed when handling issue '{}'",
-									issueListener, issue, ex);
-						}
-					}
-				}
-				page = page.next();
-			}
-		}
-		catch (Exception ex) {
+			Page<Issue> page = this.gitHub
+					.getClosedIssuesWithLabel(repository.getOrganization(), repository.getName(), "status: waiting-for-triage");
+			monitorIssue(page, (issue, issueListener) -> issueListener.onIssueClosure(repository, issue));
+		} catch (Exception ex) {
 			log.warn("A failure occurred during monitoring of {}/{}",
 					repository.getOrganization(), repository.getName(), ex);
 		}
 	}
 
-  private void monitorClosedIssues(Repository repository) {
-    try {
-      Page<Issue> page = this.gitHub
-          .getClosedIssuesWithLabel(repository.getOrganization(), repository.getName(), "status: waiting-for-triage");
-      while (page != null) {
-        for (Issue issue : page.getContent()) {
-          for (IssueListener issueListener : this.issueListeners) {
-            try {
-                issueListener.onIssueClosure(repository, issue);
-            }
-            catch (Exception ex) {
-              log.warn("Listener '{}' failed when handling issue '{}'",
-                  issueListener, issue, ex);
-            }
-          }
-        }
-        page = page.next();
-      }
-    }
-    catch (Exception ex) {
-      log.warn("A failure occurred during monitoring of {}/{}",
-          repository.getOrganization(), repository.getName(), ex);
-    }
-  }
+	private void monitorOpenIssues(Repository repository) {
+		try {
+			Page<Issue> page = this.gitHub.getIssues(repository.getOrganization(),
+					repository.getName());
+			monitorIssue(page, (issue, issueListener) -> issueListener.onOpenIssue(repository, issue));
+		} catch (Exception ex) {
+			log.warn("A failure occurred during monitoring of {}/{}",
+					repository.getOrganization(), repository.getName(), ex);
+		}
+	}
 
+	private void monitorIssue(Page<Issue> page, IssueOperation issueOperation) {
+		while (page != null) {
+			for (Issue issue : page.getContent()) {
+				for (IssueListener issueListener : this.issueListeners) {
+					try {
+						issueOperation.run(issue, issueListener);
+					}
+					catch (Exception ex) {
+						log.warn("Listener '{}' failed when handling issue '{}'",
+								issueListener, issue, ex);
+					}
+				}
+			}
+			page = page.next();
+		}
+	}
 }

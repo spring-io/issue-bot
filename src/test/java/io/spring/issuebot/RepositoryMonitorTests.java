@@ -157,7 +157,7 @@ public class RepositoryMonitorTests {
 
 	@Test
 	public void exceptionFromGitHubIsHandledGracefullyForClosedIssues() {
-		given(this.gitHub.getIssues("test", "one")).willThrow(new RuntimeException());
+		given(this.gitHub.getClosedIssuesWithLabel("test", "one", "status: waiting-for-triage")).willThrow(new RuntimeException());
 		this.repositoryMonitor.monitor();
 		verify(this.gitHub).getIssues("test", "one");
 	}
