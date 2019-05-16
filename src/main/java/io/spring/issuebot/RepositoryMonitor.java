@@ -51,10 +51,10 @@ class RepositoryMonitor {
 	@Scheduled(fixedRate = 5 * 60 * 1000)
 	void monitor() {
 		for (Repository repository : this.repositories) {
-      log.info("Monitoring {}/{}", repository.getOrganization(), repository.getName());
+			log.info("Monitoring {}/{}", repository.getOrganization(), repository.getName());
 			monitorOpenIssues(repository);
 			monitorClosedIssues(repository);
-      log.info("Monitoring of {}/{} completed", repository.getOrganization(), repository.getName());
+			log.info("Monitoring of {}/{} completed", repository.getOrganization(), repository.getName());
 		}
 	}
 
