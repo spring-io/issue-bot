@@ -32,7 +32,7 @@ issuebot:
           - jzheaux
           - rwinch
       - organization: spring-projects
-        name: spring-sessopm
+        name: spring-session
         collaborators:
           - eleftherias
           - fhanik
