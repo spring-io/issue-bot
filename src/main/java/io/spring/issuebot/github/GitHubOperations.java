@@ -40,7 +40,8 @@ public interface GitHubOperations {
 	 * @param label the label the issues need to have
 	 * @return the issues
 	 */
-	Page<Issue> getClosedIssuesWithLabel(String organization, String repository, String label);
+	Page<Issue> getClosedIssuesWithLabel(String organization, String repository,
+			String label);
 
 	/**
 	 * Returns the comments that have been made on the given {@code issue}.

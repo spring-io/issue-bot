@@ -43,7 +43,8 @@ public class MilestoneAppliedTriageFilterTests {
 	@Test
 	public void issueWithNoMilestoneApplied() {
 		assertThat(this.filter.triaged(this.repository,
-				new Issue(null, null, null, null, null, null, null, null, null))).isFalse();
+				new Issue(null, null, null, null, null, null, null, null, null)))
+						.isFalse();
 	}
 
 }

@@ -48,4 +48,5 @@ public class LabelApplyingTriageListenerTests {
 		this.listener.doesNotRequireTriage(issue);
 		verify(this.gitHub).removeLabel(issue, "test");
 	}
+
 }

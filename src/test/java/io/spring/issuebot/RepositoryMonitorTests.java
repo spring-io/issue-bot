@@ -72,8 +72,10 @@ public class RepositoryMonitorTests {
 	public void oneRepositoryWithOpenIssues() {
 		@SuppressWarnings("unchecked")
 		Page<Issue> page = mock(Page.class);
-		Issue issueOne = new Issue(null, null, null, null, null, null, null, null, "open");
-		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null, "open");
+		Issue issueOne = new Issue(null, null, null, null, null, null, null, null,
+				"open");
+		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null,
+				"open");
 		given(page.getContent()).willReturn(Arrays.asList(issueOne, issueTwo));
 		given(this.gitHub.getIssues("test", "one")).willReturn(page);
 		given(this.gitHub.getIssues("test", "two")).willReturn(null);
@@ -88,11 +90,15 @@ public class RepositoryMonitorTests {
 	public void onRepositoryWithClosedIssues() {
 		@SuppressWarnings("unchecked")
 		Page<Issue> page = mock(Page.class);
-		Issue issueOne = new Issue(null, null, null, null, null, null, null, null, "closed");
-		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null, "closed");
+		Issue issueOne = new Issue(null, null, null, null, null, null, null, null,
+				"closed");
+		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null,
+				"closed");
 		given(page.getContent()).willReturn(Arrays.asList(issueOne, issueTwo));
-		given(this.gitHub.getClosedIssuesWithLabel("test", "one", "status: waiting-for-triage")).willReturn(page);
-		given(this.gitHub.getClosedIssuesWithLabel("test", "two", "status: waiting-for-triage")).willReturn(null);
+		given(this.gitHub.getClosedIssuesWithLabel("test", "one",
+				"status: waiting-for-triage")).willReturn(page);
+		given(this.gitHub.getClosedIssuesWithLabel("test", "two",
+				"status: waiting-for-triage")).willReturn(null);
 		this.repositoryMonitor.monitor();
 		verify(this.issueListenerOne).onIssueClosure(this.repositoryOne, issueOne);
 		verify(this.issueListenerOne).onIssueClosure(this.repositoryOne, issueTwo);
@@ -104,8 +110,10 @@ public class RepositoryMonitorTests {
 	public void bothRepositoriesWithOpenIssues() {
 		@SuppressWarnings("unchecked")
 		Page<Issue> page = mock(Page.class);
-		Issue issueOne = new Issue(null, null, null, null, null, null, null, null, "open");
-		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null, "open");
+		Issue issueOne = new Issue(null, null, null, null, null, null, null, null,
+				"open");
+		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null,
+				"open");
 		given(page.getContent()).willReturn(Arrays.asList(issueOne, issueTwo));
 		given(this.gitHub.getIssues("test", "one")).willReturn(page);
 		given(this.gitHub.getIssues("test", "two")).willReturn(page);
@@ -140,7 +148,8 @@ public class RepositoryMonitorTests {
 		Page<Issue> page = mock(Page.class);
 		Issue issue = new Issue(null, null, null, null, null, null, null, null, "closed");
 		given(page.getContent()).willReturn(Collections.singletonList(issue));
-		given(this.gitHub.getClosedIssuesWithLabel("test", "one", "status: waiting-for-triage")).willReturn(page);
+		given(this.gitHub.getClosedIssuesWithLabel("test", "one",
+				"status: waiting-for-triage")).willReturn(page);
 		willThrow(new RuntimeException()).given(this.issueListenerOne)
 				.onOpenIssue(this.repositoryOne, issue);
 		this.repositoryMonitor.monitor();
@@ -157,8 +166,10 @@ public class RepositoryMonitorTests {
 
 	@Test
 	public void exceptionFromGitHubIsHandledGracefullyForClosedIssues() {
-		given(this.gitHub.getClosedIssuesWithLabel("test", "one", "status: waiting-for-triage")).willThrow(new RuntimeException());
+		given(this.gitHub.getClosedIssuesWithLabel("test", "one",
+				"status: waiting-for-triage")).willThrow(new RuntimeException());
 		this.repositoryMonitor.monitor();
 		verify(this.gitHub).getIssues("test", "one");
 	}
+
 }

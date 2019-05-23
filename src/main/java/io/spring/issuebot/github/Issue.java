@@ -111,7 +111,7 @@ public class Issue {
 	}
 
 	public String getState() {
-		return state;
+		return this.state;
 	}
 
 	public boolean isOpen() {
@@ -126,4 +126,5 @@ public class Issue {
 	public String toString() {
 		return this.url;
 	}
+
 }

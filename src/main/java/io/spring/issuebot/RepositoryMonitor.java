@@ -51,19 +51,24 @@ class RepositoryMonitor {
 	@Scheduled(fixedRate = 5 * 60 * 1000)
 	void monitor() {
 		for (Repository repository : this.repositories) {
-			log.info("Monitoring {}/{}", repository.getOrganization(), repository.getName());
+			log.info("Monitoring {}/{}", repository.getOrganization(),
+					repository.getName());
 			monitorOpenIssues(repository);
 			monitorClosedIssues(repository);
-			log.info("Monitoring of {}/{} completed", repository.getOrganization(), repository.getName());
+			log.info("Monitoring of {}/{} completed", repository.getOrganization(),
+					repository.getName());
 		}
 	}
 
 	private void monitorClosedIssues(Repository repository) {
 		try {
-			Page<Issue> page = this.gitHub
-					.getClosedIssuesWithLabel(repository.getOrganization(), repository.getName(), "status: waiting-for-triage");
-			monitorIssue(page, (issue, issueListener) -> issueListener.onIssueClosure(repository, issue));
-		} catch (Exception ex) {
+			Page<Issue> page = this.gitHub.getClosedIssuesWithLabel(
+					repository.getOrganization(), repository.getName(),
+					"status: waiting-for-triage");
+			monitorIssue(page, (issue, issueListener) -> issueListener
+					.onIssueClosure(repository, issue));
+		}
+		catch (Exception ex) {
 			log.warn("A failure occurred during monitoring of {}/{}",
 					repository.getOrganization(), repository.getName(), ex);
 		}
@@ -73,8 +78,10 @@ class RepositoryMonitor {
 		try {
 			Page<Issue> page = this.gitHub.getIssues(repository.getOrganization(),
 					repository.getName());
-			monitorIssue(page, (issue, issueListener) -> issueListener.onOpenIssue(repository, issue));
-		} catch (Exception ex) {
+			monitorIssue(page, (issue, issueListener) -> issueListener
+					.onOpenIssue(repository, issue));
+		}
+		catch (Exception ex) {
 			log.warn("A failure occurred during monitoring of {}/{}",
 					repository.getOrganization(), repository.getName(), ex);
 		}
@@ -96,4 +103,5 @@ class RepositoryMonitor {
 			page = page.next();
 		}
 	}
+
 }

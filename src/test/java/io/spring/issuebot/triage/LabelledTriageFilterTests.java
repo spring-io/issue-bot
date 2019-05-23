@@ -39,14 +39,18 @@ public class LabelledTriageFilterTests {
 
 	@Test
 	public void issueWithLabels() {
-		assertThat(this.filter.triaged(this.repository, new Issue(null, null, null, null,
-				null, Arrays.asList(new Label("test")), null, null, null))).isTrue();
+		assertThat(
+				this.filter.triaged(this.repository,
+						new Issue(null, null, null, null, null,
+								Arrays.asList(new Label("test")), null, null, null)))
+										.isTrue();
 	}
 
 	@Test
 	public void issueWithNullLabels() {
 		assertThat(this.filter.triaged(this.repository,
-				new Issue(null, null, null, null, null, null, null, null, null))).isFalse();
+				new Issue(null, null, null, null, null, null, null, null, null)))
+						.isFalse();
 	}
 
 	@Test

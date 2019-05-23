@@ -5,5 +5,6 @@ import io.spring.issuebot.github.Issue;
 @FunctionalInterface
 public interface IssueOperation {
 
-  void run(Issue issue, IssueListener issueListener);
+	void run(Issue issue, IssueListener issueListener);
+
 }

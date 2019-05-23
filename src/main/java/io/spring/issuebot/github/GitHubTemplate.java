@@ -114,9 +114,10 @@ public class GitHubTemplate implements GitHubOperations {
 	}
 
 	@Override
-	public Page<Issue> getClosedIssuesWithLabel(String organization, String repository, String label) {
+	public Page<Issue> getClosedIssuesWithLabel(String organization, String repository,
+			String label) {
 		String url = "https://api.github.com/repos/" + organization + "/" + repository
-		+ "/issues?state=closed&labels=" + label;
+				+ "/issues?state=closed&labels=" + label;
 		return getPage(url, Issue[].class);
 	}
 
@@ -170,9 +171,8 @@ public class GitHubTemplate implements GitHubOperations {
 		}
 		URI uri = URI.create(issue.getLabelsUrl().replace("{/name}", "/" + encodedName));
 		log.info("Removing label {} on {}", labelName, uri);
-		ResponseEntity<Label[]> response = this.rest.exchange(
-				new RequestEntity<Void>(HttpMethod.DELETE, uri),
-				Label[].class);
+		ResponseEntity<Label[]> response = this.rest
+				.exchange(new RequestEntity<Void>(HttpMethod.DELETE, uri), Label[].class);
 		if (response.getStatusCode() != HttpStatus.OK) {
 			log.warn("Failed to remove label from issue. Response status: "
 					+ response.getStatusCode());
