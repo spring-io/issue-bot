@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import io.spring.issuebot.IssueMonitor;
 import io.spring.issuebot.IssueListener;
 import io.spring.issuebot.Repository;
 import java.util.Arrays;
@@ -25,8 +26,11 @@ public class ClosedIssuesListenerTest {
 
 	private final Repository repositoryOne = new Repository();
 
+	private final IssueMonitor issueMonitor = new IssueMonitor(
+			Arrays.asList(issueListenerOne, issueListenerTwo));
+
 	private ClosedIssuesListener closedIssuesListener = new ClosedIssuesListener(
-			this.gitHub, Arrays.asList(issueListenerOne, issueListenerTwo));
+			this.gitHub, issueMonitor);
 
 	@Before
 	public void setUp() {

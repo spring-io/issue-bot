@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import io.spring.issuebot.IssueMonitor;
 import io.spring.issuebot.IssueListener;
 import io.spring.issuebot.Repository;
 import java.util.Arrays;
@@ -23,8 +24,11 @@ public class OpenIssuesListenerTest {
 
 	private final Repository repositoryOne = new Repository();
 
-	private OpenIssuesListener openIssuesListener = new OpenIssuesListener(this.gitHub,
+	private final IssueMonitor issueMonitor = new IssueMonitor(
 			Arrays.asList(issueListenerOne, issueListenerTwo));
+
+	private OpenIssuesListener openIssuesListener = new OpenIssuesListener(this.gitHub,
+			issueMonitor);
 
 	@Before
 	public void setUp() {
