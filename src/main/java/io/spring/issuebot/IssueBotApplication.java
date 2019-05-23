@@ -18,7 +18,6 @@ package io.spring.issuebot;
 
 import java.util.List;
 
-import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.GitHubTemplate;
 import io.spring.issuebot.github.RegexLinkParser;
 
@@ -49,11 +48,10 @@ public class IssueBotApplication {
 	}
 
 	@Bean
-	RepositoryMonitor repositoryMonitor(GitHubOperations gitHub,
-			MonitoringProperties monitoringProperties,
-			List<IssueListener> issueListeners) {
-		return new RepositoryMonitor(gitHub, monitoringProperties.getRepositories(),
-				issueListeners);
+	RepositoryMonitor repositoryMonitor(MonitoringProperties monitoringProperties,
+			List<RepositoryListener> repositoryListeners) {
+		return new RepositoryMonitor(monitoringProperties.getRepositories(),
+				repositoryListeners);
 	}
 
 }

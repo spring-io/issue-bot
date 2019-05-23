@@ -17,13 +17,8 @@
 package io.spring.issuebot;
 
 import java.util.List;
-
-import io.spring.issuebot.github.GitHubOperations;
-import io.spring.issuebot.github.Issue;
-import io.spring.issuebot.github.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.scheduling.annotation.Scheduled;
 
 /**
@@ -35,17 +30,14 @@ class RepositoryMonitor {
 
 	private static final Logger log = LoggerFactory.getLogger(RepositoryMonitor.class);
 
-	private final GitHubOperations gitHub;
-
 	private final List<Repository> repositories;
 
-	private final List<IssueListener> issueListeners;
+	private final List<RepositoryListener> repositoryListeners;
 
-	RepositoryMonitor(GitHubOperations gitHub, List<Repository> repositories,
-			List<IssueListener> issueListeners) {
-		this.gitHub = gitHub;
+	RepositoryMonitor(List<Repository> repositories,
+			List<RepositoryListener> repositoryListeners) {
 		this.repositories = repositories;
-		this.issueListeners = issueListeners;
+		this.repositoryListeners = repositoryListeners;
 	}
 
 	@Scheduled(fixedRate = 5 * 60 * 1000)
@@ -53,54 +45,11 @@ class RepositoryMonitor {
 		for (Repository repository : this.repositories) {
 			log.info("Monitoring {}/{}", repository.getOrganization(),
 					repository.getName());
-			monitorOpenIssues(repository);
-			monitorClosedIssues(repository);
+			for (RepositoryListener repositoryListener : repositoryListeners) {
+				repositoryListener.handle(repository);
+			}
 			log.info("Monitoring of {}/{} completed", repository.getOrganization(),
 					repository.getName());
-		}
-	}
-
-	private void monitorClosedIssues(Repository repository) {
-		try {
-			Page<Issue> page = this.gitHub.getClosedIssuesWithLabel(
-					repository.getOrganization(), repository.getName(),
-					"status: waiting-for-triage");
-			monitorIssue(page, (issue, issueListener) -> issueListener
-					.onIssueClosure(repository, issue));
-		}
-		catch (Exception ex) {
-			log.warn("A failure occurred during monitoring of {}/{}",
-					repository.getOrganization(), repository.getName(), ex);
-		}
-	}
-
-	private void monitorOpenIssues(Repository repository) {
-		try {
-			Page<Issue> page = this.gitHub.getIssues(repository.getOrganization(),
-					repository.getName());
-			monitorIssue(page, (issue, issueListener) -> issueListener
-					.onOpenIssue(repository, issue));
-		}
-		catch (Exception ex) {
-			log.warn("A failure occurred during monitoring of {}/{}",
-					repository.getOrganization(), repository.getName(), ex);
-		}
-	}
-
-	private void monitorIssue(Page<Issue> page, IssueOperation issueOperation) {
-		while (page != null) {
-			for (Issue issue : page.getContent()) {
-				for (IssueListener issueListener : this.issueListeners) {
-					try {
-						issueOperation.run(issue, issueListener);
-					}
-					catch (Exception ex) {
-						log.warn("Listener '{}' failed when handling issue '{}'",
-								issueListener, issue, ex);
-					}
-				}
-			}
-			page = page.next();
 		}
 	}
 

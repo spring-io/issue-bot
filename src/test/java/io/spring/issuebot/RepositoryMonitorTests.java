@@ -16,20 +16,14 @@
 
 package io.spring.issuebot;
 
-import java.util.Arrays;
-
-import io.spring.issuebot.github.GitHubOperations;
-import io.spring.issuebot.github.Issue;
-import io.spring.issuebot.github.Page;
-import java.util.Collections;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+
+import java.util.Arrays;
+import java.util.Collections;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for {@link RepositoryMonitor}.
@@ -38,19 +32,19 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
  */
 public class RepositoryMonitorTests {
 
-	private final GitHubOperations gitHub = mock(GitHubOperations.class);
+	private final RepositoryListener repositoryListenerOne = mock(
+			RepositoryListener.class);
 
-	private final IssueListener issueListenerOne = mock(IssueListener.class);
-
-	private final IssueListener issueListenerTwo = mock(IssueListener.class);
+	private final RepositoryListener repositoryListenerTwo = mock(
+			RepositoryListener.class);
 
 	private final Repository repositoryOne = new Repository();
 
 	private final Repository repositoryTwo = new Repository();
 
-	private final RepositoryMonitor repositoryMonitor = new RepositoryMonitor(this.gitHub,
+	private final RepositoryMonitor repositoryMonitor = new RepositoryMonitor(
 			Arrays.asList(this.repositoryOne, this.repositoryTwo),
-			Arrays.asList(this.issueListenerOne, this.issueListenerTwo));
+			Arrays.asList(this.repositoryListenerOne, this.repositoryListenerTwo));
 
 	@Before
 	public void setUp() {
@@ -61,115 +55,28 @@ public class RepositoryMonitorTests {
 	}
 
 	@Test
-	public void repositoriesWithNoIssues() {
-		given(this.gitHub.getIssues("test", "one")).willReturn(null);
-		given(this.gitHub.getIssues("test", "two")).willReturn(null);
-		this.repositoryMonitor.monitor();
-		verifyNoMoreInteractions(this.issueListenerOne, this.issueListenerTwo);
+	public void noRepositories() {
+		RepositoryMonitor monitor = new RepositoryMonitor(Collections.emptyList(),
+				Arrays.asList(this.repositoryListenerOne, this.repositoryListenerTwo));
+		monitor.monitor();
+		verifyNoMoreInteractions(repositoryListenerOne, repositoryListenerTwo);
 	}
 
 	@Test
-	public void oneRepositoryWithOpenIssues() {
-		@SuppressWarnings("unchecked")
-		Page<Issue> page = mock(Page.class);
-		Issue issueOne = new Issue(null, null, null, null, null, null, null, null,
-				"open");
-		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null,
-				"open");
-		given(page.getContent()).willReturn(Arrays.asList(issueOne, issueTwo));
-		given(this.gitHub.getIssues("test", "one")).willReturn(page);
-		given(this.gitHub.getIssues("test", "two")).willReturn(null);
-		this.repositoryMonitor.monitor();
-		verify(this.issueListenerOne).onOpenIssue(this.repositoryOne, issueOne);
-		verify(this.issueListenerOne).onOpenIssue(this.repositoryOne, issueTwo);
-		verify(this.issueListenerTwo).onOpenIssue(this.repositoryOne, issueOne);
-		verify(this.issueListenerTwo).onOpenIssue(this.repositoryOne, issueTwo);
+	public void noIssueListeners() {
+		RepositoryMonitor monitor = new RepositoryMonitor(
+				Arrays.asList(repositoryOne, repositoryTwo), Collections.emptyList());
+		monitor.monitor();
+		verifyNoMoreInteractions(repositoryListenerTwo, repositoryListenerTwo);
 	}
 
 	@Test
-	public void onRepositoryWithClosedIssues() {
-		@SuppressWarnings("unchecked")
-		Page<Issue> page = mock(Page.class);
-		Issue issueOne = new Issue(null, null, null, null, null, null, null, null,
-				"closed");
-		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null,
-				"closed");
-		given(page.getContent()).willReturn(Arrays.asList(issueOne, issueTwo));
-		given(this.gitHub.getClosedIssuesWithLabel("test", "one",
-				"status: waiting-for-triage")).willReturn(page);
-		given(this.gitHub.getClosedIssuesWithLabel("test", "two",
-				"status: waiting-for-triage")).willReturn(null);
+	public void monitorDelegatesToListeners() {
 		this.repositoryMonitor.monitor();
-		verify(this.issueListenerOne).onIssueClosure(this.repositoryOne, issueOne);
-		verify(this.issueListenerOne).onIssueClosure(this.repositoryOne, issueTwo);
-		verify(this.issueListenerTwo).onIssueClosure(this.repositoryOne, issueOne);
-		verify(this.issueListenerTwo).onIssueClosure(this.repositoryOne, issueTwo);
-	}
-
-	@Test
-	public void bothRepositoriesWithOpenIssues() {
-		@SuppressWarnings("unchecked")
-		Page<Issue> page = mock(Page.class);
-		Issue issueOne = new Issue(null, null, null, null, null, null, null, null,
-				"open");
-		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null,
-				"open");
-		given(page.getContent()).willReturn(Arrays.asList(issueOne, issueTwo));
-		given(this.gitHub.getIssues("test", "one")).willReturn(page);
-		given(this.gitHub.getIssues("test", "two")).willReturn(page);
-		this.repositoryMonitor.monitor();
-		verify(this.issueListenerOne).onOpenIssue(this.repositoryOne, issueOne);
-		verify(this.issueListenerOne).onOpenIssue(this.repositoryOne, issueTwo);
-		verify(this.issueListenerTwo).onOpenIssue(this.repositoryOne, issueOne);
-		verify(this.issueListenerTwo).onOpenIssue(this.repositoryOne, issueTwo);
-		verify(this.issueListenerOne).onOpenIssue(this.repositoryTwo, issueOne);
-		verify(this.issueListenerOne).onOpenIssue(this.repositoryTwo, issueTwo);
-		verify(this.issueListenerTwo).onOpenIssue(this.repositoryTwo, issueOne);
-		verify(this.issueListenerTwo).onOpenIssue(this.repositoryTwo, issueTwo);
-	}
-
-	@Test
-	public void exceptionFromAnIssueListenerIsHandledGracefully() {
-		@SuppressWarnings("unchecked")
-		Page<Issue> page = mock(Page.class);
-		Issue issue = new Issue(null, null, null, null, null, null, null, null, "open");
-		given(page.getContent()).willReturn(Arrays.asList(issue));
-		given(this.gitHub.getIssues("test", "one")).willReturn(page);
-		willThrow(new RuntimeException()).given(this.issueListenerOne)
-				.onOpenIssue(this.repositoryOne, issue);
-		this.repositoryMonitor.monitor();
-		verify(this.issueListenerOne).onOpenIssue(this.repositoryOne, issue);
-		verify(this.issueListenerTwo).onOpenIssue(this.repositoryOne, issue);
-	}
-
-	@Test
-	public void exceptionFromAnIssueListenerIsHandledGracefullyForClosedIssues() {
-		@SuppressWarnings("unchecked")
-		Page<Issue> page = mock(Page.class);
-		Issue issue = new Issue(null, null, null, null, null, null, null, null, "closed");
-		given(page.getContent()).willReturn(Collections.singletonList(issue));
-		given(this.gitHub.getClosedIssuesWithLabel("test", "one",
-				"status: waiting-for-triage")).willReturn(page);
-		willThrow(new RuntimeException()).given(this.issueListenerOne)
-				.onOpenIssue(this.repositoryOne, issue);
-		this.repositoryMonitor.monitor();
-		verify(this.issueListenerOne).onIssueClosure(this.repositoryOne, issue);
-		verify(this.issueListenerTwo).onIssueClosure(this.repositoryOne, issue);
-	}
-
-	@Test
-	public void exceptionFromGitHubIsHandledGracefully() {
-		given(this.gitHub.getIssues("test", "one")).willThrow(new RuntimeException());
-		this.repositoryMonitor.monitor();
-		verify(this.gitHub).getIssues("test", "one");
-	}
-
-	@Test
-	public void exceptionFromGitHubIsHandledGracefullyForClosedIssues() {
-		given(this.gitHub.getClosedIssuesWithLabel("test", "one",
-				"status: waiting-for-triage")).willThrow(new RuntimeException());
-		this.repositoryMonitor.monitor();
-		verify(this.gitHub).getIssues("test", "one");
+		verify(repositoryListenerOne).handle(repositoryOne);
+		verify(repositoryListenerOne).handle(repositoryTwo);
+		verify(repositoryListenerTwo).handle(repositoryOne);
+		verify(repositoryListenerTwo).handle(repositoryTwo);
 	}
 
 }
