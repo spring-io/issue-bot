@@ -16,8 +16,7 @@ public class ClosedIssuesListener implements RepositoryListener {
 
 	private final IssueMonitor issueMonitor;
 
-	public ClosedIssuesListener(GitHubOperations gitHub,
-			IssueMonitor issueMonitor) {
+	public ClosedIssuesListener(GitHubOperations gitHub, IssueMonitor issueMonitor) {
 		this.issueMonitor = issueMonitor;
 		this.gitHub = gitHub;
 	}
@@ -28,8 +27,10 @@ public class ClosedIssuesListener implements RepositoryListener {
 			Page<Issue> page = this.gitHub.getClosedIssuesWithLabel(
 					repository.getOrganization(), repository.getName(),
 					"status: waiting-for-triage");
-			issueMonitor.monitorIssue(page, (issue, issueListener) -> issueListener.onIssueClosure(repository, issue));
-		} catch (Exception ex) {
+			issueMonitor.monitorIssue(page, (issue, issueListener) -> issueListener
+					.onIssueClosure(repository, issue));
+		}
+		catch (Exception ex) {
 			log.warn("A failure occurred during monitoring of {}/{}",
 					repository.getOrganization(), repository.getName(), ex);
 		}

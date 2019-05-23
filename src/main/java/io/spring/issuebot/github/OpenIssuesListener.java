@@ -13,10 +13,10 @@ public class OpenIssuesListener implements RepositoryListener {
 	private static final Logger log = LoggerFactory.getLogger(OpenIssuesListener.class);
 
 	private final GitHubOperations gitHub;
+
 	private final IssueMonitor issueMonitor;
 
-	public OpenIssuesListener(GitHubOperations gitHub,
-			IssueMonitor issueMonitor) {
+	public OpenIssuesListener(GitHubOperations gitHub, IssueMonitor issueMonitor) {
 		this.issueMonitor = issueMonitor;
 		this.gitHub = gitHub;
 	}
@@ -26,7 +26,8 @@ public class OpenIssuesListener implements RepositoryListener {
 		try {
 			Page<Issue> page = this.gitHub.getIssues(repository.getOrganization(),
 					repository.getName());
-			 issueMonitor.monitorIssue(page, (issue, issueListener) -> issueListener.onOpenIssue(repository, issue));
+			issueMonitor.monitorIssue(page, (issue, issueListener) -> issueListener
+					.onOpenIssue(repository, issue));
 		}
 		catch (Exception ex) {
 			log.warn("A failure occurred during monitoring of {}/{}",

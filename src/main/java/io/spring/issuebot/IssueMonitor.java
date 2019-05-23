@@ -24,7 +24,8 @@ public class IssueMonitor {
 				for (IssueListener issueListener : this.issueListeners) {
 					try {
 						issueOperation.run(issue, issueListener);
-					} catch (Exception ex) {
+					}
+					catch (Exception ex) {
 						log.warn("Listener '{}' failed when handling issue '{}'",
 								issueListener, issue, ex);
 					}
@@ -40,4 +41,5 @@ public class IssueMonitor {
 		void run(Issue issue, IssueListener issueListener);
 
 	}
+
 }
