@@ -27,7 +27,6 @@ import io.spring.issuebot.github.Event;
 import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.Issue;
 import io.spring.issuebot.github.Label;
-import io.spring.issuebot.github.PullRequest;
 import io.spring.issuebot.github.StandardPage;
 import io.spring.issuebot.github.User;
 import org.junit.Before;
@@ -62,14 +61,6 @@ public class FeedbackIssueListenerTests {
 		this.repository.setCollaborators(this.collaborators);
 		this.listener = new FeedbackIssueListener(this.gitHub, "required",
 				Arrays.asList(this.repository), "IssueBot", this.feedbackListener);
-	}
-
-	@Test
-	public void pullRequestsAreIgnored() {
-		Issue issue = new Issue(null, null, null, null, null,
-				Arrays.asList(new Label("required")), null, new PullRequest("url"));
-		this.listener.onOpenIssue(this.repository, issue);
-		verifyNoMoreInteractions(this.gitHub, this.feedbackListener);
 	}
 
 	@Test

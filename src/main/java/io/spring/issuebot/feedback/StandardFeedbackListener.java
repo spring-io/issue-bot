@@ -70,6 +70,9 @@ final class StandardFeedbackListener implements FeedbackListener {
 	@Override
 	public void feedbackRequired(Repository repository, Issue issue,
 			OffsetDateTime requestTime) {
+		if (issue.getPullRequest() != null) {
+			return;
+		}
 		OffsetDateTime now = OffsetDateTime.now();
 		if (requestTime.plusDays(14).isBefore(now)) {
 			close(repository, issue);
