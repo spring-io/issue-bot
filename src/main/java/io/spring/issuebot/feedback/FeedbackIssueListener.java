@@ -84,7 +84,7 @@ final class FeedbackIssueListener implements IssueListener {
 	}
 
 	private boolean waitingForFeedback(Issue issue) {
-		return issue.getPullRequest() == null && labelledAsWaitingForFeedback(issue);
+		return labelledAsWaitingForFeedback(issue);
 	}
 
 	private boolean labelledAsWaitingForFeedback(Issue issue) {

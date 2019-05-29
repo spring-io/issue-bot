@@ -31,6 +31,15 @@ issuebot:
           - jgrandja
           - jzheaux
           - rwinch
+      - organization: spring-projects
+        name: spring-session
+        collaborators:
+          - eleftherias
+          - fhanik
+          - jgrandja
+          - jzheaux
+          - rwinch
+          - vpavic
   triage:
     label: "status: waiting-for-triage"
   feedback:
