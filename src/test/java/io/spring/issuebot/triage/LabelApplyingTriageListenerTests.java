@@ -37,9 +37,16 @@ public class LabelApplyingTriageListenerTests {
 
 	@Test
 	public void requiresTriage() {
-		Issue issue = new Issue(null, null, null, null, null, null, null, null);
+		Issue issue = new Issue(null, null, null, null, null, null, null, null, null);
 		this.listener.requiresTriage(issue);
 		verify(this.gitHub).addLabel(issue, "test");
+	}
+
+	@Test
+	public void doesNotRequireTriage() {
+		Issue issue = new Issue(null, null, null, null, null, null, null, null, null);
+		this.listener.doesNotRequireTriage(issue);
+		verify(this.gitHub).removeLabel(issue, "test");
 	}
 
 }

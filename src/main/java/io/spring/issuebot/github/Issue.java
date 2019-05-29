@@ -44,6 +44,8 @@ public class Issue {
 
 	private final PullRequest pullRequest;
 
+	private final String state;
+
 	/**
 	 * Creates a new {@code Issue}.
 	 * @param url the url of the issue in the GitHub API
@@ -54,6 +56,7 @@ public class Issue {
 	 * @param labels the labels applied to the issue
 	 * @param milestone the milestone applied to the issue
 	 * @param pullRequest details of the pull request (if this issue is a pull request)
+	 * @param state the state of the issue, open or closed
 	 */
 	@JsonCreator
 	public Issue(@JsonProperty("url") String url,
@@ -62,7 +65,8 @@ public class Issue {
 			@JsonProperty("labels_url") String labelsUrl, @JsonProperty("user") User user,
 			@JsonProperty("labels") List<Label> labels,
 			@JsonProperty("milestone") Milestone milestone,
-			@JsonProperty("pull_request") PullRequest pullRequest) {
+			@JsonProperty("pull_request") PullRequest pullRequest,
+			@JsonProperty("state") String state) {
 		this.url = url;
 		this.commentsUrl = commentsUrl;
 		this.eventsUrl = eventsUrl;
@@ -71,6 +75,7 @@ public class Issue {
 		this.labels = labels;
 		this.milestone = milestone;
 		this.pullRequest = pullRequest;
+		this.state = state;
 	}
 
 	String getUrl() {
@@ -103,6 +108,18 @@ public class Issue {
 
 	public PullRequest getPullRequest() {
 		return this.pullRequest;
+	}
+
+	public String getState() {
+		return this.state;
+	}
+
+	public boolean isOpen() {
+		return this.getState().equals("open");
+	}
+
+	public boolean isClosed() {
+		return this.getState().equals("closed");
 	}
 
 	@Override

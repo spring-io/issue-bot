@@ -66,7 +66,7 @@ public class FeedbackIssueListenerTests {
 	@Test
 	public void issuesWithFeedbackRequiredLabelAreIgnored() {
 		Issue issue = new Issue(null, null, null, null, null,
-				Arrays.asList(new Label("something-else")), null, null);
+				Arrays.asList(new Label("something-else")), null, null, null);
 		this.listener.onOpenIssue(this.repository, issue);
 		verifyNoMoreInteractions(this.gitHub, this.feedbackListener);
 	}
@@ -74,7 +74,7 @@ public class FeedbackIssueListenerTests {
 	@Test
 	public void feedbackRequiredForLabeledIssueWithEvent() {
 		Issue issue = new Issue(null, null, null, null, null,
-				Arrays.asList(new Label("required")), null, null);
+				Arrays.asList(new Label("required")), null, null, null);
 		OffsetDateTime requestTime = OffsetDateTime.now();
 		given(this.gitHub.getEvents(issue)).willReturn(new StandardPage<>(
 				Arrays.asList(new Event("labeled", requestTime, new Label("required"))),
@@ -87,7 +87,7 @@ public class FeedbackIssueListenerTests {
 	@Test
 	public void feedbackProvidedAfterCommentFromNonCollaborator() {
 		Issue issue = new Issue("issue_url", null, null, null, null,
-				Arrays.asList(new Label("required")), null, null);
+				Arrays.asList(new Label("required")), null, null, null);
 		OffsetDateTime requestTime = OffsetDateTime.now().minusDays(1);
 		given(this.gitHub.getEvents(issue)).willReturn(new StandardPage<>(
 				Arrays.asList(new Event("labeled", requestTime, new Label("required"))),
@@ -102,7 +102,7 @@ public class FeedbackIssueListenerTests {
 	@Test
 	public void feedbackRequiredAfterCommentFromNonCollaboratorBeforeRequest() {
 		Issue issue = new Issue("issue_url", null, null, null, null,
-				Arrays.asList(new Label("required")), null, null);
+				Arrays.asList(new Label("required")), null, null, null);
 		OffsetDateTime requestTime = OffsetDateTime.now().minusDays(1);
 		given(this.gitHub.getEvents(issue)).willReturn(new StandardPage<>(
 				Arrays.asList(new Event("labeled", requestTime, new Label("required"))),
@@ -118,7 +118,7 @@ public class FeedbackIssueListenerTests {
 	@Test
 	public void feedbackRequiredAfterCommentFromCollaborator() {
 		Issue issue = new Issue(null, null, null, null, null,
-				Arrays.asList(new Label("required")), null, null);
+				Arrays.asList(new Label("required")), null, null, null);
 		OffsetDateTime requestTime = OffsetDateTime.now().minusDays(1);
 		given(this.gitHub.getEvents(issue)).willReturn(new StandardPage<>(
 				Arrays.asList(new Event("labeled", requestTime, new Label("required"))),
@@ -134,7 +134,7 @@ public class FeedbackIssueListenerTests {
 	@Test
 	public void feedbackRequiredAfterCommentFromIssueBot() {
 		Issue issue = new Issue(null, null, null, null, null,
-				Arrays.asList(new Label("required")), null, null);
+				Arrays.asList(new Label("required")), null, null, null);
 		OffsetDateTime requestTime = OffsetDateTime.now().minusDays(1);
 		given(this.gitHub.getEvents(issue)).willReturn(new StandardPage<>(
 				Arrays.asList(new Event("labeled", requestTime, new Label("required"))),
@@ -150,7 +150,7 @@ public class FeedbackIssueListenerTests {
 	@Test
 	public void issueWithNoMatchingLabeledEventIsIgnored() {
 		Issue issue = new Issue(null, null, null, null, null,
-				Arrays.asList(new Label("required")), null, null);
+				Arrays.asList(new Label("required")), null, null, null);
 		OffsetDateTime requestTime = OffsetDateTime.now();
 		given(this.gitHub.getEvents(issue)).willReturn(new StandardPage<>(
 				Arrays.asList(
@@ -163,7 +163,7 @@ public class FeedbackIssueListenerTests {
 	@Test
 	public void eventsWithWrongTypeAreIgnored() {
 		Issue issue = new Issue(null, null, null, null, null,
-				Arrays.asList(new Label("required")), null, null);
+				Arrays.asList(new Label("required")), null, null, null);
 		OffsetDateTime requestTime = OffsetDateTime.now();
 		given(this.gitHub.getEvents(issue)).willReturn(new StandardPage<>(
 				Arrays.asList(new Event("milestoned", requestTime, null)), () -> null));

@@ -49,7 +49,7 @@ public class StandardFeedbackListenerTests {
 			Arrays.asList(this.issueListener));
 
 	private final Issue issue = new Issue(null, null, null, null, null, new ArrayList<>(),
-			null, null);
+			null, null, null);
 
 	private final Issue pullRequest = new Issue(null, null, null, null, null,
 			new ArrayList<>(), null, new PullRequest(null));

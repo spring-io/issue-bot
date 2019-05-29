@@ -48,7 +48,7 @@ public class TriageIssueListenerTests {
 
 	@Test
 	public void listenerIsCalledWhenIssueRequiresTriage() {
-		Issue issue = new Issue(null, null, null, null, null, null, null, null);
+		Issue issue = new Issue(null, null, null, null, null, null, null, null, null);
 		given(this.triageFilterOne.triaged(this.repository, issue)).willReturn(false);
 		given(this.triageFilterTwo.triaged(this.repository, issue)).willReturn(false);
 		this.issueListener.onOpenIssue(this.repository, issue);
@@ -58,8 +58,17 @@ public class TriageIssueListenerTests {
 	}
 
 	@Test
+	public void listenerIsCalledWhenClosedIssueRequiresTriage() {
+		Issue issue = new Issue(null, null, null, null, null, null, null, null, null);
+		given(this.triageFilterOne.triaged(this.repository, issue)).willReturn(false);
+		given(this.triageFilterTwo.triaged(this.repository, issue)).willReturn(false);
+		this.issueListener.onIssueClosure(this.repository, issue);
+		verify(this.listener).doesNotRequireTriage(issue);
+	}
+
+	@Test
 	public void listenerIsNotCalledWhenIssueHasAlreadyBeenTriaged() {
-		Issue issue = new Issue(null, null, null, null, null, null, null, null);
+		Issue issue = new Issue(null, null, null, null, null, null, null, null, null);
 		given(this.triageFilterOne.triaged(this.repository, issue)).willReturn(true);
 		this.issueListener.onOpenIssue(this.repository, issue);
 		verify(this.triageFilterOne).triaged(this.repository, issue);
