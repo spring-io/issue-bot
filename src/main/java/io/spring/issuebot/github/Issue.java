@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,13 +56,10 @@ public class Issue {
 	 * @param pullRequest details of the pull request (if this issue is a pull request)
 	 */
 	@JsonCreator
-	public Issue(@JsonProperty("url") String url,
-			@JsonProperty("comments_url") String commentsUrl,
-			@JsonProperty("events_url") String eventsUrl,
-			@JsonProperty("labels_url") String labelsUrl, @JsonProperty("user") User user,
-			@JsonProperty("labels") List<Label> labels,
-			@JsonProperty("milestone") Milestone milestone,
-			@JsonProperty("pull_request") PullRequest pullRequest) {
+	public Issue(@JsonProperty("url") String url, @JsonProperty("comments_url") String commentsUrl,
+			@JsonProperty("events_url") String eventsUrl, @JsonProperty("labels_url") String labelsUrl,
+			@JsonProperty("user") User user, @JsonProperty("labels") List<Label> labels,
+			@JsonProperty("milestone") Milestone milestone, @JsonProperty("pull_request") PullRequest pullRequest) {
 		this.url = url;
 		this.commentsUrl = commentsUrl;
 		this.eventsUrl = eventsUrl;

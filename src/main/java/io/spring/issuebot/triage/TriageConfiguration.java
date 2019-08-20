@@ -36,16 +36,12 @@ import org.springframework.context.annotation.Configuration;
 class TriageConfiguration {
 
 	@Bean
-	TriageIssueListener triageIssueListener(GitHubOperations gitHubOperations,
-			TriageProperties triageProperties, MonitoringProperties monitoringProperties,
-			GitHubProperties gitHubProperties) {
+	TriageIssueListener triageIssueListener(GitHubOperations gitHubOperations, TriageProperties triageProperties,
+			MonitoringProperties monitoringProperties, GitHubProperties gitHubProperties) {
 		return new TriageIssueListener(
-				Arrays.asList(
-						new OpenedByCollaboratorTriageFilter(
-								monitoringProperties.getRepositories()),
+				Arrays.asList(new OpenedByCollaboratorTriageFilter(monitoringProperties.getRepositories()),
 						new LabelledTriageFilter(), new MilestoneAppliedTriageFilter()),
-				new LabelApplyingTriageListener(gitHubOperations,
-						triageProperties.getLabel()));
+				new LabelApplyingTriageListener(gitHubOperations, triageProperties.getLabel()));
 	}
 
 }

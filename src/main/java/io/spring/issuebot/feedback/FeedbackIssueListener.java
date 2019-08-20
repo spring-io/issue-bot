@@ -47,15 +47,13 @@ final class FeedbackIssueListener implements IssueListener {
 
 	private final FeedbackListener feedbackListener;
 
-	FeedbackIssueListener(GitHubOperations gitHub, String labelName,
-			List<Repository> repositories, String username,
+	FeedbackIssueListener(GitHubOperations gitHub, String labelName, List<Repository> repositories, String username,
 			FeedbackListener feedbackListener) {
 		this.gitHub = gitHub;
 		this.labelName = labelName;
 		this.repositoryCollaborators = repositories.stream()
 				.collect(Collectors.toMap(Function.identity(), (repository) -> {
-					List<String> collaborators = new ArrayList<>(
-							repository.getCollaborators());
+					List<String> collaborators = new ArrayList<>(repository.getCollaborators());
 					collaborators.add(username);
 					return collaborators;
 				}));
@@ -72,10 +70,8 @@ final class FeedbackIssueListener implements IssueListener {
 		}
 	}
 
-	private void processWaitingIssue(Repository repository, Issue issue,
-			OffsetDateTime waitingSince) {
-		if (commentedSince(waitingSince, issue,
-				this.repositoryCollaborators.get(repository))) {
+	private void processWaitingIssue(Repository repository, Issue issue, OffsetDateTime waitingSince) {
+		if (commentedSince(waitingSince, issue, this.repositoryCollaborators.get(repository))) {
 			this.feedbackListener.feedbackProvided(repository, issue);
 		}
 		else {
@@ -101,8 +97,7 @@ final class FeedbackIssueListener implements IssueListener {
 		Page<Event> page = this.gitHub.getEvents(issue);
 		while (page != null) {
 			for (Event event : page.getContent()) {
-				if (Event.Type.LABELED.equals(event.getType())
-						&& this.labelName.equals(event.getLabel().getName())) {
+				if (Event.Type.LABELED.equals(event.getType()) && this.labelName.equals(event.getLabel().getName())) {
 					createdAt = event.getCreationTime();
 				}
 			}
@@ -111,8 +106,7 @@ final class FeedbackIssueListener implements IssueListener {
 		return createdAt;
 	}
 
-	private boolean commentedSince(OffsetDateTime waitingForFeedbackSince, Issue issue,
-			List<String> collaborators) {
+	private boolean commentedSince(OffsetDateTime waitingForFeedbackSince, Issue issue, List<String> collaborators) {
 		Page<Comment> page = this.gitHub.getComments(issue);
 		while (page != null) {
 			for (Comment comment : page.getContent()) {

@@ -40,22 +40,19 @@ public class OpenedByCollaboratorTriageFilterTests {
 	@Before
 	public void setUp() {
 		this.repository.setCollaborators(Arrays.asList("Alice", "Brenda", "Charlie"));
-		this.filter = new OpenedByCollaboratorTriageFilter(
-				Arrays.asList(this.repository));
+		this.filter = new OpenedByCollaboratorTriageFilter(Arrays.asList(this.repository));
 	}
 
 	@Test
 	public void openedByCollaborator() {
 		assertThat(this.filter.triaged(this.repository,
-				new Issue(null, null, null, null, new User("Alice"), null, null, null)))
-						.isTrue();
+				new Issue(null, null, null, null, new User("Alice"), null, null, null))).isTrue();
 	}
 
 	@Test
 	public void openedByAnotherUser() {
 		assertThat(this.filter.triaged(this.repository,
-				new Issue(null, null, null, null, new User("Debbie"), null, null, null)))
-						.isFalse();
+				new Issue(null, null, null, null, new User("Debbie"), null, null, null))).isFalse();
 	}
 
 }

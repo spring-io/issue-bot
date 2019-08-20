@@ -34,8 +34,7 @@ final class MilestoneAppliedTriageFilter implements TriageFilter {
 	@Override
 	public boolean triaged(Repository repository, Issue issue) {
 		if (issue.getMilestone() != null) {
-			log.debug("Issue has been triaged. It has been added to milestone {}",
-					issue.getMilestone().getTitle());
+			log.debug("Issue has been triaged. It has been added to milestone {}", issue.getMilestone().getTitle());
 			return true;
 		}
 		return false;

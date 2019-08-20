@@ -110,8 +110,7 @@ public class RepositoryMonitorTests {
 		Issue issue = new Issue(null, null, null, null, null, null, null, null);
 		given(page.getContent()).willReturn(Arrays.asList(issue));
 		given(this.gitHub.getIssues("test", "one")).willReturn(page);
-		willThrow(new RuntimeException()).given(this.issueListenerOne)
-				.onOpenIssue(this.repositoryOne, issue);
+		willThrow(new RuntimeException()).given(this.issueListenerOne).onOpenIssue(this.repositoryOne, issue);
 		this.repositoryMonitor.monitor();
 		verify(this.issueListenerOne).onOpenIssue(this.repositoryOne, issue);
 		verify(this.issueListenerTwo).onOpenIssue(this.repositoryOne, issue);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,8 +45,7 @@ public class Event {
 	 * @param label the label associated with the event
 	 */
 	@JsonCreator
-	public Event(@JsonProperty("event") String type,
-			@JsonProperty("created_at") OffsetDateTime creationTime,
+	public Event(@JsonProperty("event") String type, @JsonProperty("created_at") OffsetDateTime creationTime,
 			@JsonProperty("label") Label label) {
 		this.type = Type.valueFrom(type);
 		this.creationTime = creationTime;

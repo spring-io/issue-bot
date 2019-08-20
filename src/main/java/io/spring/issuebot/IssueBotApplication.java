@@ -49,11 +49,9 @@ public class IssueBotApplication {
 	}
 
 	@Bean
-	RepositoryMonitor repositoryMonitor(GitHubOperations gitHub,
-			MonitoringProperties monitoringProperties,
+	RepositoryMonitor repositoryMonitor(GitHubOperations gitHub, MonitoringProperties monitoringProperties,
 			List<IssueListener> issueListeners) {
-		return new RepositoryMonitor(gitHub, monitoringProperties.getRepositories(),
-				issueListeners);
+		return new RepositoryMonitor(gitHub, monitoringProperties.getRepositories(), issueListeners);
 	}
 
 }

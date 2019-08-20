@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,31 +85,24 @@ public class GitHubTemplate implements GitHubOperations {
 		rest.setErrorHandler(new DefaultResponseErrorHandler() {
 			@Override
 			public void handleError(ClientHttpResponse response) throws IOException {
-				if (response.getStatusCode() == HttpStatus.FORBIDDEN && response
-						.getHeaders().getFirst("X-RateLimit-Remaining").equals("0")) {
-					throw new IllegalStateException(
-							"Rate limit exceeded. Limit will reset at "
-									+ new Date(Long
-											.valueOf(response.getHeaders()
-													.getFirst("X-RateLimit-Reset"))
-											* 1000));
+				if (response.getStatusCode() == HttpStatus.FORBIDDEN
+						&& response.getHeaders().getFirst("X-RateLimit-Remaining").equals("0")) {
+					throw new IllegalStateException("Rate limit exceeded. Limit will reset at "
+							+ new Date(Long.valueOf(response.getHeaders().getFirst("X-RateLimit-Reset")) * 1000));
 				}
 			}
 		});
 		BufferingClientHttpRequestFactory bufferingClient = new BufferingClientHttpRequestFactory(
 				new HttpComponentsClientHttpRequestFactory());
 		rest.setRequestFactory(bufferingClient);
-		rest.setInterceptors(Collections
-				.singletonList(new BasicAuthorizationInterceptor(username, password)));
-		rest.setMessageConverters(
-				Arrays.asList(new ErrorLoggingMappingJackson2HttpMessageConverter()));
+		rest.setInterceptors(Collections.singletonList(new BasicAuthorizationInterceptor(username, password)));
+		rest.setMessageConverters(Arrays.asList(new ErrorLoggingMappingJackson2HttpMessageConverter()));
 		return rest;
 	}
 
 	@Override
 	public Page<Issue> getIssues(String organization, String repository) {
-		String url = "https://api.github.com/repos/" + organization + "/" + repository
-				+ "/issues";
+		String url = "https://api.github.com/repos/" + organization + "/" + repository + "/issues";
 		return getPage(url, Issue[].class);
 	}
 
@@ -128,8 +121,7 @@ public class GitHubTemplate implements GitHubOperations {
 			return null;
 		}
 		ResponseEntity<T[]> contents = this.rest.getForEntity(url, type);
-		return new StandardPage<>(Arrays.asList(contents.getBody()),
-				() -> getPage(getNextUrl(contents), type));
+		return new StandardPage<>(Arrays.asList(contents.getBody()), () -> getPage(getNextUrl(contents), type));
 	}
 
 	private String getNextUrl(ResponseEntity<?> response) {
@@ -140,16 +132,13 @@ public class GitHubTemplate implements GitHubOperations {
 	public Issue addLabel(Issue issue, String labelName) {
 		URI uri = URI.create(issue.getLabelsUrl().replace("{/name}", ""));
 		log.info("Adding label {} to {}", labelName, uri);
-		ResponseEntity<Label[]> response = this.rest.exchange(
-				new RequestEntity<>(Arrays.asList(labelName), HttpMethod.POST, uri),
-				Label[].class);
+		ResponseEntity<Label[]> response = this.rest
+				.exchange(new RequestEntity<>(Arrays.asList(labelName), HttpMethod.POST, uri), Label[].class);
 		if (response.getStatusCode() != HttpStatus.OK) {
-			log.warn("Failed to add label to issue. Response status: "
-					+ response.getStatusCode());
+			log.warn("Failed to add label to issue. Response status: " + response.getStatusCode());
 		}
-		return new Issue(issue.getUrl(), issue.getCommentsUrl(), issue.getEventsUrl(),
-				issue.getLabelsUrl(), issue.getUser(), Arrays.asList(response.getBody()),
-				issue.getMilestone(), issue.getPullRequest());
+		return new Issue(issue.getUrl(), issue.getCommentsUrl(), issue.getEventsUrl(), issue.getLabelsUrl(),
+				issue.getUser(), Arrays.asList(response.getBody()), issue.getMilestone(), issue.getPullRequest());
 	}
 
 	@Override
@@ -161,37 +150,30 @@ public class GitHubTemplate implements GitHubOperations {
 		catch (URISyntaxException ex) {
 			throw new RuntimeException(ex);
 		}
-		ResponseEntity<Label[]> response = this.rest.exchange(
-				new RequestEntity<Void>(HttpMethod.DELETE, URI.create(
-						issue.getLabelsUrl().replace("{/name}", "/" + encodedName))),
-				Label[].class);
+		ResponseEntity<Label[]> response = this.rest.exchange(new RequestEntity<Void>(HttpMethod.DELETE,
+				URI.create(issue.getLabelsUrl().replace("{/name}", "/" + encodedName))), Label[].class);
 		if (response.getStatusCode() != HttpStatus.OK) {
-			log.warn("Failed to remove label from issue. Response status: "
-					+ response.getStatusCode());
+			log.warn("Failed to remove label from issue. Response status: " + response.getStatusCode());
 		}
-		return new Issue(issue.getUrl(), issue.getCommentsUrl(), issue.getEventsUrl(),
-				issue.getLabelsUrl(), issue.getUser(), Arrays.asList(response.getBody()),
-				issue.getMilestone(), issue.getPullRequest());
+		return new Issue(issue.getUrl(), issue.getCommentsUrl(), issue.getEventsUrl(), issue.getLabelsUrl(),
+				issue.getUser(), Arrays.asList(response.getBody()), issue.getMilestone(), issue.getPullRequest());
 	}
 
 	@Override
 	public Comment addComment(Issue issue, String comment) {
 		Map<String, String> body = new HashMap<>();
 		body.put("body", comment);
-		return this.rest.postForEntity(issue.getCommentsUrl(), body, Comment.class)
-				.getBody();
+		return this.rest.postForEntity(issue.getCommentsUrl(), body, Comment.class).getBody();
 	}
 
 	@Override
 	public Issue close(Issue issue) {
 		Map<String, String> body = new HashMap<>();
 		body.put("state", "closed");
-		ResponseEntity<Issue> response = this.rest.exchange(
-				new RequestEntity<>(body, HttpMethod.PATCH, URI.create(issue.getUrl())),
-				Issue.class);
+		ResponseEntity<Issue> response = this.rest
+				.exchange(new RequestEntity<>(body, HttpMethod.PATCH, URI.create(issue.getUrl())), Issue.class);
 		if (response.getStatusCode() != HttpStatus.OK) {
-			log.warn("Failed to close issue. Response status: "
-					+ response.getStatusCode());
+			log.warn("Failed to close issue. Response status: " + response.getStatusCode());
 		}
 		return response.getBody();
 	}
@@ -202,8 +184,7 @@ public class GitHubTemplate implements GitHubOperations {
 		private static final Charset CHARSET_UTF_8 = Charset.forName("UTF-8");
 
 		@Override
-		public Object read(Type type, Class<?> contextClass,
-				HttpInputMessage inputMessage)
+		public Object read(Type type, Class<?> contextClass, HttpInputMessage inputMessage)
 				throws IOException, HttpMessageNotReadableException {
 			try {
 				return super.read(type, contextClass, inputMessage);
@@ -212,8 +193,7 @@ public class GitHubTemplate implements GitHubOperations {
 				throw ex;
 			}
 			catch (HttpMessageNotReadableException ex) {
-				log.error("Failed to create {} from {}", type.getTypeName(),
-						read(inputMessage), ex);
+				log.error("Failed to create {} from {}", type.getTypeName(), read(inputMessage), ex);
 				throw ex;
 			}
 		}
@@ -224,8 +204,7 @@ public class GitHubTemplate implements GitHubOperations {
 
 	}
 
-	private static class BasicAuthorizationInterceptor
-			implements ClientHttpRequestInterceptor {
+	private static class BasicAuthorizationInterceptor implements ClientHttpRequestInterceptor {
 
 		private static final Charset UTF_8 = Charset.forName("UTF-8");
 
@@ -239,10 +218,9 @@ public class GitHubTemplate implements GitHubOperations {
 		}
 
 		@Override
-		public ClientHttpResponse intercept(HttpRequest request, byte[] body,
-				ClientHttpRequestExecution execution) throws IOException {
-			String token = Base64Utils.encodeToString(
-					(this.username + ":" + this.password).getBytes(UTF_8));
+		public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
+				throws IOException {
+			String token = Base64Utils.encodeToString((this.username + ":" + this.password).getBytes(UTF_8));
 			request.getHeaders().add("Authorization", "Basic " + token);
 			return execution.execute(request, body);
 		}

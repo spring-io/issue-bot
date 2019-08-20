@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,8 +56,7 @@ public class RegexLinkParserTests {
 
 	@Test
 	public void multipleLinks() {
-		Map<String, String> links = this.linkParser
-				.parse("<url-one>; rel=\"foo\", <url-two>; rel=\"bar\"");
+		Map<String, String> links = this.linkParser.parse("<url-one>; rel=\"foo\", <url-two>; rel=\"bar\"");
 		assertThat(links).hasSize(2);
 		assertThat(links).containsEntry("foo", "url-one");
 		assertThat(links).containsEntry("bar", "url-two");

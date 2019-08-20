@@ -43,16 +43,14 @@ public class StandardFeedbackListenerTests {
 
 	private final IssueListener issueListener = mock(IssueListener.class);
 
-	private final FeedbackListener listener = new StandardFeedbackListener(this.gitHub,
-			"feedback-provided", "feedback-required", "feedback-reminder",
-			"Please provide requested feedback", "Closing due to lack of feedback",
-			Arrays.asList(this.issueListener));
+	private final FeedbackListener listener = new StandardFeedbackListener(this.gitHub, "feedback-provided",
+			"feedback-required", "feedback-reminder", "Please provide requested feedback",
+			"Closing due to lack of feedback", Arrays.asList(this.issueListener));
 
-	private final Issue issue = new Issue(null, null, null, null, null, new ArrayList<>(),
-			null, null);
+	private final Issue issue = new Issue(null, null, null, null, null, new ArrayList<>(), null, null);
 
-	private final Issue pullRequest = new Issue(null, null, null, null, null,
-			new ArrayList<>(), null, new PullRequest(null));
+	private final Issue pullRequest = new Issue(null, null, null, null, null, new ArrayList<>(), null,
+			new PullRequest(null));
 
 	private final Repository repository = new Repository();
 
@@ -98,31 +96,27 @@ public class StandardFeedbackListenerTests {
 
 	@Test
 	public void feedbackRequiredAndReminderDue() {
-		this.listener.feedbackRequired(this.repository, this.issue,
-				OffsetDateTime.now().minusDays(8));
+		this.listener.feedbackRequired(this.repository, this.issue, OffsetDateTime.now().minusDays(8));
 		verify(this.gitHub).addComment(this.issue, "Please provide requested feedback");
 		verify(this.gitHub).addLabel(this.issue, "feedback-reminder");
 	}
 
 	@Test
 	public void pullRequestsAreIgnoredWhenFeedbackIsRequiredAndReminderIsDue() {
-		this.listener.feedbackRequired(this.repository, this.pullRequest,
-				OffsetDateTime.now().minusDays(8));
+		this.listener.feedbackRequired(this.repository, this.pullRequest, OffsetDateTime.now().minusDays(8));
 		verifyNoMoreInteractions(this.gitHub, this.issueListener);
 	}
 
 	@Test
 	public void feedbackRequiredReminderDueAndAlreadyCommented() {
 		this.issue.getLabels().add(new Label("feedback-reminder"));
-		this.listener.feedbackRequired(this.repository, this.issue,
-				OffsetDateTime.now().minusDays(8));
+		this.listener.feedbackRequired(this.repository, this.issue, OffsetDateTime.now().minusDays(8));
 		verifyNoMoreInteractions(this.gitHub);
 	}
 
 	@Test
 	public void feedbackRequiredAndOverdue() {
-		this.listener.feedbackRequired(this.repository, this.issue,
-				OffsetDateTime.now().minusDays(15));
+		this.listener.feedbackRequired(this.repository, this.issue, OffsetDateTime.now().minusDays(15));
 		verify(this.gitHub).addComment(this.issue, "Closing due to lack of feedback");
 		verify(this.gitHub).close(this.issue);
 		verify(this.gitHub).removeLabel(this.issue, "feedback-required");
@@ -131,8 +125,7 @@ public class StandardFeedbackListenerTests {
 
 	@Test
 	public void pullRequestsAreIgnoredWhenFeedbackIsOverdue() {
-		this.listener.feedbackRequired(this.repository, this.pullRequest,
-				OffsetDateTime.now().minusDays(15));
+		this.listener.feedbackRequired(this.repository, this.pullRequest, OffsetDateTime.now().minusDays(15));
 		verifyNoMoreInteractions(this.gitHub, this.issueListener);
 	}
 

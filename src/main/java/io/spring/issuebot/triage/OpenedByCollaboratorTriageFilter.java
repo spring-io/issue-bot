@@ -34,20 +34,18 @@ import org.slf4j.LoggerFactory;
  */
 final class OpenedByCollaboratorTriageFilter implements TriageFilter {
 
-	private static final Logger log = LoggerFactory
-			.getLogger(OpenedByCollaboratorTriageFilter.class);
+	private static final Logger log = LoggerFactory.getLogger(OpenedByCollaboratorTriageFilter.class);
 
 	private final Map<Repository, List<String>> repositoryCollaborators;
 
 	OpenedByCollaboratorTriageFilter(List<Repository> repositories) {
-		this.repositoryCollaborators = repositories.stream().collect(
-				Collectors.toMap(Function.identity(), Repository::getCollaborators));
+		this.repositoryCollaborators = repositories.stream()
+				.collect(Collectors.toMap(Function.identity(), Repository::getCollaborators));
 	}
 
 	@Override
 	public boolean triaged(Repository repository, Issue issue) {
-		if (this.repositoryCollaborators.get(repository)
-				.contains(issue.getUser().getLogin())) {
+		if (this.repositoryCollaborators.get(repository).contains(issue.getUser().getLogin())) {
 			log.debug("{} has been triaged. It was opened by {}", issue, issue.getUser());
 			return true;
 		}

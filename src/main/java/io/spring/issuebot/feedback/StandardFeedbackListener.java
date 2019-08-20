@@ -46,9 +46,8 @@ final class StandardFeedbackListener implements FeedbackListener {
 
 	private final List<IssueListener> issueListeners;
 
-	StandardFeedbackListener(GitHubOperations gitHub, String providedLabel,
-			String requiredLabel, String reminderLabel, String reminderComment,
-			String closeComment, List<IssueListener> issueListeners) {
+	StandardFeedbackListener(GitHubOperations gitHub, String providedLabel, String requiredLabel, String reminderLabel,
+			String reminderComment, String closeComment, List<IssueListener> issueListeners) {
 		this.gitHub = gitHub;
 		this.providedLabel = providedLabel;
 		this.requiredLabel = requiredLabel;
@@ -68,8 +67,7 @@ final class StandardFeedbackListener implements FeedbackListener {
 	}
 
 	@Override
-	public void feedbackRequired(Repository repository, Issue issue,
-			OffsetDateTime requestTime) {
+	public void feedbackRequired(Repository repository, Issue issue, OffsetDateTime requestTime) {
 		if (issue.getPullRequest() != null) {
 			return;
 		}
@@ -87,8 +85,7 @@ final class StandardFeedbackListener implements FeedbackListener {
 		this.gitHub.close(issue);
 		this.gitHub.removeLabel(issue, this.requiredLabel);
 		this.gitHub.removeLabel(issue, this.reminderLabel);
-		this.issueListeners
-				.forEach((listener) -> listener.onIssueClosure(repository, issue));
+		this.issueListeners.forEach((listener) -> listener.onIssueClosure(repository, issue));
 	}
 
 	private boolean hasReminderLabel(Issue issue) {

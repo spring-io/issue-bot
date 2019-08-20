@@ -38,18 +38,14 @@ import org.springframework.context.annotation.Configuration;
 class FeedbackConfiguration {
 
 	@Bean
-	FeedbackIssueListener feedbackIssueListener(GitHubOperations gitHub,
-			GitHubProperties gitHubProperties, MonitoringProperties monitoringProperties,
-			FeedbackProperties feedbackProperties, List<IssueListener> issueListener) {
+	FeedbackIssueListener feedbackIssueListener(GitHubOperations gitHub, GitHubProperties gitHubProperties,
+			MonitoringProperties monitoringProperties, FeedbackProperties feedbackProperties,
+			List<IssueListener> issueListener) {
 		return new FeedbackIssueListener(gitHub, feedbackProperties.getRequiredLabel(),
-				monitoringProperties.getRepositories(),
-				gitHubProperties.getCredentials().getUsername(),
-				new StandardFeedbackListener(gitHub,
-						feedbackProperties.getProvidedLabel(),
-						feedbackProperties.getRequiredLabel(),
-						feedbackProperties.getReminderLabel(),
-						feedbackProperties.getReminderComment(),
-						feedbackProperties.getCloseComment(), issueListener));
+				monitoringProperties.getRepositories(), gitHubProperties.getCredentials().getUsername(),
+				new StandardFeedbackListener(gitHub, feedbackProperties.getProvidedLabel(),
+						feedbackProperties.getRequiredLabel(), feedbackProperties.getReminderLabel(),
+						feedbackProperties.getReminderComment(), feedbackProperties.getCloseComment(), issueListener));
 	}
 
 }
