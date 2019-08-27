@@ -19,11 +19,12 @@ When the issue is no longer waiting for triage, the label should be manually rem
 
 ### Waiting for Feedback
 
-The issue bot monitors open issues (not pull requests) that are labeled as waiting for feedback.
+The issue bot monitors open issues and pull requests that are labeled as waiting for feedback.
 
-* If you apply the waiting for feedback label, the bot will then monitor the issue.
+* If you apply the waiting for feedback label, the bot will then monitor the issue or pull request.
 * If feedback isn’t provided within 7 days of the label being applied, it’ll comment with a reminder.
-* If feedback isn’t provided within a futher 7 days, it’ll close the issue.
+* If feedback isn’t provided within a futher 7 days, it’ll close any issue.
+Pull requests will not be closed.
 
 Any comment that isn’t from a collaborator is considered to be feedback.
 When such a comment is made, the bot removes the waiting label and adds a feedback provided label.
