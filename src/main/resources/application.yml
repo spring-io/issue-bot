@@ -1,6 +1,24 @@
 issuebot:
   monitoring:
     repositories:
+      - organization: spring-io
+        name: initializr
+        collaborators:
+          - bclozel
+          - mbhave
+          - oodamien
+          - philwebb
+          - snicoll
+          - wilkinsona
+      - organization: spring-io
+        name: start.spring.io
+        collaborators:
+          - bclozel
+          - mbhave
+          - oodamien
+          - philwebb
+          - snicoll
+          - wilkinsona
       - organization: spring-projects
         name: spring-boot
         collaborators:
