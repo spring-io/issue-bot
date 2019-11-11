@@ -11,8 +11,8 @@ The issue bot helps by managing [Waiting for Triage](waiting-for-triage) and mon
 The issue bot labels issues and pull requests as waiting for triage.
 An issue or pull request is deemed as waiting for triage when all of the following is true:
 * It is open
-* It wasn’t opened by a collaborator
-* It isn’t assigned to a milestone
+* It was not opened by a collaborator
+* It is not assigned to a milestone
 * It has no labels.
 
 When the issue is no longer waiting for triage, the label should be manually removed.
@@ -21,13 +21,13 @@ When the issue is no longer waiting for triage, the label should be manually rem
 
 The issue bot monitors open issues and pull requests that are labeled as waiting for
 feedback. Monitoring begins when the waiting for feedback label is applied. Any comment
-that isn't from a collbarotor is considered to be feedback.
+that is not from a collaborator is considered to be feedback.
 
 For issues, the bot will:
 
-* Comment with a reminder of feedback isn't provided within 7 days of the label being
+* Comment with a reminder of feedback is not provided within 7 days of the label being
   applied.
-* Close the issue if feedback isn't provided within a further 7 days.
+* Close the issue if feedback is not provided within a further 7 days.
 * Add the feedback provided label and remove the waiting for feedback label when feedback
   is provided.
 

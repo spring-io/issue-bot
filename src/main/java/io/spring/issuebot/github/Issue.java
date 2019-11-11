@@ -38,7 +38,7 @@ public class Issue {
 
 	private final User user;
 
-	private List<Label> labels;
+	private final List<Label> labels;
 
 	private final Milestone milestone;
 

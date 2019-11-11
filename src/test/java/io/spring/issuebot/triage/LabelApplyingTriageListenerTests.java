@@ -30,7 +30,7 @@ import static org.mockito.Mockito.verify;
  */
 public class LabelApplyingTriageListenerTests {
 
-	private GitHubOperations gitHub = mock(GitHubOperations.class);
+	private final GitHubOperations gitHub = mock(GitHubOperations.class);
 
 	private final LabelApplyingTriageListener listener = new LabelApplyingTriageListener(this.gitHub, "test");
 

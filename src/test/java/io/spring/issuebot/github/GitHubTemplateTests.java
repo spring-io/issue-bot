@@ -53,10 +53,10 @@ public class GitHubTemplateTests {
 
 	private final MockRestServiceServer server = MockRestServiceServer.createServer(this.rest);
 
-	private GitHubTemplate gitHub = new GitHubTemplate(this.rest, new RegexLinkParser());
+	private final GitHubTemplate gitHub = new GitHubTemplate(this.rest, new RegexLinkParser());
 
 	@Rule
-	public ExpectedException thrown = ExpectedException.none();
+	public final ExpectedException thrown = ExpectedException.none();
 
 	@Test
 	public void noIssues() {

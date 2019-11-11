@@ -17,6 +17,7 @@
 package io.spring.issuebot;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.Issue;
@@ -108,7 +109,7 @@ public class RepositoryMonitorTests {
 		@SuppressWarnings("unchecked")
 		Page<Issue> page = mock(Page.class);
 		Issue issue = new Issue(null, null, null, null, null, null, null, null);
-		given(page.getContent()).willReturn(Arrays.asList(issue));
+		given(page.getContent()).willReturn(Collections.singletonList(issue));
 		given(this.gitHub.getIssues("test", "one")).willReturn(page);
 		willThrow(new RuntimeException()).given(this.issueListenerOne).onOpenIssue(this.repositoryOne, issue);
 		this.repositoryMonitor.monitor();
