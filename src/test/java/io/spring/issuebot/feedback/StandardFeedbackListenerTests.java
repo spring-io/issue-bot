@@ -18,7 +18,7 @@ package io.spring.issuebot.feedback;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 
 import io.spring.issuebot.IssueListener;
 import io.spring.issuebot.Repository;
@@ -45,7 +45,7 @@ public class StandardFeedbackListenerTests {
 
 	private final FeedbackListener listener = new StandardFeedbackListener(this.gitHub, "feedback-provided",
 			"feedback-required", "feedback-reminder", "Please provide requested feedback",
-			"Closing due to lack of feedback", Arrays.asList(this.issueListener));
+			"Closing due to lack of feedback", Collections.singletonList(this.issueListener));
 
 	private final Issue issue = new Issue(null, null, null, null, null, new ArrayList<>(), null, null);
 

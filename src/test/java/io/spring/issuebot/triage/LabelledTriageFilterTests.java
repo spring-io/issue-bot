@@ -16,7 +16,6 @@
 
 package io.spring.issuebot.triage;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 import io.spring.issuebot.Repository;
@@ -33,14 +32,15 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class LabelledTriageFilterTests {
 
-	private TriageFilter filter = new LabelledTriageFilter();
+	private final TriageFilter filter = new LabelledTriageFilter();
 
 	private final Repository repository = new Repository();
 
 	@Test
 	public void issueWithLabels() {
 		assertThat(this.filter.triaged(this.repository,
-				new Issue(null, null, null, null, null, Arrays.asList(new Label("test")), null, null))).isTrue();
+				new Issue(null, null, null, null, null, Collections.singletonList(new Label("test")), null, null)))
+						.isTrue();
 	}
 
 	@Test
