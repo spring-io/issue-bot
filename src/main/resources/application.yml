@@ -1,6 +1,10 @@
 issuebot:
   monitoring:
     repositories:
+      - organization: spring-gradle-plugins
+        name: dependency-management-plugin
+        collaborators:
+          - wilkinsona
       - organization: spring-projects
         name: spring-boot
         collaborators:
