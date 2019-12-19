@@ -18,6 +18,7 @@ package io.spring.issuebot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A repository that is monitored.
@@ -86,14 +87,9 @@ public class Repository {
 			return false;
 		}
 		if (this.organization == null) {
-			if (other.organization != null) {
-				return false;
-			}
+			return other.organization == null;
 		}
-		else if (!this.organization.equals(other.organization)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(this.organization, other.organization);
 	}
 
 	@Override

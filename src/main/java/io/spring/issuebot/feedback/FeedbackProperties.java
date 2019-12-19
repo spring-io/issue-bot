@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ final class FeedbackProperties {
 	private String reminderComment;
 
 	/**
-	 * The text of the comment that is added when an issue is clsed as feedback has not
+	 * The text of the comment that is added when an issue is closed as feedback has not
 	 * been provided.
 	 */
 	private String closeComment;

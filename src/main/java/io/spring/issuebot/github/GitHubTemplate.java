@@ -21,6 +21,7 @@ import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -88,7 +89,7 @@ public class GitHubTemplate implements GitHubOperations {
 				if (response.getStatusCode() == HttpStatus.FORBIDDEN
 						&& response.getHeaders().getFirst("X-RateLimit-Remaining").equals("0")) {
 					throw new IllegalStateException("Rate limit exceeded. Limit will reset at "
-							+ new Date(Long.valueOf(response.getHeaders().getFirst("X-RateLimit-Reset")) * 1000));
+							+ new Date(Long.parseLong(response.getHeaders().getFirst("X-RateLimit-Reset")) * 1000));
 				}
 			}
 		});
@@ -96,7 +97,7 @@ public class GitHubTemplate implements GitHubOperations {
 				new HttpComponentsClientHttpRequestFactory());
 		rest.setRequestFactory(bufferingClient);
 		rest.setInterceptors(Collections.singletonList(new BasicAuthorizationInterceptor(username, password)));
-		rest.setMessageConverters(Arrays.asList(new ErrorLoggingMappingJackson2HttpMessageConverter()));
+		rest.setMessageConverters(Collections.singletonList(new ErrorLoggingMappingJackson2HttpMessageConverter()));
 		return rest;
 	}
 
@@ -132,8 +133,8 @@ public class GitHubTemplate implements GitHubOperations {
 	public Issue addLabel(Issue issue, String labelName) {
 		URI uri = URI.create(issue.getLabelsUrl().replace("{/name}", ""));
 		log.info("Adding label {} to {}", labelName, uri);
-		ResponseEntity<Label[]> response = this.rest
-				.exchange(new RequestEntity<>(Arrays.asList(labelName), HttpMethod.POST, uri), Label[].class);
+		ResponseEntity<Label[]> response = this.rest.exchange(
+				new RequestEntity<>(Collections.singletonList(labelName), HttpMethod.POST, uri), Label[].class);
 		if (response.getStatusCode() != HttpStatus.OK) {
 			log.warn("Failed to add label to issue. Response status: " + response.getStatusCode());
 		}
@@ -181,16 +182,13 @@ public class GitHubTemplate implements GitHubOperations {
 	private static final class ErrorLoggingMappingJackson2HttpMessageConverter
 			extends MappingJackson2HttpMessageConverter {
 
-		private static final Charset CHARSET_UTF_8 = Charset.forName("UTF-8");
+		private static final Charset CHARSET_UTF_8 = StandardCharsets.UTF_8;
 
 		@Override
 		public Object read(Type type, Class<?> contextClass, HttpInputMessage inputMessage)
 				throws IOException, HttpMessageNotReadableException {
 			try {
 				return super.read(type, contextClass, inputMessage);
-			}
-			catch (IOException ex) {
-				throw ex;
 			}
 			catch (HttpMessageNotReadableException ex) {
 				log.error("Failed to create {} from {}", type.getTypeName(), read(inputMessage), ex);
@@ -206,7 +204,7 @@ public class GitHubTemplate implements GitHubOperations {
 
 	private static class BasicAuthorizationInterceptor implements ClientHttpRequestInterceptor {
 
-		private static final Charset UTF_8 = Charset.forName("UTF-8");
+		private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
 		private final String username;
 

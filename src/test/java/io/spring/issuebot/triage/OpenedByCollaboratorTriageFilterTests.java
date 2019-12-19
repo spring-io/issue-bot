@@ -17,6 +17,7 @@
 package io.spring.issuebot.triage;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import io.spring.issuebot.Repository;
 import io.spring.issuebot.github.Issue;
@@ -40,7 +41,7 @@ public class OpenedByCollaboratorTriageFilterTests {
 	@Before
 	public void setUp() {
 		this.repository.setCollaborators(Arrays.asList("Alice", "Brenda", "Charlie"));
-		this.filter = new OpenedByCollaboratorTriageFilter(Arrays.asList(this.repository));
+		this.filter = new OpenedByCollaboratorTriageFilter(Collections.singletonList(this.repository));
 	}
 
 	@Test
