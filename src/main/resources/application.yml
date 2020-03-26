@@ -63,6 +63,13 @@ issuebot:
           - jzheaux
           - rwinch
           - vpavic
+      - organization: spring-projects
+        name: spring-security-oauth
+        collaborators:
+          - eleftherias
+          - jgrandja
+          - jzheaux
+          - rwinch
   triage:
     label: "status: waiting-for-triage"
   feedback:
