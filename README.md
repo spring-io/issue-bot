@@ -4,7 +4,7 @@ The issue bot helps manage open GitHub issues.
 
 ## Features
 
-The issue bot helps by managing [Waiting for Triage](waiting-for-triage) and monitoring [Waiting for Feedback](waiting-for-feedback).
+The issue bot helps by managing [Waiting for Triage](#waiting-for-triage) and monitoring [Waiting for Feedback](#waiting-for-feedback).
 
 ### Waiting for Triage
 
