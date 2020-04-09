@@ -70,6 +70,13 @@ issuebot:
           - jgrandja
           - jzheaux
           - rwinch
+      - organization: spring-projects-experimental
+        name: spring-authorization-server
+        collaborators:
+          - eleftherias
+          - jgrandja
+          - jzheaux
+          - rwinch
   triage:
     label: "status: waiting-for-triage"
   feedback:
