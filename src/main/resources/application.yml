@@ -5,6 +5,10 @@ issuebot:
         name: dependency-management-plugin
         collaborators:
           - wilkinsona
+      - organization: spring-gradle-plugins
+        name: javadoc-plugin
+        collaborators:
+          - rwinch
       - organization: spring-io
         name: initializr
         collaborators:
