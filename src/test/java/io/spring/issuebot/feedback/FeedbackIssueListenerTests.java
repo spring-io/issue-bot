@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,8 @@ import io.spring.issuebot.github.Issue;
 import io.spring.issuebot.github.Label;
 import io.spring.issuebot.github.StandardPage;
 import io.spring.issuebot.github.User;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -43,7 +43,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
  *
  * @author Andy Wilkinson
  */
-public class FeedbackIssueListenerTests {
+class FeedbackIssueListenerTests {
 
 	private final GitHubOperations gitHub = mock(GitHubOperations.class);
 
@@ -55,8 +55,8 @@ public class FeedbackIssueListenerTests {
 
 	private IssueListener listener;
 
-	@Before
-	public void setUp() {
+	@BeforeEach
+	void setUp() {
 		this.repository.setOrganization("test");
 		this.repository.setName("test");
 		this.repository.setCollaborators(this.collaborators);
@@ -65,7 +65,7 @@ public class FeedbackIssueListenerTests {
 	}
 
 	@Test
-	public void issuesWithFeedbackRequiredLabelAreIgnored() {
+	void issuesWithFeedbackRequiredLabelAreIgnored() {
 		Issue issue = new Issue(null, null, null, null, null, Collections.singletonList(new Label("something-else")),
 				null, null);
 		this.listener.onOpenIssue(this.repository, issue);
@@ -73,7 +73,7 @@ public class FeedbackIssueListenerTests {
 	}
 
 	@Test
-	public void feedbackRequiredForLabeledIssueWithEvent() {
+	void feedbackRequiredForLabeledIssueWithEvent() {
 		Issue issue = new Issue(null, null, null, null, null, Collections.singletonList(new Label("required")), null,
 				null);
 		OffsetDateTime requestTime = OffsetDateTime.now();
@@ -84,7 +84,7 @@ public class FeedbackIssueListenerTests {
 	}
 
 	@Test
-	public void feedbackProvidedAfterCommentFromNonCollaborator() {
+	void feedbackProvidedAfterCommentFromNonCollaborator() {
 		Issue issue = new Issue("issue_url", null, null, null, null, Collections.singletonList(new Label("required")),
 				null, null);
 		OffsetDateTime requestTime = OffsetDateTime.now().minusDays(1);
@@ -97,7 +97,7 @@ public class FeedbackIssueListenerTests {
 	}
 
 	@Test
-	public void feedbackRequiredAfterCommentFromNonCollaboratorBeforeRequest() {
+	void feedbackRequiredAfterCommentFromNonCollaboratorBeforeRequest() {
 		Issue issue = new Issue("issue_url", null, null, null, null, Collections.singletonList(new Label("required")),
 				null, null);
 		OffsetDateTime requestTime = OffsetDateTime.now().minusDays(1);
@@ -111,7 +111,7 @@ public class FeedbackIssueListenerTests {
 	}
 
 	@Test
-	public void feedbackRequiredAfterCommentFromCollaborator() {
+	void feedbackRequiredAfterCommentFromCollaborator() {
 		Issue issue = new Issue(null, null, null, null, null, Collections.singletonList(new Label("required")), null,
 				null);
 		OffsetDateTime requestTime = OffsetDateTime.now().minusDays(1);
@@ -124,7 +124,7 @@ public class FeedbackIssueListenerTests {
 	}
 
 	@Test
-	public void feedbackRequiredAfterCommentFromIssueBot() {
+	void feedbackRequiredAfterCommentFromIssueBot() {
 		Issue issue = new Issue(null, null, null, null, null, Collections.singletonList(new Label("required")), null,
 				null);
 		OffsetDateTime requestTime = OffsetDateTime.now().minusDays(1);
@@ -137,7 +137,7 @@ public class FeedbackIssueListenerTests {
 	}
 
 	@Test
-	public void issueWithNoMatchingLabeledEventIsIgnored() {
+	void issueWithNoMatchingLabeledEventIsIgnored() {
 		Issue issue = new Issue(null, null, null, null, null, Collections.singletonList(new Label("required")), null,
 				null);
 		OffsetDateTime requestTime = OffsetDateTime.now();
@@ -148,7 +148,7 @@ public class FeedbackIssueListenerTests {
 	}
 
 	@Test
-	public void eventsWithWrongTypeAreIgnored() {
+	void eventsWithWrongTypeAreIgnored() {
 		Issue issue = new Issue(null, null, null, null, null, Collections.singletonList(new Label("required")), null,
 				null);
 		OffsetDateTime requestTime = OffsetDateTime.now();

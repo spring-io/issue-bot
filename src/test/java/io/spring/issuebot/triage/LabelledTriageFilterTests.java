@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import java.util.Collections;
 import io.spring.issuebot.Repository;
 import io.spring.issuebot.github.Issue;
 import io.spring.issuebot.github.Label;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,27 +30,27 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author Andy Wilkinson
  */
-public class LabelledTriageFilterTests {
+class LabelledTriageFilterTests {
 
 	private final TriageFilter filter = new LabelledTriageFilter();
 
 	private final Repository repository = new Repository();
 
 	@Test
-	public void issueWithLabels() {
+	void issueWithLabels() {
 		assertThat(this.filter.triaged(this.repository,
 				new Issue(null, null, null, null, null, Collections.singletonList(new Label("test")), null, null)))
 						.isTrue();
 	}
 
 	@Test
-	public void issueWithNullLabels() {
+	void issueWithNullLabels() {
 		assertThat(this.filter.triaged(this.repository, new Issue(null, null, null, null, null, null, null, null)))
 				.isFalse();
 	}
 
 	@Test
-	public void issueWithNoLabels() {
+	void issueWithNoLabels() {
 		assertThat(this.filter.triaged(this.repository,
 				new Issue(null, null, null, null, null, Collections.emptyList(), null, null))).isFalse();
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import java.util.Arrays;
 import io.spring.issuebot.IssueListener;
 import io.spring.issuebot.Repository;
 import io.spring.issuebot.github.Issue;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -33,7 +33,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
  *
  * @author Andy Wilkinson
  */
-public class TriageIssueListenerTests {
+class TriageIssueListenerTests {
 
 	private final Repository repository = new Repository();
 
@@ -47,7 +47,7 @@ public class TriageIssueListenerTests {
 			Arrays.asList(this.triageFilterOne, this.triageFilterTwo), this.listener);
 
 	@Test
-	public void listenerIsCalledWhenIssueRequiresTriage() {
+	void listenerIsCalledWhenIssueRequiresTriage() {
 		Issue issue = new Issue(null, null, null, null, null, null, null, null);
 		given(this.triageFilterOne.triaged(this.repository, issue)).willReturn(false);
 		given(this.triageFilterTwo.triaged(this.repository, issue)).willReturn(false);
@@ -58,7 +58,7 @@ public class TriageIssueListenerTests {
 	}
 
 	@Test
-	public void listenerIsNotCalledWhenIssueHasAlreadyBeenTriaged() {
+	void listenerIsNotCalledWhenIssueHasAlreadyBeenTriaged() {
 		Issue issue = new Issue(null, null, null, null, null, null, null, null);
 		given(this.triageFilterOne.triaged(this.repository, issue)).willReturn(true);
 		this.issueListener.onOpenIssue(this.repository, issue);

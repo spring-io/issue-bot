@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,20 @@
 
 package io.spring.issuebot;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * Tests for {@link IssueBotApplication}.
  *
  * @author Andy Wilkinson
  */
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-public class IssueBotApplicationTests {
+class IssueBotApplicationTests {
 
 	@Test
-	public void contextLoads() {
+	void contextLoads() {
 
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,7 @@ package io.spring.issuebot.github;
 
 import java.util.Date;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -34,7 +32,7 @@ import org.springframework.util.Base64Utils;
 import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
@@ -47,7 +45,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  *
  * @author Andy Wilkinson
  */
-public class GitHubTemplateTests {
+class GitHubTemplateTests {
 
 	private final RestTemplate rest = GitHubTemplate.createDefaultRestTemplate("username", "password");
 
@@ -55,11 +53,8 @@ public class GitHubTemplateTests {
 
 	private final GitHubTemplate gitHub = new GitHubTemplate(this.rest, new RegexLinkParser());
 
-	@Rule
-	public final ExpectedException thrown = ExpectedException.none();
-
 	@Test
-	public void noIssues() {
+	void noIssues() {
 		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues")).andExpect(method(HttpMethod.GET))
 				.andExpect(basicAuth()).andRespond(withSuccess("[]", MediaType.APPLICATION_JSON));
 		Page<Issue> issues = this.gitHub.getIssues("org", "repo");
@@ -68,7 +63,7 @@ public class GitHubTemplateTests {
 	}
 
 	@Test
-	public void singlePageOfIssues() {
+	void singlePageOfIssues() {
 		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues")).andExpect(method(HttpMethod.GET))
 				.andExpect(basicAuth()).andRespond(withResource("issues-page-one.json"));
 		Page<Issue> issues = this.gitHub.getIssues("org", "repo");
@@ -77,7 +72,7 @@ public class GitHubTemplateTests {
 	}
 
 	@Test
-	public void multiplePagesOfIssues() {
+	void multiplePagesOfIssues() {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Link", "<page-two>; rel=\"next\"");
 		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues")).andExpect(method(HttpMethod.GET))
@@ -93,20 +88,19 @@ public class GitHubTemplateTests {
 	}
 
 	@Test
-	public void rateLimited() {
+	void rateLimited() {
 		long reset = System.currentTimeMillis();
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("X-RateLimit-Remaining", "0");
 		headers.set("X-RateLimit-Reset", Long.toString(reset / 1000));
 		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues")).andExpect(method(HttpMethod.GET))
 				.andExpect(basicAuth()).andRespond(withStatus(HttpStatus.FORBIDDEN).headers(headers));
-		this.thrown.expect(IllegalStateException.class);
-		this.thrown.expectMessage(equalToIgnoringCase("Rate limit exceeded. Limit will reset at " + new Date(reset)));
-		this.gitHub.getIssues("org", "repo");
+		assertThatIllegalStateException().isThrownBy(() -> this.gitHub.getIssues("org", "repo"))
+				.withMessage("Rate limit exceeded. Limit will reset at " + new Date(reset));
 	}
 
 	@Test
-	public void noComments() {
+	void noComments() {
 		this.server.expect(requestTo("/commentsUrl")).andExpect(method(HttpMethod.GET)).andExpect(basicAuth())
 				.andRespond(withSuccess("[]", MediaType.APPLICATION_JSON));
 		Page<Comment> comments = this.gitHub
@@ -116,7 +110,7 @@ public class GitHubTemplateTests {
 	}
 
 	@Test
-	public void singlePageOfComments() {
+	void singlePageOfComments() {
 		this.server.expect(requestTo("/commentsUrl")).andExpect(method(HttpMethod.GET)).andExpect(basicAuth())
 				.andRespond(withResource("comments-page-one.json"));
 		Page<Comment> comments = this.gitHub
@@ -126,7 +120,7 @@ public class GitHubTemplateTests {
 	}
 
 	@Test
-	public void multiplePagesOfComments() {
+	void multiplePagesOfComments() {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Link", "<page-two>; rel=\"next\"");
 		this.server.expect(requestTo("/commentsUrl")).andExpect(method(HttpMethod.GET)).andExpect(basicAuth())
@@ -142,7 +136,7 @@ public class GitHubTemplateTests {
 	}
 
 	@Test
-	public void addLabelToIssue() {
+	void addLabelToIssue() {
 		this.server.expect(requestTo("labelsUrl")).andExpect(method(HttpMethod.POST)).andExpect(basicAuth())
 				.andExpect(content().string("[\"test\"]"))
 				.andRespond(withSuccess("[{\"name\":\"test\"}]", MediaType.APPLICATION_JSON));
@@ -152,7 +146,7 @@ public class GitHubTemplateTests {
 	}
 
 	@Test
-	public void removeLabelFromIssue() {
+	void removeLabelFromIssue() {
 		this.server.expect(requestTo("labels/test")).andExpect(method(HttpMethod.DELETE)).andExpect(basicAuth())
 				.andRespond(withSuccess("[]", MediaType.APPLICATION_JSON));
 		Issue issue = new Issue(null, null, null, "labels{/name}", null, null, null, null);
@@ -161,7 +155,7 @@ public class GitHubTemplateTests {
 	}
 
 	@Test
-	public void removeLabelWithNameThatRequiresEncodingFromIssue() {
+	void removeLabelWithNameThatRequiresEncodingFromIssue() {
 		this.server.expect(requestTo("labels/status:%20foo")).andExpect(method(HttpMethod.DELETE))
 				.andExpect(basicAuth()).andRespond(withSuccess("[]", MediaType.APPLICATION_JSON));
 		Issue issue = new Issue(null, null, null, "labels{/name}", null, null, null, null);
@@ -170,7 +164,7 @@ public class GitHubTemplateTests {
 	}
 
 	@Test
-	public void addCommentToIssue() {
+	void addCommentToIssue() {
 		this.server.expect(requestTo("/commentsUrl")).andExpect(method(HttpMethod.POST)).andExpect(basicAuth())
 				.andExpect(content().string("{\"body\":\"A test comment\"}"))
 				.andRespond(withResource("new-comment.json"));
@@ -180,7 +174,7 @@ public class GitHubTemplateTests {
 	}
 
 	@Test
-	public void singlePageOfEvents() {
+	void singlePageOfEvents() {
 		this.server.expect(requestTo("/eventsUrl")).andExpect(method(HttpMethod.GET)).andExpect(basicAuth())
 				.andRespond(withResource("events-page-one.json"));
 		Page<Event> events = this.gitHub.getEvents(new Issue(null, null, "eventsUrl", null, null, null, null, null));
@@ -189,7 +183,7 @@ public class GitHubTemplateTests {
 	}
 
 	@Test
-	public void multiplePagesOfEvents() {
+	void multiplePagesOfEvents() {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Link", "<page-two>; rel=\"next\"");
 		this.server.expect(requestTo("/eventsUrl")).andExpect(method(HttpMethod.GET)).andExpect(basicAuth())
@@ -204,7 +198,7 @@ public class GitHubTemplateTests {
 	}
 
 	@Test
-	public void closeIssue() {
+	void closeIssue() {
 		this.server.expect(requestTo("issueUrl")).andExpect(method(HttpMethod.PATCH)).andExpect(basicAuth())
 				.andExpect(content().string("{\"state\":\"closed\"}"))
 				.andRespond(withSuccess("{\"url\":\"updatedIssueUrl\"}", MediaType.APPLICATION_JSON));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import java.util.Collections;
 import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.Issue;
 import io.spring.issuebot.github.Page;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
@@ -36,7 +36,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
  *
  * @author Andy Wilkinson
  */
-public class RepositoryMonitorTests {
+class RepositoryMonitorTests {
 
 	private final GitHubOperations gitHub = mock(GitHubOperations.class);
 
@@ -52,8 +52,8 @@ public class RepositoryMonitorTests {
 			Arrays.asList(this.repositoryOne, this.repositoryTwo),
 			Arrays.asList(this.issueListenerOne, this.issueListenerTwo));
 
-	@Before
-	public void setUp() {
+	@BeforeEach
+	void setUp() {
 		this.repositoryOne.setOrganization("test");
 		this.repositoryOne.setName("one");
 		this.repositoryTwo.setOrganization("test");
@@ -61,7 +61,7 @@ public class RepositoryMonitorTests {
 	}
 
 	@Test
-	public void repositoriesWithNoIssues() {
+	void repositoriesWithNoIssues() {
 		given(this.gitHub.getIssues("test", "one")).willReturn(null);
 		given(this.gitHub.getIssues("test", "two")).willReturn(null);
 		this.repositoryMonitor.monitor();
@@ -69,7 +69,7 @@ public class RepositoryMonitorTests {
 	}
 
 	@Test
-	public void oneRepositoryWithOpenIssues() {
+	void oneRepositoryWithOpenIssues() {
 		@SuppressWarnings("unchecked")
 		Page<Issue> page = mock(Page.class);
 		Issue issueOne = new Issue(null, null, null, null, null, null, null, null);
@@ -85,7 +85,7 @@ public class RepositoryMonitorTests {
 	}
 
 	@Test
-	public void bothRepositoriesWithOpenIssues() {
+	void bothRepositoriesWithOpenIssues() {
 		@SuppressWarnings("unchecked")
 		Page<Issue> page = mock(Page.class);
 		Issue issueOne = new Issue(null, null, null, null, null, null, null, null);
@@ -105,7 +105,7 @@ public class RepositoryMonitorTests {
 	}
 
 	@Test
-	public void exceptionFromAnIssueListenerIsHandledGracefully() {
+	void exceptionFromAnIssueListenerIsHandledGracefully() {
 		@SuppressWarnings("unchecked")
 		Page<Issue> page = mock(Page.class);
 		Issue issue = new Issue(null, null, null, null, null, null, null, null);
@@ -118,7 +118,7 @@ public class RepositoryMonitorTests {
 	}
 
 	@Test
-	public void exceptionFromGitHubIsHandledGracefully() {
+	void exceptionFromGitHubIsHandledGracefully() {
 		given(this.gitHub.getIssues("test", "one")).willThrow(new RuntimeException());
 		this.repositoryMonitor.monitor();
 		verify(this.gitHub).getIssues("test", "one");
