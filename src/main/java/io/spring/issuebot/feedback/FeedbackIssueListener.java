@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,8 @@ import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.Issue;
 import io.spring.issuebot.github.Label;
 import io.spring.issuebot.github.Page;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An {@link IssueListener} that processes issues that are waiting for feedback.
@@ -38,6 +40,8 @@ import io.spring.issuebot.github.Page;
  * @author Andy Wilkinson
  */
 final class FeedbackIssueListener implements IssueListener {
+
+	private static final Logger log = LoggerFactory.getLogger(FeedbackIssueListener.class);
 
 	private final GitHubOperations gitHub;
 
@@ -65,7 +69,13 @@ final class FeedbackIssueListener implements IssueListener {
 		if (waitingForFeedback(issue)) {
 			OffsetDateTime waitingSince = getWaitingSince(issue);
 			if (waitingSince != null) {
+				if (log.isDebugEnabled()) {
+					log.debug("{} has been awaiting feedback since {}", issue, waitingSince);
+				}
 				processWaitingIssue(repository, issue, waitingSince);
+			}
+			else {
+				log.warn("Could not determine time at which {} was labelled as waiting for feedback", issue);
 			}
 		}
 	}
@@ -86,6 +96,9 @@ final class FeedbackIssueListener implements IssueListener {
 	private boolean labelledAsWaitingForFeedback(Issue issue) {
 		for (Label label : issue.getLabels()) {
 			if (this.labelName.equals(label.getName())) {
+				if (log.isDebugEnabled()) {
+					log.debug("Issue {} is waiting for feedback", issue);
+				}
 				return true;
 			}
 		}
