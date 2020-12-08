@@ -77,4 +77,11 @@ public interface GitHubOperations {
 	 */
 	Page<Event> getEvents(Issue issue);
 
+	/**
+	 * Returns the current rate limit information or {@code null} if the limit is
+	 * currently unknown.
+	 * @return the rate limit or {@code null}
+	 */
+	RateLimit getRateLimit();
+
 }

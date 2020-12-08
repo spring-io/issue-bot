@@ -16,11 +16,13 @@
 
 package io.spring.issuebot;
 
+import java.util.Date;
 import java.util.List;
 
 import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.Issue;
 import io.spring.issuebot.github.Page;
+import io.spring.issuebot.github.RateLimit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +78,17 @@ class RepositoryMonitor {
 			log.warn("A failure occurred during monitoring of {}/{}", repository.getOrganization(),
 					repository.getName(), ex);
 		}
-		log.info("Monitoring of {}/{} completed", repository.getOrganization(), repository.getName());
+		RateLimit rateLimit = this.gitHub.getRateLimit();
+		if (rateLimit == null) {
+			log.info("Monitoring of {}/{} completed. Remaining rate limit unknown", repository.getOrganization(),
+					repository.getName());
+		}
+		else {
+			log.info("Monitoring of {}/{} completed. Remaining rate limit {} of {} resets at {}",
+					repository.getOrganization(), repository.getName(), rateLimit.getRemaining(), rateLimit.getLimit(),
+					new Date(rateLimit.getReset()));
+		}
+
 	}
 
 }

@@ -60,6 +60,8 @@ public class GitHubTemplate implements GitHubOperations {
 
 	private static final Logger log = LoggerFactory.getLogger(GitHubTemplate.class);
 
+	private final RateLimitInterceptor rateLimitInterceptor = new RateLimitInterceptor();
+
 	private final RestOperations rest;
 
 	private final LinkParser linkParser;
@@ -73,7 +75,8 @@ public class GitHubTemplate implements GitHubOperations {
 	 * @param linkParser the link parser
 	 */
 	public GitHubTemplate(String username, String password, LinkParser linkParser) {
-		this(createDefaultRestTemplate(username, password), linkParser);
+		this.rest = createDefaultRestTemplate(username, password, this.rateLimitInterceptor);
+		this.linkParser = linkParser;
 	}
 
 	GitHubTemplate(RestOperations rest, LinkParser linkParser) {
@@ -81,22 +84,26 @@ public class GitHubTemplate implements GitHubOperations {
 		this.linkParser = linkParser;
 	}
 
-	static RestTemplate createDefaultRestTemplate(String username, String password) {
+	static RestTemplate createDefaultRestTemplate(String username, String password,
+			RateLimitInterceptor rateLimitInterceptor) {
 		RestTemplate rest = new RestTemplate();
 		rest.setErrorHandler(new DefaultResponseErrorHandler() {
 			@Override
 			public void handleError(ClientHttpResponse response) throws IOException {
-				if (response.getStatusCode() == HttpStatus.FORBIDDEN
-						&& response.getHeaders().getFirst("X-RateLimit-Remaining").equals("0")) {
-					throw new IllegalStateException("Rate limit exceeded. Limit will reset at "
-							+ new Date(Long.parseLong(response.getHeaders().getFirst("X-RateLimit-Reset")) * 1000));
+				if (response.getStatusCode() == HttpStatus.FORBIDDEN) {
+					RateLimit rateLimit = RateLimit.from(response);
+					if (rateLimit.getRemaining() == 0) {
+						throw new IllegalStateException(
+								"Rate limit exceeded. Limit will reset at " + new Date(rateLimit.getReset()));
+					}
 				}
 			}
 		});
 		BufferingClientHttpRequestFactory bufferingClient = new BufferingClientHttpRequestFactory(
 				new HttpComponentsClientHttpRequestFactory());
 		rest.setRequestFactory(bufferingClient);
-		rest.setInterceptors(Collections.singletonList(new BasicAuthorizationInterceptor(username, password)));
+		rest.setInterceptors(
+				Arrays.asList(new BasicAuthorizationInterceptor(username, password), rateLimitInterceptor));
 		rest.setMessageConverters(Collections.singletonList(new ErrorLoggingMappingJackson2HttpMessageConverter()));
 		return rest;
 	}
@@ -179,6 +186,15 @@ public class GitHubTemplate implements GitHubOperations {
 		return response.getBody();
 	}
 
+	@Override
+	public RateLimit getRateLimit() {
+		return this.rateLimitInterceptor.rateLimit;
+	}
+
+	RestOperations getRestOperations() {
+		return this.rest;
+	}
+
 	private static final class ErrorLoggingMappingJackson2HttpMessageConverter
 			extends MappingJackson2HttpMessageConverter {
 
@@ -221,6 +237,28 @@ public class GitHubTemplate implements GitHubOperations {
 			String token = Base64Utils.encodeToString((this.username + ":" + this.password).getBytes(UTF_8));
 			request.getHeaders().add("Authorization", "Basic " + token);
 			return execution.execute(request, body);
+		}
+
+	}
+
+	private static class RateLimitInterceptor implements ClientHttpRequestInterceptor {
+
+		private static final Logger log = LoggerFactory.getLogger(RateLimitInterceptor.class);
+
+		private volatile RateLimit rateLimit = null;
+
+		@Override
+		public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
+				throws IOException {
+			ClientHttpResponse response = execution.execute(request, body);
+			try {
+				this.rateLimit = RateLimit.from(response);
+			}
+			catch (Exception ex) {
+				log.warn("Rate limit unavailable from response with headers {}", response.getHeaders());
+				this.rateLimit = null;
+			}
+			return response;
 		}
 
 	}

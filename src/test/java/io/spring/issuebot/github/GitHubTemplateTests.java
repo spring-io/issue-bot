@@ -47,11 +47,10 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  */
 class GitHubTemplateTests {
 
-	private final RestTemplate rest = GitHubTemplate.createDefaultRestTemplate("username", "password");
+	private final GitHubTemplate gitHub = new GitHubTemplate("username", "password", new RegexLinkParser());
 
-	private final MockRestServiceServer server = MockRestServiceServer.createServer(this.rest);
-
-	private final GitHubTemplate gitHub = new GitHubTemplate(this.rest, new RegexLinkParser());
+	private final MockRestServiceServer server = MockRestServiceServer
+			.createServer((RestTemplate) this.gitHub.getRestOperations());
 
 	@Test
 	void noIssues() {
@@ -91,6 +90,7 @@ class GitHubTemplateTests {
 	void rateLimited() {
 		long reset = System.currentTimeMillis();
 		HttpHeaders headers = new HttpHeaders();
+		headers.set("X-RateLimit-Limit", "5000");
 		headers.set("X-RateLimit-Remaining", "0");
 		headers.set("X-RateLimit-Reset", Long.toString(reset / 1000));
 		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues")).andExpect(method(HttpMethod.GET))
