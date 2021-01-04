@@ -49,7 +49,7 @@ class RepositoryMonitor {
 		this.issueListeners = issueListeners;
 	}
 
-	@Scheduled(fixedRate = 5 * 60 * 1000)
+	@Scheduled(fixedRate = 12 * 60 * 1000)
 	void monitor() {
 		for (Repository repository : this.repositories) {
 			monitor(repository);
