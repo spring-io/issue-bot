@@ -267,6 +267,18 @@ issuebot:
           - jgrandja
           - jzheaux
           - rwinch
+      - organization: spring-projects-experimental
+        name: spring-native
+        collaborators:
+          - aclement
+          - bclozel
+          - christophstrobl
+          - dsyer
+          - eleftherias
+          - fhanik
+          - schauder
+          - sdeleuze
+          - snicoll
   triage:
     label: "status: waiting-for-triage"
   feedback:
