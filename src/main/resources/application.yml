@@ -243,9 +243,9 @@ issuebot:
           - fhanik
           - jgrandja
           - jzheaux
+          - marcusdacoregio
           - rwinch
           - sjohnr
-          - marcusdacoregio
       - organization: spring-projects
         name: spring-session
         collaborators:
