@@ -243,7 +243,9 @@ issuebot:
           - fhanik
           - jgrandja
           - jzheaux
+          - marcusdacoregio
           - rwinch
+          - sjohnr
       - organization: spring-projects
         name: spring-session
         collaborators:
@@ -267,6 +269,7 @@ issuebot:
           - jgrandja
           - jzheaux
           - rwinch
+          - sjohnr
       - organization: spring-projects-experimental
         name: spring-native
         collaborators:
