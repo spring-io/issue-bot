@@ -37,6 +37,192 @@ issuebot:
           - snicoll
           - wilkinsona
       - organization: spring-projects
+        name: spring-data-bom
+        collaborators:
+          - christophstrobl
+          - gregturn
+          - jxblum
+          - mpaluch
+          - odrotbohm
+          - schauder
+      - organization: spring-projects
+        name: spring-data-build
+        collaborators:
+          - christophstrobl
+          - gregturn
+          - jxblum
+          - mpaluch
+          - odrotbohm
+          - schauder
+      - organization: spring-projects
+        name: spring-data-cassandra
+        collaborators:
+          - christophstrobl
+          - gregturn
+          - jxblum
+          - mpaluch
+          - odrotbohm
+          - schauder
+      - organization: spring-projects
+        name: spring-data-commons
+        collaborators:
+          - christophstrobl
+          - gregturn
+          - jxblum
+          - mpaluch
+          - odrotbohm
+          - schauder
+      - organization: spring-projects
+        name: spring-data-couchbase
+        collaborators:
+          - christophstrobl
+          - daschl
+          - davidkelly
+          - gregturn
+          - jxblum
+          - mikereiche
+          - mpaluch
+          - odrotbohm
+          - schauder
+      - organization: spring-projects
+        name: spring-data-elasticsearch
+        collaborators:
+          - christophstrobl
+          - gregturn
+          - jxblum
+          - mpaluch
+          - odrotbohm
+          - schauder
+          - sothawo
+      - organization: spring-projects
+        name: spring-data-envers
+        collaborators:
+          - christophstrobl
+          - gregturn
+          - jxblum
+          - mpaluch
+          - odrotbohm
+          - schauder
+      - organization: spring-projects
+        name: spring-data-examples
+        collaborators:
+          - christophstrobl
+          - gregturn
+          - jxblum
+          - mpaluch
+          - odrotbohm
+          - schauder
+      - organization: spring-projects
+        name: spring-data-gemfire
+        collaborators:
+          - christophstrobl
+          - gregturn
+          - jxblum
+          - mpaluch
+          - odrotbohm
+          - schauder
+      - organization: spring-projects
+        name: spring-data-geode
+        collaborators:
+          - christophstrobl
+          - gregturn
+          - jxblum
+          - mpaluch
+          - odrotbohm
+          - schauder
+      - organization: spring-projects
+        name: spring-data-jdbc
+        collaborators:
+          - christophstrobl
+          - gregturn
+          - jxblum
+          - mpaluch
+          - odrotbohm
+          - schauder
+      - organization: spring-projects
+        name: spring-data-jpa
+        collaborators:
+          - christophstrobl
+          - gregturn
+          - jxblum
+          - mpaluch
+          - odrotbohm
+          - schauder
+      - organization: spring-projects
+        name: spring-data-keyvalue
+        collaborators:
+          - christophstrobl
+          - gregturn
+          - jxblum
+          - mpaluch
+          - odrotbohm
+          - schauder
+      - organization: spring-projects
+        name: spring-data-ldap
+        collaborators:
+          - christophstrobl
+          - gregturn
+          - jxblum
+          - mpaluch
+          - odrotbohm
+          - schauder
+      - organization: spring-projects
+        name: spring-data-mongodb
+        collaborators:
+          - christophstrobl
+          - gregturn
+          - jxblum
+          - mpaluch
+          - odrotbohm
+          - schauder
+      - organization: spring-projects
+        name: spring-data-neo4j
+        collaborators:
+          - christophstrobl
+          - gregturn
+          - jxblum
+          - meistermeier
+          - michael-simons
+          - mpaluch
+          - odrotbohm
+          - schauder
+      - organization: spring-projects
+        name: spring-data-r2dbc
+        collaborators:
+          - christophstrobl
+          - gregturn
+          - jxblum
+          - mpaluch
+          - odrotbohm
+          - schauder
+      - organization: spring-projects
+        name: spring-data-redis
+        collaborators:
+          - christophstrobl
+          - gregturn
+          - jxblum
+          - mpaluch
+          - odrotbohm
+          - schauder
+      - organization: spring-projects
+        name: spring-data-rest
+        collaborators:
+          - christophstrobl
+          - gregturn
+          - jxblum
+          - mpaluch
+          - odrotbohm
+          - schauder
+      - organization: spring-projects
+        name: spring-data-solr
+        collaborators:
+          - christophstrobl
+          - gregturn
+          - jxblum
+          - mpaluch
+          - odrotbohm
+          - schauder
+      - organization: spring-projects
         name: spring-framework
         collaborators:
           - bclozel
@@ -46,192 +232,6 @@ issuebot:
           - sbrannen
           - sdeleuze
           - snicoll
-      - organization: spring-projects
-        name: spring-data-bom
-        collaborators:
-          - christophstrobl
-          - gregturn
-          - mpaluch
-          - jxblum
-          - odrotbohm
-          - schauder
-      - organization: spring-projects
-        name: spring-data-build
-        collaborators:
-          - christophstrobl
-          - gregturn
-          - mpaluch
-          - jxblum
-          - odrotbohm
-          - schauder
-      - organization: spring-projects
-        name: spring-data-commons
-        collaborators:
-          - christophstrobl
-          - gregturn
-          - mpaluch
-          - jxblum
-          - odrotbohm
-          - schauder
-      - organization: spring-projects
-        name: spring-data-cassandra
-        collaborators:
-          - christophstrobl
-          - gregturn
-          - mpaluch
-          - jxblum
-          - odrotbohm
-          - schauder
-      - organization: spring-projects
-        name: spring-data-envers
-        collaborators:
-          - christophstrobl
-          - gregturn
-          - mpaluch
-          - jxblum
-          - odrotbohm
-          - schauder
-      - organization: spring-projects
-        name: spring-data-examples
-        collaborators:
-          - christophstrobl
-          - gregturn
-          - mpaluch
-          - jxblum
-          - odrotbohm
-          - schauder
-      - organization: spring-projects
-        name: spring-data-gemfire
-        collaborators:
-          - christophstrobl
-          - gregturn
-          - mpaluch
-          - jxblum
-          - odrotbohm
-          - schauder
-      - organization: spring-projects
-        name: spring-data-geode
-        collaborators:
-          - christophstrobl
-          - gregturn
-          - mpaluch
-          - jxblum
-          - odrotbohm
-          - schauder
-      - organization: spring-projects
-        name: spring-data-jdbc
-        collaborators:
-          - christophstrobl
-          - gregturn
-          - mpaluch
-          - jxblum
-          - odrotbohm
-          - schauder
-      - organization: spring-projects
-        name: spring-data-jpa
-        collaborators:
-          - christophstrobl
-          - gregturn
-          - mpaluch
-          - jxblum
-          - odrotbohm
-          - schauder
-      - organization: spring-projects
-        name: spring-data-keyvalue
-        collaborators:
-          - christophstrobl
-          - gregturn
-          - mpaluch
-          - jxblum
-          - odrotbohm
-          - schauder
-      - organization: spring-projects
-        name: spring-data-ldap
-        collaborators:
-          - christophstrobl
-          - gregturn
-          - mpaluch
-          - jxblum
-          - odrotbohm
-          - schauder
-      - organization: spring-projects
-        name: spring-data-mongodb
-        collaborators:
-          - christophstrobl
-          - gregturn
-          - mpaluch
-          - jxblum
-          - odrotbohm
-          - schauder
-      - organization: spring-projects
-        name: spring-data-r2dbc
-        collaborators:
-          - christophstrobl
-          - gregturn
-          - mpaluch
-          - jxblum
-          - odrotbohm
-          - schauder
-      - organization: spring-projects
-        name: spring-data-redis
-        collaborators:
-          - christophstrobl
-          - gregturn
-          - mpaluch
-          - jxblum
-          - odrotbohm
-          - schauder
-      - organization: spring-projects
-        name: spring-data-rest
-        collaborators:
-          - christophstrobl
-          - gregturn
-          - mpaluch
-          - jxblum
-          - odrotbohm
-          - schauder
-      - organization: spring-projects
-        name: spring-data-solr
-        collaborators:
-          - christophstrobl
-          - gregturn
-          - mpaluch
-          - jxblum
-          - odrotbohm
-          - schauder
-      - organization: spring-projects
-        name: spring-data-couchbase
-        collaborators:
-          - christophstrobl
-          - gregturn
-          - mpaluch
-          - jxblum
-          - odrotbohm
-          - schauder
-          - daschl
-          - mikereiche
-          - davidkelly
-      - organization: spring-projects
-        name: spring-data-elasticsearch
-        collaborators:
-          - christophstrobl
-          - gregturn
-          - mpaluch
-          - jxblum
-          - odrotbohm
-          - schauder
-          - sothawo
-      - organization: spring-projects
-        name: spring-data-neo4j
-        collaborators:
-          - christophstrobl
-          - gregturn
-          - mpaluch
-          - jxblum
-          - odrotbohm
-          - schauder
-          - michael-simons
-          - meistermeier
       - organization: spring-projects
         name: spring-restdocs
         collaborators:
@@ -247,6 +247,13 @@ issuebot:
           - rwinch
           - sjohnr
       - organization: spring-projects
+        name: spring-security-oauth
+        collaborators:
+          - eleftherias
+          - jgrandja
+          - jzheaux
+          - rwinch
+      - organization: spring-projects
         name: spring-session
         collaborators:
           - eleftherias
@@ -255,13 +262,6 @@ issuebot:
           - jzheaux
           - rwinch
           - vpavic
-      - organization: spring-projects
-        name: spring-security-oauth
-        collaborators:
-          - eleftherias
-          - jgrandja
-          - jzheaux
-          - rwinch
       - organization: spring-projects-experimental
         name: spring-authorization-server
         collaborators:
