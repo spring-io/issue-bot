@@ -233,6 +233,14 @@ issuebot:
           - sdeleuze
           - snicoll
       - organization: spring-projects
+        name: spring-graphql
+        collaborators:
+          - andimarek
+          - bclozel
+          - mp911de
+          - rstoyanchev
+          - rwinch
+      - organization: spring-projects
         name: spring-restdocs
         collaborators:
           - wilkinsona
