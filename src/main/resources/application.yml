@@ -282,6 +282,14 @@ issuebot:
           - schauder
           - sdeleuze
           - snicoll
+      - organization: spring-projects
+        name: spring-graphql
+        collaborators:
+          - andimarek
+          - bclozel
+          - mp911de
+          - rstoyanchev
+          - rwinch
   triage:
     label: "status: waiting-for-triage"
   feedback:
