@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.config.SocketConfig;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,8 +102,10 @@ public class GitHubTemplate implements GitHubOperations {
 				}
 			}
 		});
+		HttpClient httpClient = HttpClientBuilder.create()
+				.setDefaultSocketConfig(SocketConfig.custom().setSoTimeout(30000).build()).build();
 		BufferingClientHttpRequestFactory bufferingClient = new BufferingClientHttpRequestFactory(
-				new HttpComponentsClientHttpRequestFactory());
+				new HttpComponentsClientHttpRequestFactory(httpClient));
 		rest.setRequestFactory(bufferingClient);
 		rest.setInterceptors(
 				Arrays.asList(new BasicAuthorizationInterceptor(username, password), rateLimitInterceptor));
