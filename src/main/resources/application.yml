@@ -271,7 +271,7 @@ issuebot:
           - jzheaux
           - rwinch
           - vpavic
-      - organization: spring-projects-experimental
+      - organization: spring-projects
         name: spring-authorization-server
         collaborators:
           - eleftherias
