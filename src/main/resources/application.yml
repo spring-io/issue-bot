@@ -232,6 +232,7 @@ issuebot:
           - rstoyanchev
           - sbrannen
           - sdeleuze
+          - simonbasle
           - snicoll
       - organization: spring-projects
         name: spring-graphql
