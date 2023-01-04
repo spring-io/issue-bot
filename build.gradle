@@ -1,0 +1,42 @@
+plugins {
+	id "checkstyle"
+	id "java"
+	id "io.spring.javaformat" version "0.0.35"
+	id "org.springframework.boot" version "2.7.6"
+}
+
+group = "io.spring.issuebot"
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	annotationProcessor(platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES))
+	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
+	checkstyle("io.spring.javaformat:spring-javaformat-checkstyle:0.0.35")
+
+	implementation(platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES))
+	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+	implementation("org.apache.httpcomponents:httpclient")
+	implementation("org.springframework.boot:spring-boot-starter-web")
+
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+}
+
+checkstyle {
+	toolVersion = "10.6.0"
+}
+
+java {
+	sourceCompatibility = "1.8"
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.encoding = "UTF-8"
+}
+
+tasks.withType(Test).configureEach {
+	useJUnitPlatform()
+}
