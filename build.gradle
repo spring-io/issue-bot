@@ -2,7 +2,7 @@ plugins {
 	id "checkstyle"
 	id "java"
 	id "io.spring.javaformat" version "0.0.35"
-	id "org.springframework.boot" version "2.7.6"
+	id "org.springframework.boot" version "3.0.1"
 }
 
 group = "io.spring.issuebot"
@@ -19,7 +19,7 @@ dependencies {
 
 	implementation(platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES))
 	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-	implementation("org.apache.httpcomponents:httpclient")
+	implementation("org.apache.httpcomponents.client5:httpclient5")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
