@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.spring.issuebot.github.Issue.ClosureReason;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
@@ -185,9 +186,12 @@ public class GitHubTemplate implements GitHubOperations {
 	}
 
 	@Override
-	public Issue close(Issue issue) {
+	public Issue close(Issue issue, ClosureReason closureReason) {
 		Map<String, String> body = new HashMap<>();
 		body.put("state", "closed");
+		if (closureReason != null) {
+			body.put("state_reason", closureReason.getStateReason());
+		}
 		ResponseEntity<Issue> response = this.rest
 				.exchange(new RequestEntity<>(body, HttpMethod.PATCH, URI.create(issue.getUrl())), Issue.class);
 		if (response.getStatusCode() != HttpStatus.OK) {

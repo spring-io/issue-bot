@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 the original author or authors.
+ * Copyright 2015-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 package io.spring.issuebot.github;
+
+import io.spring.issuebot.github.Issue.ClosureReason;
 
 /**
  * Operations that can be performed against the GitHub API.
@@ -66,9 +68,10 @@ public interface GitHubOperations {
 	/**
 	 * Closes the given {@code issue}.
 	 * @param issue the issue
+	 * @param reason the reason for closing the issue
 	 * @return the modified issue
 	 */
-	Issue close(Issue issue);
+	Issue close(Issue issue, ClosureReason reason);
 
 	/**
 	 * Returns the events that have occurred on the given {@code issue}.

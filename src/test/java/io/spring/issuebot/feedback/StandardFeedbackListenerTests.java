@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2020 the original author or authors.
+ * Copyright 2015-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import io.spring.issuebot.IssueListener;
 import io.spring.issuebot.Repository;
 import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.Issue;
+import io.spring.issuebot.github.Issue.ClosureReason;
 import io.spring.issuebot.github.Label;
 import io.spring.issuebot.github.PullRequest;
 import org.junit.jupiter.api.Test;
@@ -118,7 +119,7 @@ class StandardFeedbackListenerTests {
 	void feedbackRequiredAndOverdue() {
 		this.listener.feedbackRequired(this.repository, this.issue, OffsetDateTime.now().minusDays(15));
 		verify(this.gitHub).addComment(this.issue, "Closing due to lack of feedback");
-		verify(this.gitHub).close(this.issue);
+		verify(this.gitHub).close(this.issue, ClosureReason.NOT_PLANNED);
 		verify(this.gitHub).removeLabel(this.issue, "feedback-required");
 		verify(this.issueListener).onIssueClosure(this.repository, this.issue);
 	}

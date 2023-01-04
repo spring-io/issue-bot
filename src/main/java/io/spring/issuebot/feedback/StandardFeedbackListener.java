@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import io.spring.issuebot.IssueListener;
 import io.spring.issuebot.Repository;
 import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.Issue;
+import io.spring.issuebot.github.Issue.ClosureReason;
 import io.spring.issuebot.github.Label;
 
 /**
@@ -82,7 +83,7 @@ final class StandardFeedbackListener implements FeedbackListener {
 
 	private void close(Repository repository, Issue issue) {
 		this.gitHub.addComment(issue, this.closeComment);
-		this.gitHub.close(issue);
+		this.gitHub.close(issue, ClosureReason.NOT_PLANNED);
 		this.gitHub.removeLabel(issue, this.requiredLabel);
 		this.gitHub.removeLabel(issue, this.reminderLabel);
 		this.issueListeners.forEach((listener) -> listener.onIssueClosure(repository, issue));

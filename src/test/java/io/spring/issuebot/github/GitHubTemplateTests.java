@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2020 the original author or authors.
+ * Copyright 2015-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package io.spring.issuebot.github;
 
 import java.util.Date;
 
+import io.spring.issuebot.github.Issue.ClosureReason;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.core.io.UrlResource;
@@ -198,11 +199,22 @@ class GitHubTemplateTests {
 	}
 
 	@Test
-	void closeIssue() {
+	void closeIssueAsCompleted() {
 		this.server.expect(requestTo("issueUrl")).andExpect(method(HttpMethod.PATCH)).andExpect(basicAuth())
-				.andExpect(content().string("{\"state\":\"closed\"}"))
+				.andExpect(content().json("{\"state\":\"closed\",\"state_reason\":\"completed\"}"))
 				.andRespond(withSuccess("{\"url\":\"updatedIssueUrl\"}", MediaType.APPLICATION_JSON));
-		Issue closedIssue = this.gitHub.close(new Issue("issueUrl", null, null, null, null, null, null, null));
+		Issue closedIssue = this.gitHub.close(new Issue("issueUrl", null, null, null, null, null, null, null),
+				ClosureReason.COMPLETED);
+		assertThat(closedIssue.getUrl()).isEqualTo("updatedIssueUrl");
+	}
+
+	@Test
+	void closeIssueAsNotPlanned() {
+		this.server.expect(requestTo("issueUrl")).andExpect(method(HttpMethod.PATCH)).andExpect(basicAuth())
+				.andExpect(content().json("{\"state\":\"closed\",\"state_reason\":\"not_planned\"}"))
+				.andRespond(withSuccess("{\"url\":\"updatedIssueUrl\"}", MediaType.APPLICATION_JSON));
+		Issue closedIssue = this.gitHub.close(new Issue("issueUrl", null, null, null, null, null, null, null),
+				ClosureReason.NOT_PLANNED);
 		assertThat(closedIssue.getUrl()).isEqualTo("updatedIssueUrl");
 	}
 
