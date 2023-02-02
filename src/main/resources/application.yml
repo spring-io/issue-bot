@@ -1,4 +1,8 @@
 issuebot:
+  github:
+    credentials:
+      username: ${issuebot-github-credentials-username}
+      password: ${issuebot-github-credentials-password}
   monitoring:
     repositories:
       - organization: spring-gradle-plugins

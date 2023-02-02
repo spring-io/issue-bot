@@ -22,6 +22,9 @@ dependencies {
 	implementation("org.apache.httpcomponents.client5:httpclient5")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 
+	runtimeOnly(platform("com.azure.spring:spring-cloud-azure-dependencies:4.5.0"))
+	runtimeOnly("com.azure.spring:spring-cloud-azure-starter-keyvault-secrets")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
