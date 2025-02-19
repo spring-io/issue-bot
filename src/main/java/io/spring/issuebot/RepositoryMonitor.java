@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,18 +41,24 @@ class RepositoryMonitor {
 
 	private final List<Repository> repositories;
 
+	private final boolean enabled;
+
 	private final List<IssueListener> issueListeners;
 
-	RepositoryMonitor(GitHubOperations gitHub, List<Repository> repositories, List<IssueListener> issueListeners) {
+	RepositoryMonitor(GitHubOperations gitHub, List<Repository> repositories, boolean enabled,
+			List<IssueListener> issueListeners) {
 		this.gitHub = gitHub;
 		this.repositories = repositories;
+		this.enabled = enabled;
 		this.issueListeners = issueListeners;
 	}
 
 	@Scheduled(fixedRate = 5 * 60 * 1000)
 	void monitor() {
-		for (Repository repository : this.repositories) {
-			monitor(repository);
+		if (this.enabled) {
+			for (Repository repository : this.repositories) {
+				monitor(repository);
+			}
 		}
 	}
 

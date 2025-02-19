@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 the original author or authors.
+ * Copyright 2015-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,12 +30,22 @@ public class MonitoringProperties {
 
 	private List<Repository> repositories;
 
+	private boolean enabled = true;
+
 	public List<Repository> getRepositories() {
 		return this.repositories;
 	}
 
 	public void setRepositories(List<Repository> repositories) {
 		this.repositories = repositories;
+	}
+
+	public boolean isEnabled() {
+		return this.enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
 }
