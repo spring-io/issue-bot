@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2023 the original author or authors.
+ * Copyright 2015-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -50,7 +51,6 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.util.Base64Utils;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.DefaultResponseErrorHandler;
@@ -106,10 +106,10 @@ public class GitHubTemplate implements GitHubOperations {
 			}
 		});
 		HttpClient httpClient = HttpClientBuilder.create()
-				.setConnectionManager(PoolingHttpClientConnectionManagerBuilder.create()
-						.setDefaultSocketConfig(SocketConfig.custom().setSoTimeout(Timeout.ofSeconds(30)).build())
-						.build())
-				.build();
+			.setConnectionManager(PoolingHttpClientConnectionManagerBuilder.create()
+				.setDefaultSocketConfig(SocketConfig.custom().setSoTimeout(Timeout.ofSeconds(30)).build())
+				.build())
+			.build();
 		BufferingClientHttpRequestFactory bufferingClient = new BufferingClientHttpRequestFactory(
 				new HttpComponentsClientHttpRequestFactory(httpClient));
 		rest.setRequestFactory(bufferingClient);
@@ -151,8 +151,8 @@ public class GitHubTemplate implements GitHubOperations {
 	public Issue addLabel(Issue issue, String labelName) {
 		URI uri = URI.create(issue.getLabelsUrl().replace("{/name}", ""));
 		log.info("Adding label {} to {}", labelName, uri);
-		ResponseEntity<Label[]> response = this.rest.exchange(
-				new RequestEntity<>(Collections.singletonList(labelName), HttpMethod.POST, uri), Label[].class);
+		ResponseEntity<Label[]> response = this.rest
+			.exchange(new RequestEntity<>(Collections.singletonList(labelName), HttpMethod.POST, uri), Label[].class);
 		if (response.getStatusCode() != HttpStatus.OK) {
 			log.warn("Failed to add label to issue. Response status: " + response.getStatusCode());
 		}
@@ -193,7 +193,7 @@ public class GitHubTemplate implements GitHubOperations {
 			body.put("state_reason", closureReason.getStateReason());
 		}
 		ResponseEntity<Issue> response = this.rest
-				.exchange(new RequestEntity<>(body, HttpMethod.PATCH, URI.create(issue.getUrl())), Issue.class);
+			.exchange(new RequestEntity<>(body, HttpMethod.PATCH, URI.create(issue.getUrl())), Issue.class);
 		if (response.getStatusCode() != HttpStatus.OK) {
 			log.warn("Failed to close issue. Response status: " + response.getStatusCode());
 		}
@@ -248,7 +248,7 @@ public class GitHubTemplate implements GitHubOperations {
 		@Override
 		public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
 				throws IOException {
-			String token = Base64Utils.encodeToString((this.username + ":" + this.password).getBytes(UTF_8));
+			String token = Base64.getEncoder().encodeToString((this.username + ":" + this.password).getBytes(UTF_8));
 			request.getHeaders().add("Authorization", "Basic " + token);
 			return execution.execute(request, body);
 		}

@@ -2,34 +2,13 @@ pluginManagement {
 	repositories {
 		mavenCentral()
 		gradlePluginPortal()
-		maven {
-			url "https://repo.spring.io/release"
-			content {
-				includeGroup("io.spring.ge.conventions")
-			}
-		}
 	}
 }
 
 plugins {
-	id "com.gradle.enterprise" version "3.12.1"
-	id "io.spring.ge.conventions" version "0.0.12"
+	id "io.spring.develocity.conventions" version "0.0.22"
 }
 
 rootProject.name="issue-bot"
 
 enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
-
-settings.gradle.projectsLoaded {
-	gradleEnterprise {
-		buildScan {
-			def buildDir = settings.gradle.rootProject.getBuildDir()
-			buildDir.mkdirs()
-			new File(buildDir, "build-scan-uri.txt").text = "build scan not generated"
-			buildScanPublished { scan ->
-				buildDir.mkdirs()
-				new File(buildDir, "build-scan-uri.txt").text = "<${scan.buildScanUri}|build scan>\n"
-			}
-		}
-	}
-}

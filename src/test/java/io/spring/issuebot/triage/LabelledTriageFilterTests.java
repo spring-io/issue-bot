@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2020 the original author or authors.
+ * Copyright 2015-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,19 +40,20 @@ class LabelledTriageFilterTests {
 	void issueWithLabels() {
 		assertThat(this.filter.triaged(this.repository,
 				new Issue(null, null, null, null, null, Collections.singletonList(new Label("test")), null, null)))
-						.isTrue();
+			.isTrue();
 	}
 
 	@Test
 	void issueWithNullLabels() {
 		assertThat(this.filter.triaged(this.repository, new Issue(null, null, null, null, null, null, null, null)))
-				.isFalse();
+			.isFalse();
 	}
 
 	@Test
 	void issueWithNoLabels() {
 		assertThat(this.filter.triaged(this.repository,
-				new Issue(null, null, null, null, null, Collections.emptyList(), null, null))).isFalse();
+				new Issue(null, null, null, null, null, Collections.emptyList(), null, null)))
+			.isFalse();
 	}
 
 }

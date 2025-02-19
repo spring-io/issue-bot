@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2020 the original author or authors.
+ * Copyright 2015-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,13 +47,15 @@ class OpenedByCollaboratorTriageFilterTests {
 	@Test
 	void openedByCollaborator() {
 		assertThat(this.filter.triaged(this.repository,
-				new Issue(null, null, null, null, new User("Alice"), null, null, null))).isTrue();
+				new Issue(null, null, null, null, new User("Alice"), null, null, null)))
+			.isTrue();
 	}
 
 	@Test
 	void openedByAnotherUser() {
 		assertThat(this.filter.triaged(this.repository,
-				new Issue(null, null, null, null, new User("Debbie"), null, null, null))).isFalse();
+				new Issue(null, null, null, null, new User("Debbie"), null, null, null)))
+			.isFalse();
 	}
 
 }
