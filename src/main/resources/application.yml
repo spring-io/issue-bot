@@ -287,8 +287,8 @@ issuebot:
       - organization: spring-projects
         name: spring-ws
         collaborators:
-          - wilkinsona
           - snicoll
+          - wilkinsona
       - organization: spring-projects-experimental
         name: spring-native
         collaborators:
