@@ -17,8 +17,7 @@ issuebot:
         name: initializr
         collaborators:
           - bclozel
-          - mbhave
-          - oodamien
+          - mhalbritter
           - philwebb
           - snicoll
           - wilkinsona
@@ -26,8 +25,7 @@ issuebot:
         name: start.spring.io
         collaborators:
           - bclozel
-          - mbhave
-          - oodamien
+          - mhalbritter
           - philwebb
           - snicoll
           - wilkinsona
@@ -38,15 +36,12 @@ issuebot:
           - mbhave
           - mhalbritter
           - philwebb
-          - scottfrederick
           - snicoll
           - wilkinsona
       - organization: spring-projects
         name: spring-data-bom
         collaborators:
           - christophstrobl
-          - gregturn
-          - jxblum
           - mpaluch
           - odrotbohm
           - schauder
@@ -54,8 +49,6 @@ issuebot:
         name: spring-data-build
         collaborators:
           - christophstrobl
-          - gregturn
-          - jxblum
           - mpaluch
           - odrotbohm
           - schauder
@@ -63,8 +56,6 @@ issuebot:
         name: spring-data-cassandra
         collaborators:
           - christophstrobl
-          - gregturn
-          - jxblum
           - mpaluch
           - odrotbohm
           - schauder
@@ -72,8 +63,6 @@ issuebot:
         name: spring-data-commons
         collaborators:
           - christophstrobl
-          - gregturn
-          - jxblum
           - mpaluch
           - odrotbohm
           - schauder
@@ -83,8 +72,6 @@ issuebot:
           - christophstrobl
           - daschl
           - davidkelly
-          - gregturn
-          - jxblum
           - mikereiche
           - mpaluch
           - odrotbohm
@@ -93,8 +80,6 @@ issuebot:
         name: spring-data-elasticsearch
         collaborators:
           - christophstrobl
-          - gregturn
-          - jxblum
           - mpaluch
           - odrotbohm
           - schauder
@@ -103,8 +88,6 @@ issuebot:
         name: spring-data-envers
         collaborators:
           - christophstrobl
-          - gregturn
-          - jxblum
           - mpaluch
           - odrotbohm
           - schauder
@@ -112,8 +95,6 @@ issuebot:
         name: spring-data-examples
         collaborators:
           - christophstrobl
-          - gregturn
-          - jxblum
           - mpaluch
           - odrotbohm
           - schauder
@@ -121,8 +102,6 @@ issuebot:
         name: spring-data-gemfire
         collaborators:
           - christophstrobl
-          - gregturn
-          - jxblum
           - mpaluch
           - odrotbohm
           - schauder
@@ -130,17 +109,6 @@ issuebot:
         name: spring-data-geode
         collaborators:
           - christophstrobl
-          - gregturn
-          - jxblum
-          - mpaluch
-          - odrotbohm
-          - schauder
-      - organization: spring-projects
-        name: spring-data-jdbc
-        collaborators:
-          - christophstrobl
-          - gregturn
-          - jxblum
           - mpaluch
           - odrotbohm
           - schauder
@@ -148,8 +116,6 @@ issuebot:
         name: spring-data-jpa
         collaborators:
           - christophstrobl
-          - gregturn
-          - jxblum
           - mpaluch
           - odrotbohm
           - schauder
@@ -157,8 +123,6 @@ issuebot:
         name: spring-data-keyvalue
         collaborators:
           - christophstrobl
-          - gregturn
-          - jxblum
           - mpaluch
           - odrotbohm
           - schauder
@@ -166,8 +130,6 @@ issuebot:
         name: spring-data-ldap
         collaborators:
           - christophstrobl
-          - gregturn
-          - jxblum
           - mpaluch
           - odrotbohm
           - schauder
@@ -175,8 +137,6 @@ issuebot:
         name: spring-data-mongodb
         collaborators:
           - christophstrobl
-          - gregturn
-          - jxblum
           - mpaluch
           - odrotbohm
           - schauder
@@ -184,8 +144,6 @@ issuebot:
         name: spring-data-neo4j
         collaborators:
           - christophstrobl
-          - gregturn
-          - jxblum
           - meistermeier
           - michael-simons
           - mpaluch
@@ -195,8 +153,6 @@ issuebot:
         name: spring-data-r2dbc
         collaborators:
           - christophstrobl
-          - gregturn
-          - jxblum
           - mpaluch
           - odrotbohm
           - schauder
@@ -204,8 +160,13 @@ issuebot:
         name: spring-data-redis
         collaborators:
           - christophstrobl
-          - gregturn
-          - jxblum
+          - mpaluch
+          - odrotbohm
+          - schauder
+      - organization: spring-projects
+        name: spring-data-relational
+        collaborators:
+          - christophstrobl
           - mpaluch
           - odrotbohm
           - schauder
@@ -213,17 +174,6 @@ issuebot:
         name: spring-data-rest
         collaborators:
           - christophstrobl
-          - gregturn
-          - jxblum
-          - mpaluch
-          - odrotbohm
-          - schauder
-      - organization: spring-projects
-        name: spring-data-solr
-        collaborators:
-          - christophstrobl
-          - gregturn
-          - jxblum
           - mpaluch
           - odrotbohm
           - schauder
@@ -232,11 +182,9 @@ issuebot:
         collaborators:
           - bclozel
           - jhoeller
-          - poutsma
           - rstoyanchev
           - sbrannen
           - sdeleuze
-          - simonbasle
           - snicoll
       - organization: spring-projects
         name: spring-graphql
@@ -253,24 +201,14 @@ issuebot:
       - organization: spring-projects
         name: spring-security
         collaborators:
-          - eleftherias
           - fhanik
           - jgrandja
           - jzheaux
-          - marcusdacoregio
           - rwinch
           - sjohnr
       - organization: spring-projects
-        name: spring-security-oauth
-        collaborators:
-          - eleftherias
-          - jgrandja
-          - jzheaux
-          - rwinch
-      - organization: spring-projects
         name: spring-session
         collaborators:
-          - eleftherias
           - fhanik
           - jgrandja
           - jzheaux
@@ -279,7 +217,6 @@ issuebot:
       - organization: spring-projects
         name: spring-authorization-server
         collaborators:
-          - eleftherias
           - jgrandja
           - jzheaux
           - rwinch
@@ -289,18 +226,6 @@ issuebot:
         collaborators:
           - snicoll
           - wilkinsona
-      - organization: spring-projects-experimental
-        name: spring-native
-        collaborators:
-          - aclement
-          - bclozel
-          - christophstrobl
-          - dsyer
-          - eleftherias
-          - fhanik
-          - schauder
-          - sdeleuze
-          - snicoll
   triage:
     label: "status: waiting-for-triage"
   feedback:
