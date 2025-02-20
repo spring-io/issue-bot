@@ -284,6 +284,11 @@ issuebot:
           - jzheaux
           - rwinch
           - sjohnr
+      - organization: spring-projects
+        name: spring-ws
+        collaborators:
+          - snicoll
+          - wilkinsona
       - organization: spring-projects-experimental
         name: spring-native
         collaborators:
