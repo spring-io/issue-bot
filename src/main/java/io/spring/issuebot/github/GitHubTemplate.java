@@ -139,7 +139,7 @@ public class GitHubTemplate implements GitHubOperations {
 		if (!StringUtils.hasText(url)) {
 			return null;
 		}
-		ResponseEntity<T[]> contents = this.rest.getForEntity(url, type);
+		ResponseEntity<T[]> contents = this.rest.getForEntity(URI.create(url), type);
 		return new StandardPage<>(Arrays.asList(contents.getBody()), () -> getPage(getNextUrl(contents), type));
 	}
 
@@ -169,7 +169,7 @@ public class GitHubTemplate implements GitHubOperations {
 		catch (URISyntaxException ex) {
 			throw new RuntimeException(ex);
 		}
-		ResponseEntity<Label[]> response = this.rest.exchange(new RequestEntity<Void>(HttpMethod.DELETE,
+		ResponseEntity<Label[]> response = this.rest.exchange(new RequestEntity<>(HttpMethod.DELETE,
 				URI.create(issue.getLabelsUrl().replace("{/name}", "/" + encodedName))), Label[].class);
 		if (response.getStatusCode() != HttpStatus.OK) {
 			log.warn("Failed to remove label from issue. Response status: " + response.getStatusCode());

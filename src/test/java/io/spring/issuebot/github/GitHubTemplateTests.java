@@ -78,13 +78,28 @@ class GitHubTemplateTests {
 
 	@Test
 	void multiplePagesOfIssues() {
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Link", "<page-two>; rel=\"next\"");
 		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues"))
 			.andExpect(method(HttpMethod.GET))
 			.andExpect(basicAuth())
-			.andRespond(withResource("issues-page-one.json", "Link:<page-two>; rel=\"next\""));
+			.andRespond(withResource("issues-page-one.json", "Link:</page-two>; rel=\"next\""));
 		this.server.expect(requestTo("/page-two"))
+			.andExpect(method(HttpMethod.GET))
+			.andExpect(basicAuth())
+			.andRespond(withResource("issues-page-two.json"));
+		Page<Issue> pageOne = this.gitHub.getIssues("org", "repo");
+		assertThat(pageOne.getContent()).hasSize(15);
+		Page<Issue> pageTwo = pageOne.next();
+		assertThat(pageTwo).isNotNull();
+		assertThat(pageTwo.getContent()).hasSize(15);
+	}
+
+	@Test
+	void multiplePagesOfIssuesWithPercentEncodedLink() {
+		this.server.expect(requestTo("https://api.github.com/repos/org/repo/issues"))
+			.andExpect(method(HttpMethod.GET))
+			.andExpect(basicAuth())
+			.andRespond(withResource("issues-page-one.json", "Link:</page-two%3D%3D>; rel=\"next\""));
+		this.server.expect(requestTo("/page-two%3D%3D"))
 			.andExpect(method(HttpMethod.GET))
 			.andExpect(basicAuth())
 			.andRespond(withResource("issues-page-two.json"));
@@ -117,7 +132,7 @@ class GitHubTemplateTests {
 			.andExpect(basicAuth())
 			.andRespond(withSuccess("[]", MediaType.APPLICATION_JSON));
 		Page<Comment> comments = this.gitHub
-			.getComments(new Issue(null, "commentsUrl", null, null, null, null, null, null));
+			.getComments(new Issue(null, "/commentsUrl", null, null, null, null, null, null));
 		assertThat(comments.getContent()).isEmpty();
 		assertThat(comments.next()).isNull();
 	}
@@ -129,7 +144,7 @@ class GitHubTemplateTests {
 			.andExpect(basicAuth())
 			.andRespond(withResource("comments-page-one.json"));
 		Page<Comment> comments = this.gitHub
-			.getComments(new Issue(null, "commentsUrl", null, null, null, null, null, null));
+			.getComments(new Issue(null, "/commentsUrl", null, null, null, null, null, null));
 		assertThat(comments.getContent()).hasSize(17);
 		assertThat(comments.next()).isNull();
 	}
@@ -141,13 +156,13 @@ class GitHubTemplateTests {
 		this.server.expect(requestTo("/commentsUrl"))
 			.andExpect(method(HttpMethod.GET))
 			.andExpect(basicAuth())
-			.andRespond(withResource("comments-page-one.json", "Link:<page-two>; rel=\"next\""));
+			.andRespond(withResource("comments-page-one.json", "Link:</page-two>; rel=\"next\""));
 		this.server.expect(requestTo("/page-two"))
 			.andExpect(method(HttpMethod.GET))
 			.andExpect(basicAuth())
 			.andRespond(withResource("comments-page-two.json"));
 		Page<Comment> pageOne = this.gitHub
-			.getComments(new Issue(null, "commentsUrl", null, null, null, null, null, null));
+			.getComments(new Issue(null, "/commentsUrl", null, null, null, null, null, null));
 		assertThat(pageOne.getContent()).hasSize(17);
 		Page<Comment> pageTwo = pageOne.next();
 		assertThat(pageTwo).isNotNull();
@@ -206,24 +221,22 @@ class GitHubTemplateTests {
 			.andExpect(method(HttpMethod.GET))
 			.andExpect(basicAuth())
 			.andRespond(withResource("events-page-one.json"));
-		Page<Event> events = this.gitHub.getEvents(new Issue(null, null, "eventsUrl", null, null, null, null, null));
+		Page<Event> events = this.gitHub.getEvents(new Issue(null, null, "/eventsUrl", null, null, null, null, null));
 		assertThat(events.getContent()).hasSize(12);
 		assertThat(events.next()).isNull();
 	}
 
 	@Test
 	void multiplePagesOfEvents() {
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Link", "<page-two>; rel=\"next\"");
 		this.server.expect(requestTo("/eventsUrl"))
 			.andExpect(method(HttpMethod.GET))
 			.andExpect(basicAuth())
-			.andRespond(withResource("events-page-one.json", "Link:<page-two>; rel=\"next\""));
+			.andRespond(withResource("events-page-one.json", "Link:</page-two>; rel=\"next\""));
 		this.server.expect(requestTo("/page-two"))
 			.andExpect(method(HttpMethod.GET))
 			.andExpect(basicAuth())
 			.andRespond(withResource("events-page-two.json"));
-		Page<Event> pageOne = this.gitHub.getEvents(new Issue(null, null, "eventsUrl", null, null, null, null, null));
+		Page<Event> pageOne = this.gitHub.getEvents(new Issue(null, null, "/eventsUrl", null, null, null, null, null));
 		assertThat(pageOne.getContent()).hasSize(12);
 		Page<Event> pageTwo = pageOne.next();
 		assertThat(pageTwo).isNotNull();
