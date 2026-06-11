@@ -226,6 +226,14 @@ issuebot:
         collaborators:
           - snicoll
           - wilkinsona
+      - organization: spring-projects
+        name: spring-ai
+        collaborators:
+          - tzolov
+          - sdeleuze
+          - ilayaperumalg
+          - ericbottard
+          - sobychacko
   triage:
     label: "status: waiting-for-triage"
   feedback:
