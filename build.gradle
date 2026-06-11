@@ -2,7 +2,7 @@ plugins {
 	id "checkstyle"
 	id "java"
 	id "io.spring.javaformat" version "0.0.43"
-	id "org.springframework.boot" version "3.4.2"
+	id "org.springframework.boot" version "3.5.15"
 }
 
 group = "io.spring.issuebot"
@@ -22,7 +22,7 @@ dependencies {
 	implementation("org.apache.httpcomponents.client5:httpclient5")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 
-	runtimeOnly(platform("com.azure.spring:spring-cloud-azure-dependencies:5.20.0"))
+	runtimeOnly(platform("com.azure.spring:spring-cloud-azure-dependencies:6.4.0"))
 	runtimeOnly("com.azure.spring:spring-cloud-azure-starter-keyvault-secrets")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
