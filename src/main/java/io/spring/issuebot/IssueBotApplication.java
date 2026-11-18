@@ -27,6 +27,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.web.client.RestClient;
 
 /**
  * Main class for launching Issue Bot.
@@ -43,9 +44,9 @@ public class IssueBotApplication {
 	}
 
 	@Bean
-	GitHubTemplate gitHubTemplate(GitHubProperties gitHubProperties) {
+	GitHubTemplate gitHubTemplate(GitHubProperties gitHubProperties, RestClient.Builder restClientBuilder) {
 		return new GitHubTemplate(gitHubProperties.getCredentials().getUsername(),
-				gitHubProperties.getCredentials().getPassword(), new RegexLinkParser());
+				gitHubProperties.getCredentials().getPassword(), new RegexLinkParser(), restClientBuilder);
 	}
 
 	@Bean

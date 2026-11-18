@@ -31,7 +31,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.client.RequestMatcher;
 import org.springframework.test.web.client.response.DefaultResponseCreator;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
@@ -49,10 +49,12 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  */
 class GitHubTemplateTests {
 
-	private final GitHubTemplate gitHub = new GitHubTemplate("username", "password", new RegexLinkParser());
+	private final RestClient.Builder restClientBuilder = RestClient.builder();
 
-	private final MockRestServiceServer server = MockRestServiceServer
-		.createServer((RestTemplate) this.gitHub.getRestOperations());
+	private final MockRestServiceServer server = MockRestServiceServer.bindTo(this.restClientBuilder).build();
+
+	private final GitHubTemplate gitHub = new GitHubTemplate("username", "password", new RegexLinkParser(),
+			this.restClientBuilder);
 
 	@Test
 	void noIssues() {
@@ -210,7 +212,7 @@ class GitHubTemplateTests {
 			.andExpect(basicAuth())
 			.andExpect(content().string("{\"body\":\"A test comment\"}"))
 			.andRespond(withResource("new-comment.json"));
-		Issue issue = new Issue(null, "commentsUrl", null, null, null, null, null, null);
+		Issue issue = new Issue(null, "/commentsUrl", null, null, null, null, null, null);
 		Comment comment = this.gitHub.addComment(issue, "A test comment");
 		assertThat(comment).isNotNull();
 	}

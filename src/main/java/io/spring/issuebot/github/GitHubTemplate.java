@@ -22,18 +22,12 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.spring.issuebot.github.Issue.ClosureReason;
-import org.apache.hc.client5.http.classic.HttpClient;
-import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
-import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
-import org.apache.hc.core5.http.io.SocketConfig;
-import org.apache.hc.core5.util.Timeout;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,20 +37,16 @@ import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.DefaultResponseErrorHandler;
-import org.springframework.web.client.RestOperations;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 /**
  * Central class for interacting with GitHub's REST API.
@@ -69,32 +59,34 @@ public class GitHubTemplate implements GitHubOperations {
 
 	private final RateLimitInterceptor rateLimitInterceptor = new RateLimitInterceptor();
 
-	private final RestOperations rest;
+	private final RestClient rest;
 
 	private final LinkParser linkParser;
 
 	/**
 	 * Creates a new {@code GitHubTemplate} that will use the given {@code username} and
 	 * {@code password} to authenticate, and the given {@code linkParser} to parse links
-	 * from responses' {@code Link} header.
+	 * from responses' {@code Link} header. The given {@code restClientBuilder} is used to
+	 * create the template's underlying REST client.
 	 * @param username the username
 	 * @param password the password
 	 * @param linkParser the link parser
+	 * @param restClientBuilder the REST client builder
 	 */
-	public GitHubTemplate(String username, String password, LinkParser linkParser) {
-		this.rest = createDefaultRestTemplate(username, password, this.rateLimitInterceptor);
+	public GitHubTemplate(String username, String password, LinkParser linkParser,
+			RestClient.Builder restClientBuilder) {
+		this.rest = createDefaultRestClient(username, password, this.rateLimitInterceptor, restClientBuilder);
 		this.linkParser = linkParser;
 	}
 
-	GitHubTemplate(RestOperations rest, LinkParser linkParser) {
+	GitHubTemplate(RestClient rest, LinkParser linkParser) {
 		this.rest = rest;
 		this.linkParser = linkParser;
 	}
 
-	static RestTemplate createDefaultRestTemplate(String username, String password,
-			RateLimitInterceptor rateLimitInterceptor) {
-		RestTemplate rest = new RestTemplate();
-		rest.setErrorHandler(new DefaultResponseErrorHandler() {
+	static RestClient createDefaultRestClient(String username, String password,
+			RateLimitInterceptor rateLimitInterceptor, RestClient.Builder restClientBuilder) {
+		restClientBuilder.defaultStatusHandler(new DefaultResponseErrorHandler() {
 			@Override
 			public void handleError(URI uri, HttpMethod method, ClientHttpResponse response) throws IOException {
 				if (response.getStatusCode() == HttpStatus.FORBIDDEN) {
@@ -106,18 +98,11 @@ public class GitHubTemplate implements GitHubOperations {
 				}
 			}
 		});
-		HttpClient httpClient = HttpClientBuilder.create()
-			.setConnectionManager(PoolingHttpClientConnectionManagerBuilder.create()
-				.setDefaultSocketConfig(SocketConfig.custom().setSoTimeout(Timeout.ofSeconds(30)).build())
-				.build())
-			.build();
-		BufferingClientHttpRequestFactory bufferingClient = new BufferingClientHttpRequestFactory(
-				new HttpComponentsClientHttpRequestFactory(httpClient));
-		rest.setRequestFactory(bufferingClient);
-		rest.setInterceptors(
-				Arrays.asList(new BasicAuthorizationInterceptor(username, password), rateLimitInterceptor));
-		rest.setMessageConverters(Collections.singletonList(new ErrorLoggingMappingJackson2HttpMessageConverter()));
-		return rest;
+		restClientBuilder.defaultHeaders((httpHeaders) -> httpHeaders.setBasicAuth(username, password));
+		restClientBuilder.requestInterceptor(rateLimitInterceptor);
+		restClientBuilder.configureMessageConverters((clientConverters) -> clientConverters
+			.withJsonConverter(new ErrorLoggingJacksonJsonHttpMessageConverter()));
+		return restClientBuilder.build();
 	}
 
 	@Override
@@ -140,7 +125,7 @@ public class GitHubTemplate implements GitHubOperations {
 		if (!StringUtils.hasText(url)) {
 			return null;
 		}
-		ResponseEntity<T[]> contents = this.rest.getForEntity(URI.create(url), type);
+		ResponseEntity<T[]> contents = this.rest.get().uri(URI.create(url)).retrieve().toEntity(type);
 		return new StandardPage<>(Arrays.asList(contents.getBody()), () -> getPage(getNextUrl(contents), type));
 	}
 
@@ -152,8 +137,11 @@ public class GitHubTemplate implements GitHubOperations {
 	public Issue addLabel(Issue issue, String labelName) {
 		URI uri = URI.create(issue.getLabelsUrl().replace("{/name}", ""));
 		log.info("Adding label {} to {}", labelName, uri);
-		ResponseEntity<Label[]> response = this.rest
-			.exchange(new RequestEntity<>(Collections.singletonList(labelName), HttpMethod.POST, uri), Label[].class);
+		ResponseEntity<Label[]> response = this.rest.post()
+			.uri(uri)
+			.body(List.of(labelName))
+			.retrieve()
+			.toEntity(Label[].class);
 		if (response.getStatusCode() != HttpStatus.OK) {
 			log.warn("Failed to add label to issue. Response status: " + response.getStatusCode());
 		}
@@ -170,8 +158,10 @@ public class GitHubTemplate implements GitHubOperations {
 		catch (URISyntaxException ex) {
 			throw new RuntimeException(ex);
 		}
-		ResponseEntity<Label[]> response = this.rest.exchange(new RequestEntity<>(HttpMethod.DELETE,
-				URI.create(issue.getLabelsUrl().replace("{/name}", "/" + encodedName))), Label[].class);
+		ResponseEntity<Label[]> response = this.rest.delete()
+			.uri(URI.create(issue.getLabelsUrl().replace("{/name}", "/" + encodedName)))
+			.retrieve()
+			.toEntity(Label[].class);
 		if (response.getStatusCode() != HttpStatus.OK) {
 			log.warn("Failed to remove label from issue. Response status: " + response.getStatusCode());
 		}
@@ -183,7 +173,7 @@ public class GitHubTemplate implements GitHubOperations {
 	public Comment addComment(Issue issue, String comment) {
 		Map<String, String> body = new HashMap<>();
 		body.put("body", comment);
-		return this.rest.postForEntity(issue.getCommentsUrl(), body, Comment.class).getBody();
+		return this.rest.post().uri(issue.getCommentsUrl()).body(body).retrieve().body(Comment.class);
 	}
 
 	@Override
@@ -193,8 +183,11 @@ public class GitHubTemplate implements GitHubOperations {
 		if (closureReason != null) {
 			body.put("state_reason", closureReason.getStateReason());
 		}
-		ResponseEntity<Issue> response = this.rest
-			.exchange(new RequestEntity<>(body, HttpMethod.PATCH, URI.create(issue.getUrl())), Issue.class);
+		ResponseEntity<Issue> response = this.rest.patch()
+			.uri(issue.getUrl())
+			.body(body)
+			.retrieve()
+			.toEntity(Issue.class);
 		if (response.getStatusCode() != HttpStatus.OK) {
 			log.warn("Failed to close issue. Response status: " + response.getStatusCode());
 		}
@@ -206,11 +199,11 @@ public class GitHubTemplate implements GitHubOperations {
 		return this.rateLimitInterceptor.rateLimit;
 	}
 
-	RestOperations getRestOperations() {
+	RestClient getRestClient() {
 		return this.rest;
 	}
 
-	private static final class ErrorLoggingMappingJackson2HttpMessageConverter extends JacksonJsonHttpMessageConverter {
+	private static final class ErrorLoggingJacksonJsonHttpMessageConverter extends JacksonJsonHttpMessageConverter {
 
 		private static final Charset CHARSET_UTF_8 = StandardCharsets.UTF_8;
 
@@ -228,29 +221,6 @@ public class GitHubTemplate implements GitHubOperations {
 
 		private String read(HttpInputMessage inputMessage) throws IOException {
 			return StreamUtils.copyToString(inputMessage.getBody(), CHARSET_UTF_8);
-		}
-
-	}
-
-	private static class BasicAuthorizationInterceptor implements ClientHttpRequestInterceptor {
-
-		private static final Charset UTF_8 = StandardCharsets.UTF_8;
-
-		private final String username;
-
-		private final String password;
-
-		BasicAuthorizationInterceptor(String username, String password) {
-			this.username = username;
-			this.password = (password != null) ? password : "";
-		}
-
-		@Override
-		public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
-				throws IOException {
-			String token = Base64.getEncoder().encodeToString((this.username + ":" + this.password).getBytes(UTF_8));
-			request.getHeaders().add("Authorization", "Basic " + token);
-			return execution.execute(request, body);
 		}
 
 	}
