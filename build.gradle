@@ -18,6 +18,7 @@ dependencies {
 	implementation(platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES))
 	implementation("org.apache.httpcomponents.client5:httpclient5")
 	implementation("org.springframework.boot:spring-boot-starter-restclient")
+	implementation("org.springframework.boot:spring-boot-starter-webmvc")
 
 	runtimeOnly(platform('com.azure.spring:spring-cloud-azure-dependencies:7.4.0'))
 	runtimeOnly('com.azure.spring:spring-cloud-azure-starter-keyvault-secrets') {
