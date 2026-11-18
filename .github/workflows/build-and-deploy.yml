@@ -39,4 +39,5 @@ jobs:
             --name issue-bot \
             --service spring-asa \
             --resource-group spring-asa \
-            --artifact-path build/libs/issue-bot.jar
+            --artifact-path build/libs/issue-bot.jar \
+            --jvm-options="-XX:-UseBASE64Intrinsics"
