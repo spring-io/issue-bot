@@ -28,7 +28,7 @@ dependencies {
 }
 
 checkstyle {
-	toolVersion = "10.21.2"
+	toolVersion = "12.3.1"
 }
 
 java {
