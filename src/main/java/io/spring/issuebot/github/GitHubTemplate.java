@@ -255,7 +255,7 @@ public class GitHubTemplate implements GitHubOperations {
 
 	}
 
-	private static class RateLimitInterceptor implements ClientHttpRequestInterceptor {
+	private static final class RateLimitInterceptor implements ClientHttpRequestInterceptor {
 
 		private static final Logger log = LoggerFactory.getLogger(RateLimitInterceptor.class);
 
