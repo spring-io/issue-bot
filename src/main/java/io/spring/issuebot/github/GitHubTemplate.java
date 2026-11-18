@@ -17,7 +17,6 @@
 package io.spring.issuebot.github;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
@@ -35,9 +34,11 @@ import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.util.Timeout;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.core.ResolvableType;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
@@ -50,7 +51,7 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.DefaultResponseErrorHandler;
@@ -95,7 +96,7 @@ public class GitHubTemplate implements GitHubOperations {
 		RestTemplate rest = new RestTemplate();
 		rest.setErrorHandler(new DefaultResponseErrorHandler() {
 			@Override
-			public void handleError(ClientHttpResponse response) throws IOException {
+			public void handleError(URI uri, HttpMethod method, ClientHttpResponse response) throws IOException {
 				if (response.getStatusCode() == HttpStatus.FORBIDDEN) {
 					RateLimit rateLimit = RateLimit.from(response);
 					if (rateLimit.getRemaining() == 0) {
@@ -209,19 +210,18 @@ public class GitHubTemplate implements GitHubOperations {
 		return this.rest;
 	}
 
-	private static final class ErrorLoggingMappingJackson2HttpMessageConverter
-			extends MappingJackson2HttpMessageConverter {
+	private static final class ErrorLoggingMappingJackson2HttpMessageConverter extends JacksonJsonHttpMessageConverter {
 
 		private static final Charset CHARSET_UTF_8 = StandardCharsets.UTF_8;
 
 		@Override
-		public Object read(Type type, Class<?> contextClass, HttpInputMessage inputMessage)
+		public Object read(ResolvableType type, HttpInputMessage inputMessage, @Nullable Map<String, Object> hints)
 				throws IOException, HttpMessageNotReadableException {
 			try {
-				return super.read(type, contextClass, inputMessage);
+				return super.read(type, inputMessage, hints);
 			}
 			catch (HttpMessageNotReadableException ex) {
-				log.error("Failed to create {} from {}", type.getTypeName(), read(inputMessage), ex);
+				log.error("Failed to create {} from {}", type.getRawClass().getName(), read(inputMessage), ex);
 				throw ex;
 			}
 		}

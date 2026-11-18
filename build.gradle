@@ -2,7 +2,7 @@ plugins {
 	id "checkstyle"
 	id "java"
 	id "io.spring.javaformat" version "0.0.48"
-	id "org.springframework.boot" version "3.5.15"
+	id "org.springframework.boot" version "4.1.2"
 }
 
 group = "io.spring.issuebot"
@@ -16,12 +16,13 @@ dependencies {
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
 	implementation(platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES))
-	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 	implementation("org.apache.httpcomponents.client5:httpclient5")
-	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-restclient")
 
-	runtimeOnly(platform("com.azure.spring:spring-cloud-azure-dependencies:6.4.0"))
-	runtimeOnly("com.azure.spring:spring-cloud-azure-starter-keyvault-secrets")
+	runtimeOnly(platform('com.azure.spring:spring-cloud-azure-dependencies:7.4.0'))
+	runtimeOnly('com.azure.spring:spring-cloud-azure-starter-keyvault-secrets') {
+		exclude(group: 'jakarta.validation', module: 'jakarta.validation-api')
+	}
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
